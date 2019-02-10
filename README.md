@@ -1,2 +1,1 @@
 # SuperSolr
-The SuperSolr project
