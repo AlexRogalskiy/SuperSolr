@@ -13,25 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.HelloWorldService;
+import java.io.Serializable;
 
-@Controller
-public class SampleController {
+/**
+ * Base controller declaration
+ *
+ * @param <E>
+ * @param <ID>
+ * @author Alex
+ * @version 1.0.0
+ * @since 2017-08-08
+ */
+public interface BaseController<E, ID extends Serializable> {
 
-	@Autowired
-	private HelloWorldService helloWorldService;
+    ResponseEntity<?> getAll();
 
-	@RequestMapping("/")
-	@ResponseBody
-	public String helloWorld() {
-		return this.helloWorldService.getHelloMessage();
-	}
+    ResponseEntity<?> getById(final ID id);
+
+    ResponseEntity<?> create(final E item);
+
+    ResponseEntity<?> update(final ID id, final E itemDto);
+
+    ResponseEntity<?> delete(final ID id);
+
+    ResponseEntity<?> deleteAll();
 }

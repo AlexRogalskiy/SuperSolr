@@ -62,7 +62,7 @@ public abstract class BaseServiceImpl<E extends BaseModel<ID>, ID extends Serial
     }
 
     @Override
-    public void saveOrUpdate(final E target, final Class<E> clazz) {
+    public void saveOrUpdate(final E target, final Class<? extends E> clazz) {
         log.info("Saving or updating target entity: {}", target);
         if (target.isNew()) {
             getEntityManager().persist(target);

@@ -40,7 +40,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.NonAutoConfigurationSampleTomcatApplicationTests.NonAutoConfigurationSampleTomcatApplication;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.HelloWorldService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.SampleController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.ProductControllerImpl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -65,7 +65,7 @@ public class NonAutoConfigurationSampleTomcatApplicationTests {
 			ServerPropertiesAutoConfiguration.class, WebMvcAutoConfiguration.class,
 			HttpMessageConvertersAutoConfiguration.class,
 			PropertyPlaceholderAutoConfiguration.class })
-	@ComponentScan(basePackageClasses = { SampleController.class, HelloWorldService.class })
+	@ComponentScan(basePackageClasses = { ProductControllerImpl.class, HelloWorldService.class })
 	public static class NonAutoConfigurationSampleTomcatApplication {
 
 		public static void main(String[] args) throws Exception {

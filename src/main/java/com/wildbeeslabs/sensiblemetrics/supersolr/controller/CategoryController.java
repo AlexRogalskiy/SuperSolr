@@ -13,28 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.service;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import java.io.Serializable;
-import java.util.Optional;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 
 /**
- * Custom base service declaration
- *
- * @param <E>
- * @param <ID>
+ * Custom category controller declaration
  */
-public interface BaseService<E, ID extends Serializable> {
+public interface CategoryController extends BaseController<Category, String> {
 
-    Iterable<E> findAll();
-
-    Optional<E> find(final ID id);
-
-    void save(final E target);
-
-    void saveOrUpdate(final E target, final Class<? extends E> clazz);
-
-    void save(final Iterable<E> target);
-
-    void delete(final E target);
 }
