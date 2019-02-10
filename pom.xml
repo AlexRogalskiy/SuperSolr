@@ -31,6 +31,21 @@
         <tag>HEAD</tag>
     </scm>
 
+    <developers>
+        <developer>
+            <id>AlexRogalskiy</id>
+            <name>Alexander Rogalsky</name>
+            <email>alexander.rogalsky@yandex.ru</email>
+            <url>https://github.com/AlexRogalskiy</url>
+            <organization>Wildbees Labs, Inc., Saint-Petersburg (RU)</organization>
+            <organizationUrl>http://www.wildbeeslabs.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+3</timezone>
+        </developer>
+    </developers>
+
     <prerequisites>
         <maven>3.0.0</maven>
     </prerequisites>
@@ -40,6 +55,29 @@
             <name>MIT License</name>
             <url>http://www.opensource.org/licenses/mit-license.php</url>
             <distribution>repo</distribution>
+            <comments>
+                The MIT License
+
+                Copyright 2019 WildBees Labs, Inc.
+
+                Permission is hereby granted, free of charge, to any person obtaining a copy
+                of this software and associated documentation files (the "Software"), to deal
+                in the Software without restriction, including without limitation the rights
+                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                copies of the Software, and to permit persons to whom the Software is
+                furnished to do so, subject to the following conditions:
+
+                The above copyright notice and this permission notice shall be included in
+                all copies or substantial portions of the Software.
+
+                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+                THE SOFTWARE.
+            </comments>
         </license>
     </licenses>
 
@@ -70,6 +108,7 @@
         <spring-data-commons.version>2.1.3.RELEASE</spring-data-commons.version>
         <spring-data-solr.version>2.0.5.RELEASE</spring-data-solr.version>
         <commons-logging.version>1.2</commons-logging.version>
+        <spring-hateoas.version>0.9.0.RELEASE</spring-hateoas.version>
 
         <rest-assured.version>2.9.0</rest-assured.version>
         <junit.version>4.12</junit.version>
@@ -77,6 +116,7 @@
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.4</lombok.version>
         <guava.version>27.0.1-jre</guava.version>
+        <jackson-mapper.version>1.9.13</jackson-mapper.version>
         <joda-time.version>2.10.1</joda-time.version>
 
         <validation-api.version>2.0.1.Final</validation-api.version>
@@ -94,6 +134,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-batch</artifactId>
+            <version>${spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot-starter.version}</version>
         </dependency>
         <dependency>
@@ -237,6 +282,13 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-solr</artifactId>
             <version>${spring-data-solr.version}</version>
+        </dependency>
+
+        <!-- Json library dependencies -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson-mapper.version}</version>
         </dependency>
 
         <!-- Testing library dependencies -->
@@ -704,6 +756,17 @@
             <id>Sonatype-public</id>
             <name>Sonatype repository</name>
             <url>http://oss.sonatype.org/content/groups/public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>spring-releases</id>
+            <url>http://repo.springsource.org/libs-release</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

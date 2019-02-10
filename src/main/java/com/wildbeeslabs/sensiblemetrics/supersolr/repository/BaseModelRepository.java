@@ -21,13 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.solr.core.query.result.FacetPage;
 
-/**
- * Custom category controller declaration
- */
-public interface CategoryController extends BaseModelController<Category, String> {
+import java.io.Serializable;
 
+@NoRepositoryBean
+public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends BaseRepository<E, ID> {
+
+    Page<? extends E> findByName(final String name, final Pageable pageable);
+
+    FacetPage<? extends E> autocompleteNameFragment(final String fragment, final Pageable pageable);
 }

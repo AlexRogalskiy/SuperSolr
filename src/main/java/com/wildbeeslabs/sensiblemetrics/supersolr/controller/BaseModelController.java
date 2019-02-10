@@ -23,11 +23,23 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+
+import java.io.Serializable;
 
 /**
- * Custom category controller declaration
+ * Base model controller declaration
+ *
+ * @param <E>
+ * @param <ID>
+ * @author Alex
+ * @version 1.0.0
+ * @since 2017-08-08
  */
-public interface CategoryController extends BaseModelController<Category, String> {
+public interface BaseModelController<E extends BaseModel<ID>, ID extends Serializable> extends BaseController<E, ID> {
 
+    /**
+     * Default page size
+     */
+    int DEFAULT_PAGE_SIZE = 10;
 }

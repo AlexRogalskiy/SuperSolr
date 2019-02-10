@@ -21,13 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
-
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Custom category controller declaration
+ * Default searchable product model definition
  */
-public interface CategoryController extends BaseModelController<Category, String> {
+public interface SearchableProduct {
 
+    String ID_FIELD_NAME = "id";
+    String NAME_FIELD_NAME = "name";
+    String AVAILABLE_FIELD_NAME = "inStock";
+    String LOCATION_FIELD_NAME = "store";
+    String CATEGORY_FIELD_NAME = "category";
+    String PRICE_FIELD_NAME = "price";
+    String FEATURES_FIELD_NAME = "features";
+    String RATING_FIELD_NAME = "rating";
 }
