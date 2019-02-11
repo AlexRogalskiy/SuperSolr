@@ -1,0 +1,129 @@
+spring:
+  profiles:
+    active: "local"
+---
+spring:
+  data:
+    solr:
+      host: http://localhost:8983/solr/
+
+logging:
+  file: logs/application.log
+  level:
+    ROOT: DEBUG
+    org.springframework: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
+    com.dinamexoft.carol.triggers: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+server:
+  email: dev@carolfitai.com
+  port: 8080
+  endpoint-path: endpoints
+  base-path: http://localhost
+  compression:
+    enabled: true
+    mime-types: application/json
+  error:
+    path: /error
+    whitelabel:
+      enabled: false
+  ssl:
+    enabled: false
+    key-store: classpath:main.jks
+    key-password: secret
+
+management:
+  context-path: /manage
+  port: 8081
+  ssl:
+    enabled: false
+    key-store: classpath:management.jks
+    key-password: secret
+  address: 127.0.0.1
+  security:
+    enabled: true
+    roles: EPADMIN
+  info:
+    git:
+      mode: full
+
+endpoints:
+  enabled: false
+  sensitive: true
+  metrics:
+    id: app_metrics
+  health:
+    enabled: true
+    id: app_health
+  beans:
+    id: app_beans
+  info:
+    id: app_info
+  shutdown:
+    enabled: false
+---
+spring:
+  profiles: prod
+  resources:
+    staticLocations: classpath:/templates
+  application:
+    name: SuperSolr
+    label: © 2019 Powered by SuperSolr
+  main:
+    banner-mode: "off"
+
+server:
+  email: prod@carolfitai.com
+
+logging:
+  file: logs/prod_app.log
+  level:
+    ROOT: WARN
+    org.springframework: WARN
+    org.springframework.web: WARN
+    org.hibernate: WARN
+    com.dinamexoft.carol.triggers: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+---
+spring:
+  profiles: local, default
+  resources:
+    static-locations: classpath:/templates
+  application:
+    name: SuperSolr
+    label: © 2019 Powered by SuperSolr
+  devtools:
+    restart:
+      log-condition-evaluation-delta: false
+      enabled: true
+    livereload:
+      enabled: false
+  jackson:
+    serialization:
+      indent_output: true
+      writeDatesAsTimestamps: false
+  main:
+    banner-mode: "console"
+  jmx:
+    enabled: false
+
+server:
+  email: local@test.com
+
+logging:
+  file: logs/dev_app.log
+  level:
+    ROOT: WARN
+    org.springframework: WARN
+    org.springframework.web: WARN
+    org.hibernate: WARN
+    com.dinamexoft.carol.triggers: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
