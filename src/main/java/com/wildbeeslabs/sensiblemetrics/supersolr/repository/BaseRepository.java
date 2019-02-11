@@ -27,8 +27,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.solr.repository.SolrCrudRepository;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Custom base repository
@@ -38,8 +36,4 @@ import java.util.Optional;
  */
 @NoRepositoryBean
 public interface BaseRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {
-
-    List<? extends E> findByNameIgnoreCase(final String name);
-
-    Optional<E> findByName(final String name);
 }

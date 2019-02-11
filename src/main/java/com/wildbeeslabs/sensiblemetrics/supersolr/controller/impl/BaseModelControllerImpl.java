@@ -33,23 +33,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.FacetFieldEntry;
-import org.springframework.data.solr.core.query.result.FacetPage;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Base model controller implementation
@@ -63,39 +49,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends BaseView<ID>, ID extends Serializable> extends BaseControllerImpl<E, T, ID> implements BaseModelController<E, T, ID> {
-
-    @RequestMapping("/search")
-    public String search(final Model model,
-                         final @RequestParam(value = "q", required = false) String query,
-                         final @PageableDefault(page = 0, size = DEFAULT_PAGE_SIZE) Pageable pageable,
-                         final HttpServletRequest request) {
-        log.info("Search by query: {}", query);
-        model.addAttribute("page", getService().findByName(query, pageable));
-        model.addAttribute("pageable", pageable);
-        model.addAttribute("query", query);
-        return "search";
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/autocomplete", produces = "application/json")
-    public Set<String> autoComplete(final Model model,
-                                    final @RequestParam("term") String query,
-                                    final @PageableDefault(page = 0, size = 1) Pageable pageable) {
-        log.info("Search autocomplete by query: {}", query);
-        if (!StringUtils.hasText(query)) {
-            return Collections.emptySet();
-        }
-        final FacetPage<? extends E> result = getService().autocompleteNameFragment(query, pageable);
-        final Set<String> titles = new LinkedHashSet<>();
-        for (final Page<FacetFieldEntry> page : result.getFacetResultPages()) {
-            for (final FacetFieldEntry entry : page) {
-                if (entry.getValue().contains(query)) {
-                    titles.add(entry.getValue());
-                }
-            }
-        }
-        return titles;
-    }
 
     @Override
     public E updateItem(final ID id,

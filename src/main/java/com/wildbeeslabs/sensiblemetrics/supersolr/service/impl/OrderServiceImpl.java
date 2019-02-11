@@ -58,19 +58,15 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
     private SolrTemplate solrTemplate;
 
     @Override
-    protected OrderRepository getRepository() {
-        return this.orderRepository;
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public Page<? extends Order> findByDescription(final String description, final PageRequest request) {
         return getRepository().findByDescription(description, request);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Order> findByInfo(final String description, final PageRequest request) {
-        return getRepository().findByInfo(description, request);
+    public Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request) {
+        return getRepository().findByCustomQuery(searchTerm, request);
     }
 
     public List<? extends Order> dynamicSearch(final String searchTerm) {
@@ -97,5 +93,10 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
 
     private Sort sortByIdDesc() {
         return new Sort(Sort.Direction.DESC, SearchableOrder.ID_FIELD_NAME);
+    }
+
+    @Override
+    protected OrderRepository getRepository() {
+        return this.orderRepository;
     }
 }

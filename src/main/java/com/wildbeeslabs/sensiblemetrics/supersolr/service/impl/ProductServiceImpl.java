@@ -57,20 +57,26 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByName(final String name, final Pageable pageable) {
-        if (StringUtils.isBlank(name)) {
-            return getRepository().findAll(pageable);
-        }
-        return getRepository().findByNames(splitSearchTermAndRemoveIgnoredCharacters(name), pageable);
+    public Page<? extends Product> findByTitle(final String title, final Pageable pageable) {
+        return getRepository().findByTitle(title, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public FacetPage<? extends Product> autocompleteNameFragment(final String fragment, final Pageable pageable) {
+    public Page<? extends Product> findByTitles(final String title, final Pageable pageable) {
+        if (StringUtils.isBlank(title)) {
+            return getRepository().findAll(pageable);
+        }
+        return getRepository().findByTitles(splitSearchTermAndRemoveIgnoredCharacters(title), pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Product> autocompleteTitleFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByNameStartsWith(splitSearchTermAndRemoveIgnoredCharacters(fragment), pageable);
+        return getRepository().findByTitleStartsWith(splitSearchTermAndRemoveIgnoredCharacters(fragment), pageable);
     }
 
     private Collection<String> splitSearchTermAndRemoveIgnoredCharacters(final String searchTerm) {

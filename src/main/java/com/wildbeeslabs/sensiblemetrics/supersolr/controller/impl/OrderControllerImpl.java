@@ -112,7 +112,7 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
 
     @GetMapping("/order/search/{searchTerm}/{page}")
     public ResponseEntity<?> findOrderBySearchTerm(final @PathVariable String searchTerm, final @PathVariable int page) {
-        final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByInfo(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
+        final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }
 

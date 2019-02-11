@@ -29,9 +29,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -47,18 +44,6 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends Serializable> extends BaseServiceImpl<E, ID> implements BaseModelService<E, ID> {
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<? extends E> findByName(final String name, final Pageable pageable) {
-        return getRepository().findByName(name, pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public FacetPage<? extends E> autocompleteNameFragment(final String fragment, final Pageable pageable) {
-        return getRepository().autocompleteNameFragment(fragment, pageable);
-    }
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})

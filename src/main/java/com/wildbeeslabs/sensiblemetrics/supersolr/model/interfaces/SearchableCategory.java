@@ -37,7 +37,8 @@ public interface SearchableCategory {
      * Default field names
      */
     String ID_FIELD_NAME = "id";
-    String NAME_FIELD_NAME = "name";
+    String TITLE_FIELD_NAME = "title";
+    String DESCRIPTION_FIELD_NAME = "description";
     String CATEGORY_FIELD_NAME = "category";
     String PRODUCTS_FIELD_NAME = "products";
 }

@@ -57,8 +57,6 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
 
     @Autowired
     private MessageSource messageSource;
-    //@Autowired
-    //private ModelConverter modelConverter;
 
     protected List<? extends E> getAllItems() throws EmptyContentException {
         log.debug("Fetching all items");
@@ -151,10 +149,6 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
     protected MessageSource getMessageSource() {
         return this.messageSource;
     }
-
-    //protected ModelConverter getModelConverter() {
-    //    return this.modelConverter;
-    //}
 
     protected abstract BaseService<E, ID> getService();
 }

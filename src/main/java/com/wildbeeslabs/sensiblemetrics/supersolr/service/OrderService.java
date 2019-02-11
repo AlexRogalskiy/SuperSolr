@@ -39,5 +39,5 @@ public interface OrderService extends BaseModelService<Order, Long> {
 
     Page<? extends Order> findByDescription(final String description, final PageRequest request);
 
-    Page<? extends Order> findByInfo(final String description, final PageRequest request);
+    Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request);
 }

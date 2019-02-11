@@ -25,9 +25,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.FacetPage;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
@@ -54,8 +51,4 @@ public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializab
     Pattern DEFAULT_IGNORED_CHARS_PATTERN = Pattern.compile("\\p{Punct}");
 
     void saveOrUpdate(final E target, final Class<? extends E> clazz);
-
-    Page<? extends E> findByName(final String name, final Pageable pageable);
-
-    FacetPage<? extends E> autocompleteNameFragment(final String fragment, final Pageable pageable);
 }

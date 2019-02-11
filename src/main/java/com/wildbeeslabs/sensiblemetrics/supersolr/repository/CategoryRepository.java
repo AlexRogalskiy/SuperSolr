@@ -24,11 +24,15 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.repository.Facet;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
 
 /**
  * Custom cateogory repositorys
@@ -36,9 +40,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends BaseModelRepository<Category, String> {
 
-    @Query("id:*?0* OR name:*?0*")
-    Page<Product> findByCustomQuery(final String searchTerm, final Pageable pageable);
+    //@Query("id:*?0* OR title:*?0* OR description:*?0*")
+    //Page<Product> findCategoryByNamedQuery(final String searchTerm, final Pageable pageable);
 
-    @Query(name = "Product.findByNamedQuery")
-    Page<Product> findByNamedQuery(final String searchTerm, final Pageable pageable);
+    Page<? extends Category> findByTitle(final String title, final Pageable pageable);
+
+    Page<? extends Category> findByTitles(final Collection<String> title, final Pageable pageable);
+
+    @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
+    FacetPage<? extends Category> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
+
+    @Query(name = "Category.findByNamedQuery")
+    Page<? extends Category> findByNamedQuery(final String searchTerm, final Pageable pageable);
 }

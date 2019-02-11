@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -49,8 +50,15 @@ public interface ProductRepository extends BaseModelRepository<Product, String> 
             SearchableProduct.FEATURES_FIELD_NAME,
             SearchableProduct.AVAILABLE_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Product> findByNames(final Collection<String> names, final Pageable pageable);
+    HighlightPage<? extends Product> findByCustomQuery(final Collection<String> values, final Pageable pageable);
+
+    Page<? extends Product> findByTitle(final String title, final Pageable pageable);
+
+    Page<? extends Product> findByTitles(final Collection<String> title, final Pageable pageable);
 
     @Facet(fields = {SearchableProduct.TITLE_FIELD_NAME})
-    FacetPage<? extends Product> findByNameStartsWith(final Collection<String> fragments, final Pageable pageable);
+    FacetPage<? extends Product> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
+
+    @Query(name = "Product.findByNamedQuery")
+    Page<? extends Product> findByNamedQuery(final String searchTerm, final Pageable pageable);
 }

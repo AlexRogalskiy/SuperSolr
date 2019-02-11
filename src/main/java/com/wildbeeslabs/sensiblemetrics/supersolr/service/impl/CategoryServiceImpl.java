@@ -29,8 +29,19 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
  * Custom category service implementation {@link Category}
@@ -43,6 +54,38 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Category> findByTitle(final String title, final Pageable pageable) {
+        return getRepository().findByTitle(title, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Category> findByTitles(final String title, final Pageable pageable) {
+        if (StringUtils.isBlank(title)) {
+            return getRepository().findAll(pageable);
+        }
+        return getRepository().findByTitles(splitSearchTermAndRemoveIgnoredCharacters(title), pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Category> autocompleteTitleFragment(final String fragment, final Pageable pageable) {
+        if (StringUtils.isBlank(fragment)) {
+            return new SolrResultPage<>(Collections.emptyList());
+        }
+        return getRepository().findByTitleStartsWith(splitSearchTermAndRemoveIgnoredCharacters(fragment), pageable);
+    }
+
+    private Collection<String> splitSearchTermAndRemoveIgnoredCharacters(final String searchTerm) {
+        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
+        return Arrays.stream(searchTerms)
+                .filter(StringUtils::isNotEmpty)
+                .map(term -> DEFAULT_IGNORED_CHARS_PATTERN.matcher(term).replaceAll(DEFAULT_SEARСH_TERM_REPLACEMENT))
+                .collect(Collectors.toList());
+    }
 
     @Override
     protected CategoryRepository getRepository() {

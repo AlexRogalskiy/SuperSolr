@@ -40,10 +40,10 @@ public interface OrderRepository extends BaseModelRepository<Order, Long> {
     @Query("description:*?0*")
     Page<? extends Order> findByDescription(final String description, final Pageable pageable);
 
-    //@Query("odesc:*?0* OR customer:*?0* OR pname:*?0*")
     @Query(fields = {
+            SearchableOrder.ID_FIELD_NAME,
             SearchableOrder.DESCRIPTION_FIELD_NAME,
             SearchableOrder.NAME_FIELD_NAME
     }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByInfo(final String searchTerm, final Pageable pageable);
+    Page<? extends Order> findByCustomQuery(final String searchTerm, final Pageable pageable);
 }

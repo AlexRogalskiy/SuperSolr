@@ -24,6 +24,9 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.result.FacetPage;
 
 /**
  * Custom category service declaration
@@ -34,4 +37,10 @@ public interface CategoryService extends BaseModelService<Category, String> {
      * Default service ID
      */
     String SERVICE_ID = "CategoryService";
+
+    Page<? extends Category> findByTitle(final String title, final Pageable pageable);
+
+    Page<? extends Category> findByTitles(final String title, final Pageable pageable);
+
+    FacetPage<? extends Category> autocompleteTitleFragment(final String fragment, final Pageable pageable);
 }
