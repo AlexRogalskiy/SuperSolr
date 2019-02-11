@@ -95,7 +95,7 @@
         <start-class>com.wildbeeslabs.sensiblemetrics.supersolr.SuperSolrAppLoader</start-class>
 
         <profileWebApp>src/main/webapp</profileWebApp>
-        <profileProperties>src/test/resource/test.properties</profileProperties>
+        <location>dev</location>
 
         <hikari.version>3.2.0</hikari.version>
         <mysql-connector.version>8.0.13</mysql-connector.version>
@@ -377,6 +377,13 @@
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
         </dependency>
+
+        <!-- Solr library dependencies -->
+        <!--<dependency>-->
+        <!--<groupId>org.apache.solr</groupId>-->
+        <!--<artifactId>solr</artifactId>-->
+        <!--<version>RELEASE</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -616,22 +623,36 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>overlays</directory>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
     <profiles>
         <profile>
-            <id>siteProfile</id>
+            <id>dev</id>
             <activation>
+                <!--<activeByDefault>true</activeByDefault>-->
                 <property>
-                    <name>profile</name>
+                    <name>location</name>
                 </property>
             </activation>
             <properties>
-                <profileWebApp>src/main/profiles/${profile}/webapp</profileWebApp>
-                <profileProperties>src/main/profiles/${profile}/profile.properties</profileProperties>
-                <profileResources>src/main/profiles/${profile}/resources</profileResources>
+                <profileWebApp>src/main/profiles/${location}/webapp</profileWebApp>
+                <profileProperties>src/main/profiles/${location}/profile.properties</profileProperties>
+                <profileResources>src/main/profiles/${location}/resources</profileResources>
             </properties>
             <build>
                 <resources>
@@ -646,11 +667,12 @@
                 </resources>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven</groupId>
-                        <artifactId>maven-plugin-api</artifactId>
-                        <version>3.3.3</version>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0.0</version>
                         <executions>
                             <execution>
+                                <id>default-lifecycle-properties</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>read-project-properties</goal>
@@ -660,6 +682,13 @@
                                         <file>${profileProperties}</file>
                                     </files>
                                 </configuration>
+                            </execution>
+                            <execution>
+                                <id>clean-lifecycle-properties</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
