@@ -63,7 +63,7 @@ public abstract class BaseModel<T> implements Persistable<T>, Serializable {
     private static final long serialVersionUID = 6444143028591284804L;
 
     @Id
-    @Indexed(name = "id", type = "string")
+    @Indexed(name = "id")
     private T id;
 
     @CreationTimestamp

@@ -21,28 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.solr.core.query.result.FacetPage;
-import org.springframework.data.solr.repository.Query;
+/**
+ * Default searchable category model definition
+ */
+public interface SearchableCategory {
 
-import java.io.Serializable;
+    /**
+     * Default document ID
+     */
+    String DOCUMENT_ID = "Category";
 
-@NoRepositoryBean
-public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends BaseRepository<E, ID> {
-
-    Page<? extends E> findByName(final String name, final Pageable pageable);
-
-    FacetPage<? extends E> autocompleteNameFragment(final String fragment, final Pageable pageable);
-
-    @Query("id:*?0* OR name:*?0*")
-    Page<Product> findByCustomQuery(final String searchTerm, final Pageable pageable);
-
-    @Query(name = "BaseModel.findByNamedQuery")
-    Page<Product> findByNamedQuery(final String searchTerm, final Pageable pageable);
+    /**
+     * Default field names
+     */
+    String ID_FIELD_NAME = "id";
+    String NAME_FIELD_NAME = "name";
+    String CATEGORY_FIELD_NAME = "category";
+    String PRODUCTS_FIELD_NAME = "products";
 }

@@ -34,8 +34,10 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Objects;
+import java.util.Set;
 //import org.springframework.data.solr.core.geo.GeoLocation;
 
 /**
@@ -45,8 +47,11 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Table(name = "products", catalog = "market_data",
+        indexes = {@Index(name = "product_category_idx", columnList = "product_id, category")}
+)
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = "product")
+@SolrDocument(solrCoreName = SearchableProduct.DOCUMENT_ID)
 public class Product extends BaseModel<String> implements SearchableProduct {
 
     /**
@@ -71,11 +76,32 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = CATEGORY_FIELD_NAME, nullable = false)
     private Category category;
-    //private List<Category> categories;
 
     @Indexed(name = RATING_FIELD_NAME)
     private Integer rating;
 
     //@Indexed(name = LOCATION_FIELD_NAME)
     //private GeoLocation location;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "Product_Order",
+            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "order_id", referencedColumnName = "id")}
+    )
+    @Indexed(name = SearchableProduct.ORDERS_FIELD_NAME)
+    private final Set<Order> orders = new HashSet<>();
+
+    public void setOrders(final Set<Order> orders) {
+        this.orders.clear();
+        if (Objects.nonNull(orders)) {
+            this.orders.addAll(orders);
+        }
+    }
+
+    public void addOrder(final Order order) {
+        if (Objects.nonNull(order)) {
+            this.orders.add(order);
+        }
+    }
 }

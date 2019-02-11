@@ -23,14 +23,11 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
@@ -40,30 +37,40 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Custom full-text search category document model
+ * Custom full-text search order document model
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(name = "category", catalog = "market_data")
+@Table(name = "order", catalog = "market_data")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableCategory.DOCUMENT_ID)
-public class Category extends BaseModel<String> implements SearchableCategory {
+@SolrDocument(solrCoreName = SearchableOrder.DOCUMENT_ID)
+public class Order extends BaseModel<Long> implements SearchableOrder {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
-    private static final long serialVersionUID = -107452074862198456L;
+    private static final long serialVersionUID = -5055264765286046442L;
 
-    @Indexed(name = SearchableCategory.NAME_FIELD_NAME, type = "string")
+    @Indexed(name = SearchableOrder.NAME_FIELD_NAME, type = "string")
     private String name;
 
-    @OneToMany(mappedBy = SearchableCategory.CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @Column(name = "products", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @BatchSize(size = 10)
-    @Indexed(name = SearchableCategory.PRODUCTS_FIELD_NAME)
+    @Lob
+    @Indexed(name = SearchableOrder.DESCRIPTION_FIELD_NAME, type = "string")
+    private String description;
+
+    @Indexed(name = "productName", type = "string")
+    private String productName;
+
+    @Indexed(name = SearchableOrder.CLIENT_NAME_FIELD_NAME, type = "string")
+    private String clientName;
+
+    @Indexed(name = SearchableOrder.CLIENT_MOBILE_FIELD_NAME, type = "string")
+    private String clientMobile;
+
+    @ManyToMany(mappedBy = SearchableOrder.PRODUCTS_FIELD_NAME)
+    @Indexed(name = SearchableOrder.PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final Set<Product> products) {

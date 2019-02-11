@@ -25,7 +25,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -38,12 +37,6 @@ import java.util.Collection;
 
 @Repository
 public interface ProductRepository extends BaseModelRepository<Product, String> {
-
-    @Query("id:*?0* OR name:*?0*")
-    Page<Product> findByCustomQuery(final String searchTerm, final Pageable pageable);
-
-    @Query(name = "Product.findByNamedQuery")
-    Page<Product> findByNamedQuery(final String searchTerm, final Pageable pageable);
 
     @Highlight(prefix = "<b>", postfix = "</b>")
     @Query(fields = {

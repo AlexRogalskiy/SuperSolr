@@ -28,6 +28,14 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
  */
 public interface SearchableProduct {
 
+    /**
+     * Default document ID
+     */
+    String DOCUMENT_ID = "Product";
+
+    /**
+     * Default field names
+     */
     String ID_FIELD_NAME = "id";
     String NAME_FIELD_NAME = "name";
     String AVAILABLE_FIELD_NAME = "inStock";
@@ -36,4 +44,5 @@ public interface SearchableProduct {
     String PRICE_FIELD_NAME = "price";
     String FEATURES_FIELD_NAME = "features";
     String RATING_FIELD_NAME = "rating";
+    String ORDERS_FIELD_NAME = "orders";
 }
