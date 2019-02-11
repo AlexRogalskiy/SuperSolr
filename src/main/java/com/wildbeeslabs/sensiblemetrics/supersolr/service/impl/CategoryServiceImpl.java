@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.CategoryRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
 import lombok.EqualsAndHashCode;
@@ -33,7 +34,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.HighlightOptions;
+import org.springframework.data.solr.core.query.SimpleHighlightQuery;
 import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,11 +68,11 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Category> findByTitles(final String title, final Pageable pageable) {
-        if (StringUtils.isBlank(title)) {
+    public Page<? extends Category> findByTitles(final String titles, final Pageable pageable) {
+        if (StringUtils.isBlank(titles)) {
             return getRepository().findAll(pageable);
         }
-        return getRepository().findByTitles(splitSearchTermAndRemoveIgnoredCharacters(title), pageable);
+        return getRepository().findByTitles(splitSearchTermAndRemoveIgnoredCharacters(titles), pageable);
     }
 
     @Override
@@ -77,6 +82,18 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
             return new SolrResultPage<>(Collections.emptyList());
         }
         return getRepository().findByTitleStartsWith(splitSearchTermAndRemoveIgnoredCharacters(fragment), pageable);
+    }
+
+    @Override
+    public HighlightPage<? extends Category> find(final String searchTerm, final Pageable page) {
+        final Criteria fileIdCriteria = new Criteria(SearchableOrder.ID_FIELD_NAME).boost(2).is(searchTerm);
+        final Criteria titleCriteria = new Criteria(SearchableOrder.TITLE_FIELD_NAME).fuzzy(searchTerm);
+        final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
+        query.setHighlightOptions(new HighlightOptions()
+                .setSimplePrefix("<strong>")
+                .setSimplePostfix("</strong>")
+                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.TITLE_FIELD_NAME));
+        return getSolrTemplate().queryForHighlightPage(query, Category.class);
     }
 
     private Collection<String> splitSearchTermAndRemoveIgnoredCharacters(final String searchTerm) {

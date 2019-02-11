@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.CategoryController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.utils.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.CategoryView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
 import lombok.EqualsAndHashCode;
@@ -36,18 +37,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetFieldEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Custom category controller implementation
@@ -57,6 +59,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(CategoryController.CONTROLLER_ID)
+@RequestMapping("/api/category")
 public class CategoryControllerImpl extends BaseModelControllerImpl<Category, CategoryView, String> implements CategoryController {
 
     @Autowired
@@ -93,6 +96,19 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
             }
         }
         return titles;
+    }
+
+    @GetMapping("/category/search")
+    @SuppressWarnings("unchecked")
+    public ResponseEntity<?> find(
+            final @RequestParam String searchTerm,
+            final @RequestParam(defaultValue = "0") int offset,
+            final @RequestParam(defaultValue = "10") int limit) {
+        final HighlightPage<Category> page = (HighlightPage<Category>) getService().find(searchTerm, new OffsetPageRequest(offset, limit));
+        return new ResponseEntity<>(page
+                .stream()
+                .map((Category document) -> getResult(document, page.getHighlights(document), CategoryView.class))
+                .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 
     @RequestMapping("/category")

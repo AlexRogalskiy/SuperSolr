@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +36,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.solr.core.mapping.Indexed;
+import org.springframework.data.solr.repository.Score;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -44,7 +46,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * Custom full-text search base document model
+ * Custom full-text search base model
  */
 @Data
 @NoArgsConstructor
@@ -55,7 +57,7 @@ import java.util.Objects;
 @MappedSuperclass
 @ChronologicalDates
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseModel<T> implements Persistable<T>, Serializable {
+public abstract class BaseModel<T> implements SearchableModel, Persistable<T>, Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -68,30 +70,38 @@ public abstract class BaseModel<T> implements Persistable<T>, Serializable {
 
     @CreationTimestamp
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT)
-    @Column(name = "created", nullable = false, updatable = false)
+    @Column(name = SearchableModel.CREATED_FIELD_NAME, nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Indexed(SearchableModel.CREATED_FIELD_NAME)
     private Date created;
 
     @CreatedBy
     @NotNull(message = "Field <createdBy> cannot be blank")
-    @Column(name = "created_by", nullable = false, updatable = false)
+    @Column(name = SearchableModel.CREATED_BY_FIELD_NAME, nullable = false, updatable = false)
+    @Indexed(SearchableModel.CREATED_BY_FIELD_NAME)
     private String createdBy;
 
     @UpdateTimestamp
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT)
-    @Column(name = "changed", insertable = false)
+    @Column(name = SearchableModel.CHANGED_FIELD_NAME, insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @Indexed(SearchableModel.CHANGED_FIELD_NAME)
     private Date changed;
 
     @LastModifiedBy
-    @Column(name = "changed_by", insertable = false)
+    @Column(name = SearchableModel.CHANGED_BY_FIELD_NAME, insertable = false)
+    @Indexed(SearchableModel.CHANGED_BY_FIELD_NAME)
     private String changedBy;
 
     @Version
     @ColumnDefault("0")
-    @Column(name = "version", insertable = false, updatable = false)
+    @Column(name = SearchableModel.VERSION_BY_FIELD_NAME, insertable = false, updatable = false)
     //@Generated(GenerationTime.ALWAYS)
+    @Indexed(SearchableModel.VERSION_BY_FIELD_NAME)
     private Long version;
+
+    @Score
+    private float score;
 
     @PrePersist
     protected void onCreate() {

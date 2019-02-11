@@ -40,7 +40,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JacksonXmlRootElement(localName = SearchableCategory.DOCUMENT_ID)
+@JacksonXmlRootElement(localName = SearchableCategory.MODEL_ID)
 public class CategoryView extends BaseView<String> {
 
     /**

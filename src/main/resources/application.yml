@@ -2,13 +2,19 @@ spring:
   profiles:
     active: "local"
 ---
-solr:
-  server:
-    url: http://localhost:8983/solr/
-  solr.home:
-  repository:
-    query:
-      method.type: #methodName
+spring:
+  batch:
+    job:
+      enabled: false
+  data:
+    solr:
+      host: http://localhost:8983/solr/
+      server:
+        url: http://localhost:8983/solr/
+      solr.home:
+      repository:
+        query:
+          method.type: #methodName
 
 logging:
   file: logs/application.log

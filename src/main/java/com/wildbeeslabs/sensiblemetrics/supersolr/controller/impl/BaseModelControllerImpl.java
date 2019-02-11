@@ -33,9 +33,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.solr.core.query.result.HighlightEntry;
+import org.springframework.http.HttpHeaders;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Base model controller implementation
@@ -62,6 +68,23 @@ public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends
         final E itemEntity = MapperUtils.map(itemDto, entityClass);
         getService().saveOrUpdate(itemEntity, entityClass);
         return currentItem.get();
+    }
+
+    protected T getResult(final E entity,
+                          final List<HighlightEntry.Highlight> highlights,
+                          final Class<? extends T> dtoClass) {
+        final Map<String, List<String>> highlightMap = highlights
+                .stream()
+                .collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
+        final T updatedDto = MapperUtils.map(entity, dtoClass);
+        updatedDto.setHighlights(highlightMap);
+        return updatedDto;
+    }
+
+    protected HttpHeaders getHeaders(final Page<?> page) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Elements", Long.toString(page.getTotalElements()));
+        return headers;
     }
 
     protected abstract BaseModelService<E, ID> getService();

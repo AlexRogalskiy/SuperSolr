@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Query;
 
 import java.io.Serializable;
@@ -43,7 +44,7 @@ public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Seriali
     //Page<? extends E> findByCustomQuery(final String searchTerm, final Pageable pageable);
 
     @Query(name = "BaseModel.findById")
-    Optional<E> findById(final ID id);
+    Optional<E> findById(@Boost(2) final ID id);
 
     long count(final String searchTerm);
 }

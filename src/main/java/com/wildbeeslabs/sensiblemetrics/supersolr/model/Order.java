@@ -45,7 +45,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @Table(name = "order", catalog = "market_data")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableOrder.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableOrder.MODEL_ID)
 public class Order extends BaseModel<Long> implements SearchableOrder {
 
     /**
@@ -53,8 +53,8 @@ public class Order extends BaseModel<Long> implements SearchableOrder {
      */
     private static final long serialVersionUID = -5055264765286046442L;
 
-    @Indexed(name = SearchableOrder.NAME_FIELD_NAME, type = "string")
-    private String name;
+    @Indexed(name = SearchableOrder.TITLE_FIELD_NAME, type = "string")
+    private String title;
 
     @Lob
     @Indexed(name = SearchableOrder.DESCRIPTION_FIELD_NAME, type = "string")

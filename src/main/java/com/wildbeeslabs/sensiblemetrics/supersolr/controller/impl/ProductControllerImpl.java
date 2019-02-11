@@ -54,6 +54,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(ProductController.CONTROLLER_ID)
+@RequestMapping("/api/product")
 public class ProductControllerImpl extends BaseModelControllerImpl<Product, ProductView, String> implements ProductController {
 
     @Autowired

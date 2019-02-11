@@ -23,12 +23,19 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom bad request exception
+ * Custom "bad request" runtime exception impelementation {@link RuntimeException}
  */
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Incorrect request parameters")
 public class BadRequestException extends RuntimeException {
 
@@ -37,24 +44,16 @@ public class BadRequestException extends RuntimeException {
      */
     private static final long serialVersionUID = -7693119675913317655L;
 
-    public BadRequestException() {
-    }
-
-    public BadRequestException(String message) {
+    public BadRequestException(final String message) {
         super(message);
     }
 
-    public BadRequestException(Throwable cause) {
+    public BadRequestException(final Throwable cause) {
         super(cause);
     }
 
-    public BadRequestException(String message, Throwable cause) {
+    public BadRequestException(final String message, final Throwable cause) {
         super(message, cause);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 
     @Override

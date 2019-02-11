@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 
 /**
  * Custom product service declaration
@@ -40,7 +41,9 @@ public interface ProductService extends BaseModelService<Product, String> {
 
     Page<? extends Product> findByTitle(final String title, final Pageable pageable);
 
-    Page<? extends Product> findByTitles(final String title, final Pageable pageable);
+    Page<? extends Product> findByTitles(final String titles, final Pageable pageable);
 
     FacetPage<? extends Product> autocompleteTitleFragment(final String fragment, final Pageable pageable);
+
+    HighlightPage<? extends Product> find(final String searchTerm, final Pageable page);
 }

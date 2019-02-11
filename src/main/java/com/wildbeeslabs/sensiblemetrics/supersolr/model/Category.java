@@ -48,7 +48,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @Table(name = "category", catalog = "market_data")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableCategory.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableCategory.MODEL_ID)
 public class Category extends BaseModel<String> implements SearchableCategory {
 
     /**

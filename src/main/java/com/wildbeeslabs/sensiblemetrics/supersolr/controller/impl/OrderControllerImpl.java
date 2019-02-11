@@ -52,6 +52,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(OrderController.CONTROLLER_ID)
+@RequestMapping("/api/order")
 public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderView, Long> implements OrderController {
 
     @Autowired

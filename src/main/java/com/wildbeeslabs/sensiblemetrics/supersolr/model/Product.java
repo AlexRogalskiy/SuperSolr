@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
@@ -38,7 +39,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-//import org.springframework.data.solr.core.geo.GeoLocation;
 
 /**
  * Custom full-text search product document model
@@ -51,7 +51,7 @@ import java.util.Set;
         indexes = {@Index(name = "product_category_idx", columnList = "product_id, category")}
 )
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableProduct.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableProduct.MODEL_ID)
 public class Product extends BaseModel<String> implements SearchableProduct {
 
     /**
@@ -84,8 +84,8 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     @Indexed(name = RATING_FIELD_NAME)
     private Integer rating;
 
-    //@Indexed(name = LOCATION_FIELD_NAME)
-    //private GeoLocation location;
+    @Indexed(name = LOCATION_FIELD_NAME)
+    private Point location;
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(

@@ -34,10 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.HighlightOptions;
+import org.springframework.data.solr.core.query.SimpleHighlightQuery;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,8 +57,6 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
 
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private SolrTemplate solrTemplate;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,8 +74,20 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
         final Criteria conditions = createConditions(searchTerm);
         final SimpleQuery search = new SimpleQuery(conditions);
         search.addSort(sortByIdDesc());
-        final Page<? extends Order> results = this.solrTemplate.queryForPage(search, Order.class);
+        final Page<? extends Order> results = getSolrTemplate().queryForPage(search, Order.class);
         return results.getContent();
+    }
+
+    @Override
+    public HighlightPage<? extends Order> find(final String searchTerm, final Pageable page) {
+        final Criteria fileIdCriteria = new Criteria(SearchableOrder.ID_FIELD_NAME).boost(2).is(searchTerm);
+        final Criteria titleCriteria = new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).fuzzy(searchTerm);
+        final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
+        query.setHighlightOptions(new HighlightOptions()
+                .setSimplePrefix("<strong>")
+                .setSimplePostfix("</strong>")
+                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.TITLE_FIELD_NAME));
+        return getSolrTemplate().queryForHighlightPage(query, Order.class);
     }
 
     private Criteria createConditions(final String searchTerm) {

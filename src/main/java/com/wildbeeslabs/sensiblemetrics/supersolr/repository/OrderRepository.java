@@ -43,7 +43,7 @@ public interface OrderRepository extends BaseModelRepository<Order, Long> {
     @Query(fields = {
             SearchableOrder.ID_FIELD_NAME,
             SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.NAME_FIELD_NAME
+            SearchableOrder.TITLE_FIELD_NAME
     }, defaultOperator = Operator.OR)
     Page<? extends Order> findByCustomQuery(final String searchTerm, final Pageable pageable);
 }

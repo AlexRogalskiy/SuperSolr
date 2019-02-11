@@ -29,6 +29,8 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -44,6 +46,9 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends Serializable> extends BaseServiceImpl<E, ID> implements BaseModelService<E, ID> {
+
+    @Autowired
+    private SolrTemplate solrTemplate;
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})
@@ -64,6 +69,10 @@ public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends S
     @Override
     public long count(final String searchTerm) {
         return getRepository().count(searchTerm);
+    }
+
+    protected SolrTemplate getSolrTemplate() {
+        return this.solrTemplate;
     }
 
     protected abstract BaseModelRepository<E, ID> getRepository();

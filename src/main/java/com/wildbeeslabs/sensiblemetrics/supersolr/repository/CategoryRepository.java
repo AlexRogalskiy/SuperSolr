@@ -28,6 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCat
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Facet;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -51,5 +52,5 @@ public interface CategoryRepository extends BaseModelRepository<Category, String
     FacetPage<? extends Category> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
 
     @Query(name = "Category.findByNamedQuery")
-    Page<? extends Category> findByNamedQuery(final String searchTerm, final Pageable pageable);
+    Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 }

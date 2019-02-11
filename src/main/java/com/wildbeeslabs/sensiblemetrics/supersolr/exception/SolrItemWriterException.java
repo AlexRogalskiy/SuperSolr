@@ -21,53 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
+package com.wildbeeslabs.sensiblemetrics.supersolr.exception;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import org.springframework.batch.item.ItemWriterException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom base view Model
+ * Custom solr item writer exception implementation {@link ItemWriterException}
  */
-@Data
-@EqualsAndHashCode
-@NoArgsConstructor
-@ToString
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class BaseView<T> implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Service is not available")
+public class SolrItemWriterException extends ItemWriterException {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
-    private static final long serialVersionUID = 602615748387358410L;
+    private static final long serialVersionUID = -4964042352337834591L;
 
-    @JacksonXmlProperty(localName = "id")
-    private T id;
+    public SolrItemWriterException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    @JacksonXmlProperty(localName = "created")
-    private Date created;
-
-    @JacksonXmlProperty(localName = "createdBy")
-    private String createdBy;
-
-    @JacksonXmlProperty(localName = "changed")
-    private Date changed;
-
-    @JacksonXmlProperty(localName = "changedBy")
-    private String changedBy;
-
-    @JacksonXmlProperty(localName = "score")
-    private float score;
-
-    @JacksonXmlProperty(localName = "highlights")
-    private Map<String, List<String>> highlights;
+    public SolrItemWriterException(String message) {
+        super(message);
+    }
 }

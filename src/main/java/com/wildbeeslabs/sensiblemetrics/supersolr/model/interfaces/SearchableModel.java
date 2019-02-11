@@ -24,22 +24,22 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Default searchable order model definition
+ * Default searchable model definition
  */
-public interface SearchableOrder {
+public interface SearchableModel {
 
     /**
      * Default document ID
      */
-    String MODEL_ID = "Order";
+    String MODEL_ID = "Model";
 
     /**
      * Default field names
      */
     String ID_FIELD_NAME = "id";
-    String TITLE_FIELD_NAME = "title";
-    String DESCRIPTION_FIELD_NAME = "description";
-    String CLIENT_NAME_FIELD_NAME = "clientName";
-    String CLIENT_MOBILE_FIELD_NAME = "clientMobile";
-    String PRODUCTS_FIELD_NAME = "products";
+    String CREATED_FIELD_NAME = "created";
+    String CHANGED_FIELD_NAME = "changed";
+    String CREATED_BY_FIELD_NAME = "createdBy";
+    String CHANGED_BY_FIELD_NAME = "changedBy";
+    String VERSION_BY_FIELD_NAME = "version";
 }

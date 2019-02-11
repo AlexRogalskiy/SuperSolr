@@ -97,6 +97,8 @@
         <profileWebApp>src/main/webapp</profileWebApp>
         <location>dev</location>
         <skip.integration.tests>true</skip.integration.tests>
+        <solr.deps>solr/libs</solr.deps>
+        <tika.version>1.17</tika.version>
 
         <hikari.version>3.2.0</hikari.version>
         <mysql-connector.version>8.0.13</mysql-connector.version>
@@ -518,7 +520,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.0</version>
+                    <version>3.0.0-M2</version>
                     <configuration>
                         <useSystemClassLoader>false</useSystemClassLoader>
                         <excludes>
@@ -530,7 +532,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                     <configuration>
                         <archive>
                             <manifest>
@@ -545,7 +547,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                     <executions>
                         <execution>
                             <id>copy-dependencies</id>
@@ -554,6 +556,53 @@
                                 <goal>copy-dependencies</goal>
                             </goals>
                             <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>org.apache.solr</groupId>
+                                        <artifactId>solr-cell</artifactId>
+                                        <version>7.2.1</version>
+                                        <type>jar</type>
+                                        <overWrite>true</overWrite>
+                                        <outputDirectory>${solr.deps}</outputDirectory>
+                                        <destFileName>solr-cell.jar</destFileName>
+                                    </artifactItem>
+                                    <artifactItem>
+                                        <groupId>org.apache.tika</groupId>
+                                        <artifactId>tika-core</artifactId>
+                                        <version>${tika.version}</version>
+                                        <type>jar</type>
+                                        <overWrite>true</overWrite>
+                                        <outputDirectory>${solr.deps}</outputDirectory>
+                                        <destFileName>tika-core.jar</destFileName>
+                                    </artifactItem>
+                                    <artifactItem>
+                                        <groupId>org.apache.tika</groupId>
+                                        <artifactId>tika-parsers</artifactId>
+                                        <version>${tika.version}</version>
+                                        <type>jar</type>
+                                        <overWrite>true</overWrite>
+                                        <outputDirectory>${solr.deps}</outputDirectory>
+                                        <destFileName>tika-parsers.jar</destFileName>
+                                    </artifactItem>
+                                    <artifactItem>
+                                        <groupId>xerces</groupId>
+                                        <artifactId>xercesImpl</artifactId>
+                                        <version>2.11.0</version>
+                                        <type>jar</type>
+                                        <overWrite>true</overWrite>
+                                        <outputDirectory>${solr.deps}</outputDirectory>
+                                        <destFileName>xerces.jar</destFileName>
+                                    </artifactItem>
+                                    <artifactItem>
+                                        <groupId>org.ccil.cowan.tagsoup</groupId>
+                                        <artifactId>tagsoup</artifactId>
+                                        <version>1.2</version>
+                                        <type>jar</type>
+                                        <overWrite>true</overWrite>
+                                        <outputDirectory>${solr.deps}</outputDirectory>
+                                        <destFileName>tagsoup.jar</destFileName>
+                                    </artifactItem>
+                                </artifactItems>
                                 <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
                                 <overWriteReleases>false</overWriteReleases>
                                 <overWriteSnapshots>false</overWriteSnapshots>
@@ -613,7 +662,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.1</version>
                     <configuration>
                         <createDependencyReducedPom>false</createDependencyReducedPom>
                     </configuration>
