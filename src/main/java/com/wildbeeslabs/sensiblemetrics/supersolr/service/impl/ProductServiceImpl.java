@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +56,7 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
     private ProductRepository productRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends Product> findByName(final String name, final Pageable pageable) {
         if (StringUtils.isBlank(name)) {
             return getRepository().findAll(pageable);
@@ -63,6 +65,7 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FacetPage<? extends Product> autocompleteNameFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());

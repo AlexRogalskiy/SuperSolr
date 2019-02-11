@@ -59,8 +59,12 @@ public class Product extends BaseModel<String> implements SearchableProduct {
      */
     private static final long serialVersionUID = 6034172782528641104L;
 
-    @Indexed(name = NAME_FIELD_NAME, type = "string")
-    private String name;
+    @Indexed(name = TITLE_FIELD_NAME, type = "string")
+    private String title;
+
+    @Lob
+    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
+    private String description;
 
     @Indexed(name = AVAILABLE_FIELD_NAME)
     private boolean available;

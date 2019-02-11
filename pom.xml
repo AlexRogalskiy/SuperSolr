@@ -96,6 +96,7 @@
 
         <profileWebApp>src/main/webapp</profileWebApp>
         <location>dev</location>
+        <skip.integration.tests>true</skip.integration.tests>
 
         <hikari.version>3.2.0</hikari.version>
         <mysql-connector.version>8.0.13</mysql-connector.version>
@@ -107,8 +108,9 @@
         <spring.version>5.1.3.RELEASE</spring.version>
         <spring-data-commons.version>2.1.3.RELEASE</spring-data-commons.version>
         <spring-data-solr.version>2.0.5.RELEASE</spring-data-solr.version>
-        <commons-logging.version>1.2</commons-logging.version>
+        <spring.security.version>5.1.2.RELEASE</spring.security.version>
         <spring-hateoas.version>0.9.0.RELEASE</spring-hateoas.version>
+        <commons-logging.version>1.2</commons-logging.version>
 
         <rest-assured.version>2.9.0</rest-assured.version>
         <junit.version>4.12</junit.version>
@@ -271,6 +273,23 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!-- Spring Security library dependencies -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
         </dependency>
 
         <!-- Spring Data library dependencies -->
@@ -439,9 +458,19 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.2</version>
                     <configuration>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
                         <webResources>
                             <resource>
                                 <directory>${profileWebApp}</directory>
@@ -529,6 +558,28 @@
                                 <overWriteReleases>false</overWriteReleases>
                                 <overWriteSnapshots>false</overWriteSnapshots>
                                 <overWriteIfNewer>true</overWriteIfNewer>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M2</version>
+                    <configuration>
+                        <systemPropertiesFile>${project.basedir}/src/main/profiles/${location}/application.properties
+                        </systemPropertiesFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>integration-tests</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <skipTests>${skip.integration.tests}</skipTests>
                             </configuration>
                         </execution>
                     </executions>
@@ -650,9 +701,10 @@
                 </property>
             </activation>
             <properties>
-                <profileWebApp>src/main/profiles/${location}/webapp</profileWebApp>
-                <profileProperties>src/main/profiles/${location}/profile.properties</profileProperties>
-                <profileResources>src/main/profiles/${location}/resources</profileResources>
+                <profileWebApp>${project.basedir}/src/main/profiles/${location}/webapp</profileWebApp>
+                <profileProperties>${project.basedir}/src/main/profiles/${location}/profile.properties
+                </profileProperties>
+                <profileResources>${project.basedir}/src/main/profiles/${location}/resources</profileResources>
             </properties>
             <build>
                 <resources>

@@ -180,7 +180,7 @@ public class DBConfig {
         final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setGenerateDdl(env.getRequiredProperty("triggers.datasource.config.jpa.generateDdl", Boolean.class));
         jpaVendorAdapter.setShowSql(env.getRequiredProperty("triggers.datasource.config.jpa.showSql", Boolean.class));
-        jpaVendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL5InnoDBDialect");
+        jpaVendorAdapter.setDatabasePlatform(env.getRequiredProperty("triggers.datasource.db.databasePlatform"));
         return jpaVendorAdapter;
     }
 

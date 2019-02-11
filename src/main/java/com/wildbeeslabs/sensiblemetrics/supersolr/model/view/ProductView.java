@@ -48,8 +48,8 @@ public class ProductView extends BaseView<String> {
      */
     private static final long serialVersionUID = 5714315073889762969L;
 
-    @JacksonXmlProperty(localName = "name")
-    private String name;
+    @JacksonXmlProperty(localName = "title")
+    private String title;
 
     @JacksonXmlProperty(localName = "description")
     private String description;

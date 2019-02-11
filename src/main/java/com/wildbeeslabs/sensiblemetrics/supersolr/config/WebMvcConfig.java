@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -36,15 +37,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * Custom web configuration
+ * Custom web mvc configuration
  */
 @EnableWebMvc
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
+        final PropertySourcesPlaceholderConfigurer properties = new PropertySourcesPlaceholderConfigurer();
+        properties.setLocation(new ClassPathResource("application.properties"));
+        properties.setIgnoreResourceNotFound(false);
+        return properties;
     }
 
     @Bean(name = "messageSource")
@@ -61,7 +65,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
-
         registry.addViewController("/").setViewName("search");
         registry.addViewController("/monitor").setViewName("monitor");
     }

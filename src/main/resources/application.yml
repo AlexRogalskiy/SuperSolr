@@ -2,10 +2,13 @@ spring:
   profiles:
     active: "local"
 ---
-spring:
-  data:
-    solr:
-      host: http://localhost:8983/solr/
+solr:
+  server:
+    url: http://localhost:8983/solr/
+  solr.home:
+  repository:
+    query:
+      method.type: #methodName
 
 logging:
   file: logs/application.log
@@ -14,13 +17,13 @@ logging:
     org.springframework: DEBUG
     org.springframework.web: DEBUG
     org.hibernate: DEBUG
-    com.dinamexoft.carol.triggers: DEBUG
+    com.wildbeeslabs.sensiblemetrics.supersolr: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 server:
-  email: dev@carolfitai.com
+  email: dev@supersolr.com
   port: 8080
   endpoint-path: endpoints
   base-path: http://localhost
@@ -77,7 +80,7 @@ spring:
     banner-mode: "off"
 
 server:
-  email: prod@carolfitai.com
+  email: prod@supersolr.com
 
 logging:
   file: logs/prod_app.log
@@ -86,7 +89,7 @@ logging:
     org.springframework: WARN
     org.springframework.web: WARN
     org.hibernate: WARN
-    com.dinamexoft.carol.triggers: WARN
+    com.wildbeeslabs.sensiblemetrics.supersolr: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
@@ -123,7 +126,7 @@ logging:
     org.springframework: WARN
     org.springframework.web: WARN
     org.hibernate: WARN
-    com.dinamexoft.carol.triggers: WARN
+    com.wildbeeslabs.sensiblemetrics.supersolr: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

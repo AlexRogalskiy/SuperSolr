@@ -51,4 +51,6 @@ public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Seriali
 
     @Query(name = "BaseModel.findByNamedQuery")
     Page<Product> findByNamedQuery(final String searchTerm, final Pageable pageable);
+
+
 }

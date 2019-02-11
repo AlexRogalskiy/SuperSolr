@@ -21,29 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
-/**
- * Default searchable product model definition
- */
-public interface SearchableProduct {
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
-    /**
-     * Default document ID
-     */
-    String DOCUMENT_ID = "Product";
+import java.util.Objects;
 
-    /**
-     * Default field names
-     */
-    String ID_FIELD_NAME = "id";
-    String TITLE_FIELD_NAME = "title";
-    String DESCRIPTION_FIELD_NAME = "description";
-    String AVAILABLE_FIELD_NAME = "inStock";
-    String LOCATION_FIELD_NAME = "store";
-    String CATEGORY_FIELD_NAME = "category";
-    String PRICE_FIELD_NAME = "price";
-    String FEATURES_FIELD_NAME = "features";
-    String RATING_FIELD_NAME = "rating";
-    String ORDERS_FIELD_NAME = "orders";
+@Slf4j
+@Configuration
+public class SecurityContextConfig {
+
+    public UserDetails getPrincipal() {
+        log.debug("Getting principal from the security context");
+        UserDetails principal = null;
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (Objects.nonNull(authentication)) {
+            Object currentPrincipal = authentication.getPrincipal();
+            if (currentPrincipal instanceof UserDetails) {
+                principal = (UserDetails) currentPrincipal;
+            }
+        }
+        return principal;
+    }
 }

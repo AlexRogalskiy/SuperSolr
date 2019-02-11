@@ -21,29 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.security;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
- * Default searchable product model definition
+ * Custom security authentication failure handler implementation
  */
-public interface SearchableProduct {
+public class SecurityAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    /**
-     * Default document ID
-     */
-    String DOCUMENT_ID = "Product";
+    protected static final String STATUS_MESSAGE_AUTHENTICATION_FAILED = "Bad credentials";
 
-    /**
-     * Default field names
-     */
-    String ID_FIELD_NAME = "id";
-    String TITLE_FIELD_NAME = "title";
-    String DESCRIPTION_FIELD_NAME = "description";
-    String AVAILABLE_FIELD_NAME = "inStock";
-    String LOCATION_FIELD_NAME = "store";
-    String CATEGORY_FIELD_NAME = "category";
-    String PRICE_FIELD_NAME = "price";
-    String FEATURES_FIELD_NAME = "features";
-    String RATING_FIELD_NAME = "rating";
-    String ORDERS_FIELD_NAME = "orders";
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, STATUS_MESSAGE_AUTHENTICATION_FAILED);
+    }
 }

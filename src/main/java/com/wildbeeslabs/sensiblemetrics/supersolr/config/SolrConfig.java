@@ -25,12 +25,16 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.repository.config.EnableSolrRepositories;
+import org.springframework.data.solr.server.support.EmbeddedSolrServerFactoryBean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
@@ -44,15 +48,32 @@ import org.springframework.scheduling.annotation.EnableAsync;
         multicoreSupport = true,
         schemaCreationSupport = true)
 @ComponentScan
-//@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application.properties")
 public class SolrConfig {
 
+    @Autowired
+    private Environment environment;
+
     @Bean
-    public SolrClient solrClient(final @Value("${supersolr.config.location}") String baseUrl) {
+    public SolrClient solrClient(final @Value("${supersolr.config.server.url}") String baseUrl) {
         return new HttpSolrClient.Builder()
                 .withBaseSolrUrl(baseUrl)
                 .build();
     }
+
+    @Bean
+    public EmbeddedSolrServerFactoryBean solrServerFactoryBean(final @Value("${supersolr.config.solr.home}") String baseUrl) {
+        final EmbeddedSolrServerFactoryBean factory = new EmbeddedSolrServerFactoryBean();
+        factory.setSolrHome(environment.getRequiredProperty(baseUrl));
+        return factory;
+    }
+
+//    @Bean
+//    public HttpSolrServerFactoryBean solrServerFactoryBean() {
+//        final HttpSolrServerFactoryBean factory = new HttpSolrServerFactoryBean();
+//        factory.setUrl(environment.getRequiredProperty("supersolr.config.server.url"));
+//        return factory;
+//    }
 
 //    @Bean
 //    public SolrServer solrServer(@Value("${solr.host}") String solrHost) {

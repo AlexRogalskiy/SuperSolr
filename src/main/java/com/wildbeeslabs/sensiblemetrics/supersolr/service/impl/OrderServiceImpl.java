@@ -39,6 +39,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -67,6 +68,7 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends Order> findByInfo(final String description, final PageRequest request) {
         return getRepository().findByInfo(description, request);
     }

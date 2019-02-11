@@ -28,6 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,42 +51,49 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
     private EntityManager entityManager;
 
     @Override
+    @Transactional(readOnly = true)
     public Iterable<E> findAll() {
         log.info("Fetching all target entities");
         return getRepository().findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<E> find(final ID id) {
         log.info("Fetching target entity by ID: {}", id);
         return getRepository().findById(id);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class})
     public void save(final E target) {
         log.info("Saving target entity: {}", target);
         getRepository().save(target);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class})
     public void save(final Iterable<? extends E> target) {
         log.info("Saving target entity: {}", Arrays.asList(target));
         getRepository().saveAll(target);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class})
     public void delete(final E target) {
         log.info("Deleting target entity: {}", target);
         getRepository().delete(target);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class})
     public void delete(final Iterable<? extends E> target) {
         log.info("Deleting target entities: {}", Arrays.asList(target, ", "));
         getRepository().deleteAll(target);
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class})
     public void deleteAll() {
         log.info("Deleting all target entities: {}");
         getRepository().deleteAll();

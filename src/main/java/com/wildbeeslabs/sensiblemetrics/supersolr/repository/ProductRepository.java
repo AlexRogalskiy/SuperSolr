@@ -44,13 +44,13 @@ public interface ProductRepository extends BaseModelRepository<Product, String> 
     @Highlight(prefix = "<b>", postfix = "</b>")
     @Query(fields = {
             SearchableProduct.ID_FIELD_NAME,
-            SearchableProduct.NAME_FIELD_NAME,
+            SearchableProduct.TITLE_FIELD_NAME,
             SearchableProduct.PRICE_FIELD_NAME,
             SearchableProduct.FEATURES_FIELD_NAME,
             SearchableProduct.AVAILABLE_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
     HighlightPage<? extends Product> findByNames(final Collection<String> names, final Pageable pageable);
 
-    @Facet(fields = {SearchableProduct.NAME_FIELD_NAME})
+    @Facet(fields = {SearchableProduct.TITLE_FIELD_NAME})
     FacetPage<? extends Product> findByNameStartsWith(final Collection<String> fragments, final Pageable pageable);
 }
