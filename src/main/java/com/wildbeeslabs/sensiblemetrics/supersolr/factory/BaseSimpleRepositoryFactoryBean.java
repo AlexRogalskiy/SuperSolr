@@ -38,9 +38,14 @@ import org.springframework.data.solr.repository.support.SolrRepositoryFactoryBea
 import java.io.Serializable;
 
 /**
- * Custom simple solr repository factory bean implementation {@link SolrRepositoryFactoryBean}
+ * Custom base simple repository factory bean implementation {@link SolrRepositoryFactoryBean}
  */
-public class SimpleSolrRepositoryFactoryBean<E extends BaseModel<ID>, ID extends Serializable> extends SolrRepositoryFactoryBean<BaseSimpleServiceImpl<E, ID>, E, ID> {
+public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends Serializable> extends SolrRepositoryFactoryBean<BaseSimpleServiceImpl<E, ID>, E, ID> {
+
+    /**
+     * Custom string simple repository factory bean
+     */
+    public static final BaseSimpleRepositoryFactoryBean<BaseModel<String>, String> DEFAULT_STRING_SIMPLE_REPOSITORY_FACTORY_BEAN = new BaseSimpleRepositoryFactoryBean<>();
 
     @Override
     protected RepositoryFactorySupport doCreateRepositoryFactory() {
