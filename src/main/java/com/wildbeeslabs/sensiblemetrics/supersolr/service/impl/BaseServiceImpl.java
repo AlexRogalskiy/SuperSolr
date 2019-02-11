@@ -59,6 +59,12 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
 
     @Override
     @Transactional(readOnly = true)
+    public Iterable<? extends E> findAll(final Iterable<ID> ids) {
+        return getRepository().findAllById(ids);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<E> find(final ID id) {
         log.info("Fetching target entity by ID: {}", id);
         return getRepository().findById(id);
@@ -66,16 +72,16 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})
-    public void save(final E target) {
+    public <S extends E> S save(final S target) {
         log.info("Saving target entity: {}", target);
-        getRepository().save(target);
+        return getRepository().save(target);
     }
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})
-    public void save(final Iterable<? extends E> target) {
-        log.info("Saving target entity: {}", Arrays.asList(target));
-        getRepository().saveAll(target);
+    public <S extends E> Iterable<S> save(final Iterable<S> targets) {
+        log.info("Saving target entity: {}", Arrays.asList(targets));
+        return getRepository().saveAll(targets);
     }
 
     @Override
@@ -87,7 +93,7 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})
-    public void delete(final Iterable<? extends E> target) {
+    public void deleteAll(final Iterable<? extends E> target) {
         log.info("Deleting target entities: {}", Arrays.asList(target, ", "));
         getRepository().deleteAll(target);
     }
@@ -99,8 +105,14 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
         getRepository().deleteAll();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean exists(final ID id) {
+        return find(id).isPresent();
+    }
+
     protected EntityManager getEntityManager() {
-        return entityManager;
+        return this.entityManager;
     }
 
     protected abstract BaseRepository<E, ID> getRepository();

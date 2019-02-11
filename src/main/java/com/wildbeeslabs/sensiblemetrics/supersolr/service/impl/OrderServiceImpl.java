@@ -84,7 +84,8 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
 //                conditions = new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term)
 //                        .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
 //            } else {
-            conditions = conditions.or(new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term))
+            conditions = conditions
+                    .or(new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
             //}
         }

@@ -61,5 +61,10 @@ public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends S
         }
     }
 
+    @Override
+    public long count(final String searchTerm) {
+        return getRepository().count(searchTerm);
+    }
+
     protected abstract BaseModelRepository<E, ID> getRepository();
 }

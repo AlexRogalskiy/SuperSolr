@@ -45,5 +45,5 @@ public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Seriali
     @Query(name = "BaseModel.findById")
     Optional<E> findById(final ID id);
 
-
+    long count(final String searchTerm);
 }

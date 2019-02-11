@@ -23,34 +23,20 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
-import java.util.regex.Pattern;
 
 /**
- * Custom base model service declaration
+ * Custom base simple service declaration
  *
  * @param <E>
  * @param <ID>
  */
-public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializable> extends BaseService<E, ID> {
+public interface BaseSimpleService<E, ID extends Serializable> extends BaseService<E, ID> {
 
     /**
-     * Default search term delimiter
+     * Default service ID
      */
-    String DEFAULT_SEARСH_TERM_DELIMITER = StringUtils.SPACE;
-    /**
-     * Default search term delimiter
-     */
-    String DEFAULT_SEARСH_TERM_REPLACEMENT = StringUtils.EMPTY;
-    /**
-     * Default ignored characters pattern
-     */
-    Pattern DEFAULT_IGNORED_CHARS_PATTERN = Pattern.compile("\\p{Punct}");
-
-    void saveOrUpdate(final E target, final Class<? extends E> clazz);
+    String SERVICE_ID = "SimpleService";
 
     long count(final String searchTerm);
 }

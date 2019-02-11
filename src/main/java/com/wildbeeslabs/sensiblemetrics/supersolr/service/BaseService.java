@@ -36,15 +36,21 @@ public interface BaseService<E, ID extends Serializable> {
 
     Iterable<? extends E> findAll();
 
+    Iterable<? extends E> findAll(final Iterable<ID> ids);
+
     Optional<E> find(final ID id);
 
-    void save(final E target);
+    <S extends E> S save(final S entity);
 
-    void save(final Iterable<? extends E> target);
+    //void saveAll(final Iterable<? extends E> target);
+
+    boolean exists(final ID id);
+
+    <S extends E> Iterable<S> save(final Iterable<S> entities);
 
     void delete(final E target);
 
-    void delete(final Iterable<? extends E> target);
+    void deleteAll(final Iterable<? extends E> target);
 
     void deleteAll();
 }

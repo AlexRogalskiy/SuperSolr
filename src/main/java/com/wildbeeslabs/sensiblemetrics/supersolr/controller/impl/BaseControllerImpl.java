@@ -110,7 +110,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
     protected void deleteItems(final List<? extends T> itemDtos, final Class<? extends E> entityClass) {
         log.debug("Deleting items {}", org.apache.commons.lang3.StringUtils.join(itemDtos, ", "));
         final List<? extends E> items = MapperUtils.mapAll(itemDtos, entityClass);
-        getService().delete(items);
+        getService().deleteAll(items);
     }
 
     protected void deleteAllItems() {
