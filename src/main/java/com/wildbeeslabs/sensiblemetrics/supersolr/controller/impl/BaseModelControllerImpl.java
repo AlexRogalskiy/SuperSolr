@@ -24,8 +24,11 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseModelController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -35,8 +38,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetFieldEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,25 +48,28 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Base model controller implementation
  *
  * @param <E>
+ * @param <T>
  * @param <ID>
  */
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, ID extends Serializable> extends BaseControllerImpl<E, ID> implements BaseModelController<E, ID> {
+public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends BaseView<ID>, ID extends Serializable> extends BaseControllerImpl<E, T, ID> implements BaseModelController<E, T, ID> {
 
     @RequestMapping("/search")
     public String search(final Model model,
                          final @RequestParam(value = "q", required = false) String query,
                          final @PageableDefault(page = 0, size = DEFAULT_PAGE_SIZE) Pageable pageable,
                          final HttpServletRequest request) {
+        log.info("Search by query: {}", query);
         model.addAttribute("page", getService().findByName(query, pageable));
         model.addAttribute("pageable", pageable);
         model.addAttribute("query", query);
@@ -74,8 +78,10 @@ public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, ID extend
 
     @ResponseBody
     @RequestMapping(value = "/autocomplete", produces = "application/json")
-    public Set<String> autoComplete(Model model, @RequestParam("term") String query,
-                                    @PageableDefault(page = 0, size = 1) Pageable pageable) {
+    public Set<String> autoComplete(final Model model,
+                                    final @RequestParam("term") String query,
+                                    final @PageableDefault(page = 0, size = 1) Pageable pageable) {
+        log.info("Search autocomplete by query: {}", query);
         if (!StringUtils.hasText(query)) {
             return Collections.emptySet();
         }
@@ -92,14 +98,17 @@ public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, ID extend
     }
 
     @Override
-    public ResponseEntity<?> update(final ID id, final E itemDto) {
-        getService().saveOrUpdate(itemDto, null);
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
-
-    protected ResponseEntity<?> update(final ID id, final E itemDto, final Class<? extends E> clazz) {
-        getService().saveOrUpdate(itemDto, clazz);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+    public E updateItem(final ID id,
+                        final T itemDto,
+                        final Class<? extends E> entityClass) {
+        log.info("Updating item by ID: {}", id);
+        final Optional<? extends E> currentItem = getService().find(id);
+        if (!currentItem.isPresent()) {
+            throw new ResourceNotFoundException(com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+        }
+        final E itemEntity = MapperUtils.map(itemDto, entityClass);
+        getService().saveOrUpdate(itemEntity, entityClass);
+        return currentItem.get();
     }
 
     protected abstract BaseModelService<E, ID> getService();

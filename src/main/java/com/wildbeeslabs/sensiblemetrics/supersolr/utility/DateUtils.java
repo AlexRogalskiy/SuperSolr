@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 /**
- * Date utilities implementation
+ * Custom date utilities implementation
  */
 @Slf4j
 @UtilityClass

@@ -21,29 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Query.Operator;
-import org.springframework.data.solr.repository.Query;
-import org.springframework.stereotype.Repository;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
- * Custom order repository
+ * Custom base view Model
  */
-@Repository
-public interface OrderRepository extends BaseModelRepository<Order, Long> {
+@Data
+@EqualsAndHashCode
+@NoArgsConstructor
+@ToString
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public abstract class BaseView<T> implements Serializable {
 
-    @Query("description:*?0*")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
+    /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = 602615748387358410L;
 
-    //@Query("odesc:*?0* OR customer:*?0* OR pname:*?0*")
-    @Query(fields = {
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.NAME_FIELD_NAME
-    }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByInfo(final String searchTerm, final Pageable pageable);
+    @JacksonXmlProperty(localName = "id")
+    private T id;
+
+    @JacksonXmlProperty(localName = "created")
+    private Date created;
+
+    @JacksonXmlProperty(localName = "createdBy")
+    private String createdBy;
+
+    @JacksonXmlProperty(localName = "changed")
+    private Date changed;
+
+    @JacksonXmlProperty(localName = "changedBy")
+    private String changedBy;
 }

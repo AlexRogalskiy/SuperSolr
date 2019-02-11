@@ -21,29 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Query.Operator;
-import org.springframework.data.solr.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.PageRequest;
 
 /**
- * Custom order repository
+ * Custom order service declaration
  */
-@Repository
-public interface OrderRepository extends BaseModelRepository<Order, Long> {
+public interface OrderService extends BaseModelService<Order, Long> {
 
-    @Query("description:*?0*")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
+    /**
+     * Default service ID
+     */
+    String SERVICE_ID = "OrderService";
 
-    //@Query("odesc:*?0* OR customer:*?0* OR pname:*?0*")
-    @Query(fields = {
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.NAME_FIELD_NAME
-    }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByInfo(final String searchTerm, final Pageable pageable);
+    Page<? extends Order> findByDescription(final String description, final PageRequest request);
+
+    Page<? extends Order> findByInfo(final String description, final PageRequest request);
 }

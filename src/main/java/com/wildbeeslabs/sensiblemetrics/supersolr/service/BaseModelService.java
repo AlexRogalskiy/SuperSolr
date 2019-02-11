@@ -24,11 +24,13 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
 
 /**
  * Custom base model service declaration
@@ -37,6 +39,19 @@ import java.io.Serializable;
  * @param <ID>
  */
 public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializable> extends BaseService<E, ID> {
+
+    /**
+     * Default search term delimiter
+     */
+    String DEFAULT_SEARСH_TERM_DELIMITER = StringUtils.SPACE;
+    /**
+     * Default search term delimiter
+     */
+    String DEFAULT_SEARСH_TERM_REPLACEMENT = StringUtils.EMPTY;
+    /**
+     * Default ignored characters pattern
+     */
+    Pattern DEFAULT_IGNORED_CHARS_PATTERN = Pattern.compile("\\p{Punct}");
 
     void saveOrUpdate(final E target, final Class<? extends E> clazz);
 

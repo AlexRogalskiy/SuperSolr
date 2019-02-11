@@ -24,10 +24,15 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.CategoryView;
 
 /**
  * Custom category controller declaration
  */
-public interface CategoryController extends BaseModelController<Category, String> {
+public interface CategoryController extends BaseModelController<Category, CategoryView, String> {
 
+    /**
+     * Default service ID
+     */
+    String CONTROLLER_ID = "CategoryController";
 }

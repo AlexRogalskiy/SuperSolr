@@ -21,29 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.exception;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Query.Operator;
-import org.springframework.data.solr.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom order repository
+ * Custom bad request exception
  */
-@Repository
-public interface OrderRepository extends BaseModelRepository<Order, Long> {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Incorrect request parameters")
+public class BadRequestException extends RuntimeException {
 
-    @Query("description:*?0*")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
+    /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = -7693119675913317655L;
 
-    //@Query("odesc:*?0* OR customer:*?0* OR pname:*?0*")
-    @Query(fields = {
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.NAME_FIELD_NAME
-    }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByInfo(final String searchTerm, final Pageable pageable);
+    public BadRequestException() {
+    }
+
+    public BadRequestException(String message) {
+        super(message);
+    }
+
+    public BadRequestException(Throwable cause) {
+        super(cause);
+    }
+
+    public BadRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
 }

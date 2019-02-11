@@ -33,6 +33,12 @@ import org.springframework.data.solr.repository.Query;
 
 import java.io.Serializable;
 
+/**
+ * Custom base model repository
+ *
+ * @param <E>
+ * @param <ID>
+ */
 @NoRepositoryBean
 public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends BaseRepository<E, ID> {
 

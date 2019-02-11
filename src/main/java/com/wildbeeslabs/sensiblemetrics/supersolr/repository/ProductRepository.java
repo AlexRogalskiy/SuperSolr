@@ -35,6 +35,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
+/**
+ * Custom product repository
+ */
 @Repository
 public interface ProductRepository extends BaseModelRepository<Product, String> {
 

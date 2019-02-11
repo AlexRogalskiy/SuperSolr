@@ -68,7 +68,7 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
     }
 
     @Override
-    public void save(final Iterable<E> target) {
+    public void save(final Iterable<? extends E> target) {
         log.info("Saving target entity: {}", Arrays.asList(target));
         getRepository().saveAll(target);
     }
@@ -77,6 +77,18 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
     public void delete(final E target) {
         log.info("Deleting target entity: {}", target);
         getRepository().delete(target);
+    }
+
+    @Override
+    public void delete(final Iterable<? extends E> target) {
+        log.info("Deleting target entities: {}", Arrays.asList(target, ", "));
+        getRepository().deleteAll(target);
+    }
+
+    @Override
+    public void deleteAll() {
+        log.info("Deleting all target entities: {}");
+        getRepository().deleteAll();
     }
 
     protected EntityManager getEntityManager() {

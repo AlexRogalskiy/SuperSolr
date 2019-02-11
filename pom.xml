@@ -118,6 +118,7 @@
         <guava.version>27.0.1-jre</guava.version>
         <jackson-mapper.version>1.9.13</jackson-mapper.version>
         <joda-time.version>2.10.1</joda-time.version>
+        <modelmapper.version>1.1.0</modelmapper.version>
 
         <validation-api.version>2.0.1.Final</validation-api.version>
         <javax.persistence.version>2.2</javax.persistence.version>
@@ -284,11 +285,21 @@
             <version>${spring-data-solr.version}</version>
         </dependency>
 
-        <!-- Json library dependencies -->
+        <!-- Jackson library dependencies -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>${jackson-mapper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.9.6</version>
         </dependency>
 
         <!-- Testing library dependencies -->
@@ -358,6 +369,13 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>${validation-api.version}</version>
+        </dependency>
+
+        <!-- ModelMapper library dependencies -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelmapper.version}</version>
         </dependency>
     </dependencies>
 

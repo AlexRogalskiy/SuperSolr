@@ -24,10 +24,15 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.ProductView;
 
 /**
  * Custom product controller declaration
  */
-public interface ProductController extends BaseModelController<Product, String> {
+public interface ProductController extends BaseModelController<Product, ProductView, String> {
 
+    /**
+     * Default service ID
+     */
+    String CONTROLLER_ID = "ProductController";
 }

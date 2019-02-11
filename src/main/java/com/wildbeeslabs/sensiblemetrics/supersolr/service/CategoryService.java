@@ -33,5 +33,5 @@ public interface CategoryService extends BaseModelService<Category, String> {
     /**
      * Default service ID
      */
-    String SERVICE_ID = "categoryService";
+    String SERVICE_ID = "CategoryService";
 }

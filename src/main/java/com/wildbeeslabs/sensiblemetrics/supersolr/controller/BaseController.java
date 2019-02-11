@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.Serializable;
@@ -31,22 +32,75 @@ import java.io.Serializable;
  * Base controller declaration
  *
  * @param <E>
+ * @param <T>
  * @param <ID>
  * @author Alex
  * @version 1.0.0
  * @since 2017-08-08
  */
-public interface BaseController<E, ID extends Serializable> {
+public interface BaseController<E, T, ID extends Serializable> {
 
-    ResponseEntity<?> getAll();
+    /**
+     * Default not allowed response
+     */
+    ResponseEntity<?> DEFAULT_NOT_ALLOWED_RESPONSE = new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 
-    ResponseEntity<?> getById(final ID id);
+    /**
+     * Returns response entity body {@link ResponseEntity}
+     *
+     * @return response body {@link ResponseEntity}
+     */
+    default ResponseEntity<?> getAll() {
+        return DEFAULT_NOT_ALLOWED_RESPONSE;
+    }
 
-    ResponseEntity<?> create(final E item);
+    /**
+     * Returns response entity body {@link ResponseEntity} by ID
+     *
+     * @param id - initial input entity identifier
+     * @return response body {@link ResponseEntity}
+     */
+    default ResponseEntity<?> getById(final ID id) {
+        return DEFAULT_NOT_ALLOWED_RESPONSE;
+    }
 
-    ResponseEntity<?> update(final ID id, final E itemDto);
+    /**
+     * Returns created response entity body {@link ResponseEntity}
+     *
+     * @param itemDto - initial input entity dto
+     * @return response body {@link ResponseEntity}
+     */
+    default ResponseEntity<?> create(final T itemDto) {
+        return DEFAULT_NOT_ALLOWED_RESPONSE;
+    }
 
-    ResponseEntity<?> delete(final ID id);
+    /**
+     * Returns updated response entity body {@link ResponseEntity}
+     *
+     * @param id      - initial input entity identifier
+     * @param itemDto - initial input entity dto
+     * @return response body {@link ResponseEntity}
+     */
+    default ResponseEntity<?> update(final ID id, final T itemDto) {
+        return DEFAULT_NOT_ALLOWED_RESPONSE;
+    }
 
-    ResponseEntity<?> deleteAll();
+    /**
+     * Returns deleted response entity body {@link ResponseEntity}
+     *
+     * @param id - initial input entity identifier
+     * @return response body {@link ResponseEntity}
+     */
+    default ResponseEntity<?> delete(final ID id) {
+        return DEFAULT_NOT_ALLOWED_RESPONSE;
+    }
+
+    /**
+     * Returns deleted response entity body {@link ResponseEntity}
+     *
+     * @return response body {@link ResponseEntity}
+     */
+    default ResponseEntity<?> deleteAll() {
+        return DEFAULT_NOT_ALLOWED_RESPONSE;
+    }
 }

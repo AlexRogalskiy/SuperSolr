@@ -48,8 +48,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class SolrConfig {
 
     @Bean
-    public SolrClient solrClient(final @Value("${supersolr.config.location}") String locationPath) {
-        return new HttpSolrClient(locationPath);
+    public SolrClient solrClient(final @Value("${supersolr.config.location}") String baseUrl) {
+        return new HttpSolrClient.Builder()
+                .withBaseSolrUrl(baseUrl)
+                .build();
     }
 
 //    @Bean
@@ -58,7 +60,7 @@ public class SolrConfig {
 //    }
 
     @Bean
-    public SolrTemplate solrTemplate(final SolrClient client) {
-        return new SolrTemplate(client);
+    public SolrTemplate solrTemplate(final SolrClient solrClient) {
+        return new SolrTemplate(solrClient);
     }
 }

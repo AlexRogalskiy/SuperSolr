@@ -30,6 +30,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Custom cateogory repositorys
+ */
 @Repository
 public interface CategoryRepository extends BaseModelRepository<Category, String> {
 

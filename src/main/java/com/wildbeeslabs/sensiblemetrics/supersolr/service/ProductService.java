@@ -24,9 +24,6 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.regex.Pattern;
 
 /**
  * Custom product service declaration
@@ -36,18 +33,5 @@ public interface ProductService extends BaseModelService<Product, String> {
     /**
      * Default service ID
      */
-    String SERVICE_ID = "productService";
-
-    /**
-     * Default search term delimiter
-     */
-    String DEFAULT_SEARСH_TERM_DELIMITER = StringUtils.SPACE;
-    /**
-     * Default search term delimiter
-     */
-    String DEFAULT_SEARСH_TERM_REPLACEMENT = StringUtils.EMPTY;
-    /**
-     * Default ignored characters pattern
-     */
-    Pattern DEFAULT_IGNORED_CHARS_PATTERN = Pattern.compile("\\p{Punct}");
+    String SERVICE_ID = "ProductService";
 }

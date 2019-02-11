@@ -23,20 +23,25 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
+import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
+import com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 
 import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Base controller implementation
@@ -48,37 +53,71 @@ import java.io.Serializable;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public abstract class BaseControllerImpl<E, ID extends Serializable> implements BaseController<E, ID> {
+public abstract class BaseControllerImpl<E, T, ID extends Serializable> implements BaseController<E, T, ID> {
 
-    @Override
-    public ResponseEntity<?> getAll() {
-        return new ResponseEntity<>(getService().findAll(), HttpStatus.OK);
+    @Autowired
+    private MessageSource messageSource;
+    //@Autowired
+    //private ModelConverter modelConverter;
+
+    protected List<? extends E> getAllItems() throws EmptyContentException {
+        log.debug("Fetching all items");
+        final List<? extends E> items = Lists.newArrayList(getService().findAll());
+        if (items.isEmpty()) {
+            throw new EmptyContentException(StringUtils.formatMessage(getMessageSource(), "error.no.content"));
+        }
+        return items;
     }
 
-    @Override
-    public ResponseEntity<?> getById(final ID id) {
-        return new ResponseEntity<>(getService().find(id), HttpStatus.OK);
+    protected E getItem(final ID id) {
+        log.debug("Fetching item by ID: {}", id);
+        final Optional<? extends E> item = getService().find(id);
+        if (!item.isPresent()) {
+            throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+        }
+        return item.get();
     }
 
-    @Override
-    public ResponseEntity<?> create(final E itemDto) {
-        getService().save(itemDto);
-        UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
-        HttpHeaders headers = new HttpHeaders();
-        //headers.setLocation(ucBuilder.path(request.getRequestURI() + "/{id}").buildAndExpand(itemEntity.getId()).toUri());
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    protected E createItem(final T itemDto, final Class<? extends E> entityClass) {
+        log.debug("Creating item {}", itemDto);
+        final E itemEntity = MapperUtils.map(itemDto, entityClass);
+        //if (getService().exists(itemEntity)) {
+        //    throw new ResourceAlreadyExistException(StringUtils.formatMessage(getMessageSource(), "error.already.exist.item"));
+        //}
+        getService().save(itemEntity);
+        return itemEntity;
     }
 
-    @Override
-    public ResponseEntity<?> delete(final ID id) {
-        //E itemEntity = getService().deleteItem(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    protected E updateItem(final ID id, final T itemDto, final Class<? extends E> entityClass) {
+        log.info("Updating item by ID: {}", id);
+        final Optional<? extends E> currentItem = getService().find(id);
+        if (!currentItem.isPresent()) {
+            throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+        }
+        final E itemEntity = MapperUtils.map(itemDto, entityClass);
+        getService().save(itemEntity);
+        return currentItem.get();
     }
 
-    @Override
-    public ResponseEntity<?> deleteAll() {
-        //getService().deleteAllItems();
-        return new ResponseEntity<>(HttpStatus.OK);
+    protected E deleteItem(final ID id) {
+        log.info("Deleting order by ID {}", id);
+        final Optional<? extends E> item = getService().find(id);
+        if (!item.isPresent()) {
+            throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+        }
+        getService().delete(item.get());
+        return item.get();
+    }
+
+    protected void deleteItems(final List<? extends T> itemDtos, final Class<? extends E> entityClass) {
+        log.debug("Deleting items {}", org.apache.commons.lang3.StringUtils.join(itemDtos, ", "));
+        final List<? extends E> items = MapperUtils.mapAll(itemDtos, entityClass);
+        getService().delete(items);
+    }
+
+    protected void deleteAllItems() {
+        log.debug("Deleting all items");
+        getService().deleteAll();
     }
 
     /**
@@ -96,7 +135,7 @@ public abstract class BaseControllerImpl<E, ID extends Serializable> implements 
         /**
          * Default enum converter constructor
          *
-         * @param type
+         * @param type - initial input class instance (@link Class)
          */
         public BaseEnumConverter(final Class<U> type) {
             this.type = type;
@@ -108,6 +147,14 @@ public abstract class BaseControllerImpl<E, ID extends Serializable> implements 
             setValue(item);
         }
     }
+
+    protected MessageSource getMessageSource() {
+        return this.messageSource;
+    }
+
+    //protected ModelConverter getModelConverter() {
+    //    return this.modelConverter;
+    //}
 
     protected abstract BaseService<E, ID> getService();
 }

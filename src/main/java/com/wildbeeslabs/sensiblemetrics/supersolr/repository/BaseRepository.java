@@ -30,6 +30,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Custom base repository
+ *
+ * @param <E>
+ * @param <ID>
+ */
 @NoRepositoryBean
 public interface BaseRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {
 

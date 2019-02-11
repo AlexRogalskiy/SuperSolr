@@ -25,17 +25,18 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.ProductController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.ProductView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.ProductService;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,8 +47,8 @@ import javax.servlet.http.HttpServletRequest;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Controller
-public class ProductControllerImpl extends BaseModelControllerImpl<Product, String> implements ProductController {
+@RestController(ProductController.CONTROLLER_ID)
+public class ProductControllerImpl extends BaseModelControllerImpl<Product, ProductView, String> implements ProductController {
 
     @Autowired
     private ProductService productService;
@@ -59,7 +60,9 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Stri
     }
 
     @RequestMapping("/product/{id}")
-    public String search(final Model model, @PathVariable("id") String id, final HttpServletRequest request) {
+    public String search(final Model model,
+                         final @PathVariable("id") String id,
+                         final HttpServletRequest request) {
         model.addAttribute("product", getService().find(id));
         return "product";
     }

@@ -21,29 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Query.Operator;
-import org.springframework.data.solr.repository.Query;
-import org.springframework.stereotype.Repository;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
- * Custom order repository
+ * Custom order view model
  */
-@Repository
-public interface OrderRepository extends BaseModelRepository<Order, Long> {
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JacksonXmlRootElement(localName = SearchableOrder.DOCUMENT_ID)
+public class OrderView extends BaseView<Long> {
 
-    @Query("description:*?0*")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
+    /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = -5143268414907649969L;
 
-    //@Query("odesc:*?0* OR customer:*?0* OR pname:*?0*")
-    @Query(fields = {
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.NAME_FIELD_NAME
-    }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByInfo(final String searchTerm, final Pageable pageable);
+    @JacksonXmlProperty(localName = "name")
+    private String name;
+
+    @JacksonXmlProperty(localName = "description")
+    private String description;
 }

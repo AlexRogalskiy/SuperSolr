@@ -40,7 +40,11 @@ public interface BaseService<E, ID extends Serializable> {
 
     void save(final E target);
 
-    void save(final Iterable<E> target);
+    void save(final Iterable<? extends E> target);
 
     void delete(final E target);
+
+    void delete(final Iterable<? extends E> target);
+
+    void deleteAll();
 }

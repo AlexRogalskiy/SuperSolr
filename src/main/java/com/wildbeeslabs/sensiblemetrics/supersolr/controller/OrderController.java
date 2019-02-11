@@ -21,29 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Query.Operator;
-import org.springframework.data.solr.repository.Query;
-import org.springframework.stereotype.Repository;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.OrderView;
 
 /**
- * Custom order repository
+ * Custom order controller declaration
  */
-@Repository
-public interface OrderRepository extends BaseModelRepository<Order, Long> {
+public interface OrderController extends BaseModelController<Order, OrderView, Long> {
 
-    @Query("description:*?0*")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
-
-    //@Query("odesc:*?0* OR customer:*?0* OR pname:*?0*")
-    @Query(fields = {
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.NAME_FIELD_NAME
-    }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByInfo(final String searchTerm, final Pageable pageable);
+    /**
+     * Default service ID
+     */
+    String CONTROLLER_ID = "OrderController";
 }

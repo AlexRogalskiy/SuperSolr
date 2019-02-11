@@ -21,41 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
+package com.wildbeeslabs.sensiblemetrics.supersolr.handler;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.CategoryController;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.CategoryView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Custom category controller implementation
+ * Custom model converter implementation
  */
 @Slf4j
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@RestController(CategoryController.CONTROLLER_ID)
-public class CategoryControllerImpl extends BaseModelControllerImpl<Category, CategoryView, String> implements CategoryController {
+@Component
+public class ModelConverter {
 
     @Autowired
-    private CategoryService categoryService;
+    private ModelMapper modelMapper;
 
-    @RequestMapping("/category")
-    @ResponseBody
-    public Iterable<? extends Category> helloWorld() {
-        return getService().findAll();
+    public <M extends Serializable, N extends Serializable> N convert(final M item, final Class<? extends N> clazz) {
+        return getModelMapper().map(item, clazz);
     }
 
-    protected CategoryService getService() {
-        return this.categoryService;
+    public <M extends Serializable, N extends Serializable> List<? extends N> convert(final List<? extends M> items, final Class<? extends N> clazz) {
+        if (Objects.isNull(items)) {
+            return Collections.emptyList();
+        }
+        final List<? extends N> result = items.stream()
+                .map(item -> convert(item, clazz))
+                .collect(Collectors.toCollection(LinkedList::new));
+        return result;
+    }
+
+    protected ModelMapper getModelMapper() {
+        return this.modelMapper;
     }
 }
