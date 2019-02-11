@@ -53,7 +53,7 @@ public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends
     }
 
     /**
-     * Simple solr repository factory implementation
+     * Simple solr repository factory implementation {@link SolrRepositoryFactory}
      *
      * @param <E>
      * @param <ID>
