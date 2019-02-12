@@ -114,6 +114,7 @@
         <start-class>com.wildbeeslabs.sensiblemetrics.supersolr.SuperSolrAppLoader</start-class>
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
+        <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 
         <profileWebApp>src/main/webapp</profileWebApp>
         <location>dev</location>
