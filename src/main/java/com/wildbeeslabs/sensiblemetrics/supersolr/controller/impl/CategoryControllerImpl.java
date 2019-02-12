@@ -33,9 +33,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.FacetFieldEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
@@ -52,23 +50,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Custom category controller implementation
+ * Custom category REST controller implementation
  */
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(CategoryController.CONTROLLER_ID)
-@RequestMapping("/api/category")
+@RequestMapping("/api")
 public class CategoryControllerImpl extends BaseModelControllerImpl<Category, CategoryView, String> implements CategoryController {
 
     @Autowired
     private CategoryService categoryService;
 
-    @RequestMapping("/search")
+    @GetMapping("/category/search")
     public String search(final Model model,
                          final @RequestParam(value = "q", required = false) String query,
-                         final @PageableDefault(page = 0, size = DEFAULT_PAGE_SIZE) Pageable pageable,
+                         final @PageableDefault Pageable pageable,
                          final HttpServletRequest request) {
         log.info("Search by query: {}", query);
         model.addAttribute("page", getService().findByTitle(query, pageable));
@@ -77,28 +75,29 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
         return "search";
     }
 
+    @GetMapping("/category/autocomplete")
     @ResponseBody
-    @RequestMapping(value = "/autocomplete", produces = "application/json")
     public Set<String> autoComplete(final Model model,
                                     final @RequestParam("term") String query,
-                                    final @PageableDefault(page = 0, size = 1) Pageable pageable) {
+                                    final @PageableDefault(size = 1) Pageable pageable) {
         log.info("Search autocomplete by query: {}", query);
         if (!StringUtils.hasText(query)) {
             return Collections.emptySet();
         }
-        final FacetPage<? extends Category> result = getService().autocompleteTitleFragment(query, pageable);
         final Set<String> titles = new LinkedHashSet<>();
-        for (final Page<FacetFieldEntry> page : result.getFacetResultPages()) {
-            for (final FacetFieldEntry entry : page) {
+        final FacetPage<? extends Category> result = getService().autocompleteTitleFragment(query, pageable);
+        result.getFacetResultPages().stream().forEach(page -> {
+            page.forEach(entry -> {
                 if (entry.getValue().contains(query)) {
                     titles.add(entry.getValue());
                 }
-            }
-        }
+            });
+        });
         return titles;
     }
 
-    @GetMapping("/category/search")
+    @GetMapping("/category/page")
+    @ResponseBody
     @SuppressWarnings("unchecked")
     public ResponseEntity<?> find(
             final @RequestParam String searchTerm,
@@ -107,14 +106,22 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
         final HighlightPage<Category> page = (HighlightPage<Category>) getService().find(searchTerm, new OffsetPageRequest(offset, limit));
         return new ResponseEntity<>(page
                 .stream()
-                .map((Category document) -> getResult(document, page.getHighlights(document), CategoryView.class))
+                .map(document -> getResult(document, page.getHighlights(document), CategoryView.class))
                 .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 
-    @RequestMapping("/category")
+    @GetMapping("/categories")
     @ResponseBody
-    public Iterable<? extends Category> helloWorld() {
+    public Iterable<? extends Category> find() {
         return getService().findAll();
+    }
+
+    @GetMapping("/category/{id}")
+    public String search(final Model model,
+                         final @PathVariable("id") String id,
+                         final HttpServletRequest request) {
+        model.addAttribute("category", getService().find(id));
+        return "category";
     }
 
     protected CategoryService getService() {

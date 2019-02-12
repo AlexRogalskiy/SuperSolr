@@ -23,31 +23,44 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Objects;
 
 /**
- * Custom security context configuration
+ * Custom batch configuration
  */
-@Slf4j
 @Configuration
-public class SecurityContextConfig {
+public class BatchConfig {
 
-    public UserDetails getPrincipal() {
-        log.debug("Getting principal from the security context");
-        UserDetails principal = null;
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (Objects.nonNull(authentication)) {
-            Object currentPrincipal = authentication.getPrincipal();
-            if (currentPrincipal instanceof UserDetails) {
-                principal = (UserDetails) currentPrincipal;
-            }
-        }
-        return principal;
+    @Autowired
+    public JobBuilderFactory jobBuilderFactory;
+    @Autowired
+    public StepBuilderFactory stepBuilderFactory;
+
+    @Bean
+    public Job job() {
+        return this.jobBuilderFactory.get("job")
+                .incrementer(new RunIdIncrementer())
+                .flow(step1())
+                .end()
+                .build();
+    }
+
+    @Bean
+    public Step step1() {
+        return this.stepBuilderFactory.get("step1")
+                .<String, String>chunk(1)
+                .reader(() -> null)
+                .processor((ItemProcessor<String, String>) item -> null)
+                .writer(items -> {
+                })
+                .build();
     }
 }

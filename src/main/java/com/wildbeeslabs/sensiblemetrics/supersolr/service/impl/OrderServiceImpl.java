@@ -35,16 +35,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.HighlightOptions;
 import org.springframework.data.solr.core.query.SimpleHighlightQuery;
-import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Custom order service implementation {@link Order}
@@ -53,6 +49,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Service(OrderService.SERVICE_ID)
+@Transactional
 public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implements OrderService {
 
     @Autowired
@@ -70,43 +67,27 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
         return getRepository().findByCustomQuery(searchTerm, request);
     }
 
-    public List<? extends Order> dynamicSearch(final String searchTerm) {
-        final Criteria conditions = createConditions(searchTerm);
-        final SimpleQuery search = new SimpleQuery(conditions);
-        search.addSort(sortByIdDesc());
-        final Page<? extends Order> results = getSolrTemplate().queryForPage(search, Order.class);
-        return results.getContent();
-    }
-
     @Override
+    @Transactional(readOnly = true)
     public HighlightPage<? extends Order> find(final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableOrder.ID_FIELD_NAME).boost(2).is(searchTerm);
-        final Criteria titleCriteria = new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).fuzzy(searchTerm);
-        final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
+        final Criteria descriptionCriteria = new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).fuzzy(searchTerm);
+        final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(descriptionCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
                 .setSimplePrefix("<strong>")
                 .setSimplePostfix("</strong>")
-                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.TITLE_FIELD_NAME));
+                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Order.class);
     }
 
-    private Criteria createConditions(final String searchTerm) {
+    protected Criteria getCriteria(final String searchTerm) {
         Criteria conditions = new Criteria();
         for (final String term : searchTerm.split(BaseModelService.DEFAULT_SEARСH_TERM_DELIMITER)) {
-//            if (Objects.isNull(conditions)) {
-//                conditions = new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term)
-//                        .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
-//            } else {
             conditions = conditions
                     .or(new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
-            //}
         }
         return conditions;
-    }
-
-    private Sort sortByIdDesc() {
-        return new Sort(Sort.Direction.DESC, SearchableOrder.ID_FIELD_NAME);
     }
 
     @Override

@@ -44,6 +44,9 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(name = "order", catalog = "market_data")
+@AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = SearchableOrder.ID_FIELD_NAME))
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 @SolrDocument(solrCoreName = SearchableOrder.MODEL_ID)
 public class Order extends BaseModel<Long> implements SearchableOrder {

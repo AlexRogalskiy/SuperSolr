@@ -24,6 +24,8 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
@@ -32,8 +34,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
 /**
- * Custom category view model
+ * Custom category model view
  */
 @Data
 @NoArgsConstructor
@@ -41,16 +48,36 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = SearchableCategory.MODEL_ID)
-public class CategoryView extends BaseView<String> {
+public class CategoryView extends BaseModelView<String> {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -878245565646636436L;
 
-    @JacksonXmlProperty(localName = "name")
-    private String name;
+    @JacksonXmlProperty(localName = "title")
+    @JsonProperty("title")
+    private String title;
 
     @JacksonXmlProperty(localName = "description")
+    @JsonProperty("description")
     private String description;
+
+    @JsonProperty("products")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = "products")
+    private final Set<ProductView> products = new HashSet<>();
+
+    public void setProducts(final List<? extends ProductView> products) {
+        this.products.clear();
+        if (Objects.nonNull(products)) {
+            this.products.addAll(products);
+        }
+    }
+
+    public void addProduct(final ProductView product) {
+        if (Objects.nonNull(product)) {
+            this.products.add(product);
+        }
+    }
 }

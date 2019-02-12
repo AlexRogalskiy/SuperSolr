@@ -23,6 +23,8 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
+import org.springframework.data.solr.core.query.Criteria;
+
 import java.io.Serializable;
 
 /**
@@ -38,5 +40,5 @@ public interface BaseSimpleService<E, ID extends Serializable> extends BaseServi
      */
     String SERVICE_ID = "SimpleService";
 
-    long count(final String searchTerm);
+    long count(final String searchTerm, final Criteria criteria);
 }

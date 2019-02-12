@@ -35,10 +35,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Custom full-text search product document model
@@ -50,6 +47,9 @@ import java.util.Set;
 @Table(name = "products", catalog = "market_data",
         indexes = {@Index(name = "product_category_idx", columnList = "product_id, category")}
 )
+@AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = SearchableProduct.ID_FIELD_NAME))
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 @SolrDocument(solrCoreName = SearchableProduct.MODEL_ID)
 public class Product extends BaseModel<String> implements SearchableProduct {
@@ -70,7 +70,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     private boolean available;
 
     @Indexed(name = FEATURES_FIELD_NAME)
-    private List<String> features;
+    private final List<String> features = new ArrayList<>();
 
     @Indexed(name = PRICE_FIELD_NAME)
     private double price;
@@ -81,7 +81,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     @JoinColumn(name = CATEGORY_FIELD_NAME, nullable = false)
     private Category category;
 
-    @Indexed(name = RATING_FIELD_NAME)
+    @Indexed(name = RATING_FIELD_NAME, type = "integer")
     private Integer rating;
 
     @Indexed(name = LOCATION_FIELD_NAME)
@@ -95,6 +95,19 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     )
     @Indexed(name = SearchableProduct.ORDERS_FIELD_NAME)
     private final Set<Order> orders = new HashSet<>();
+
+    public void setFeatures(final List<String> features) {
+        this.features.clear();
+        if (Objects.nonNull(features)) {
+            this.features.addAll(features);
+        }
+    }
+
+    public void addFeature(final String feature) {
+        if (Objects.nonNull(feature)) {
+            this.features.add(feature);
+        }
+    }
 
     public void setOrders(final Set<Order> orders) {
         this.orders.clear();

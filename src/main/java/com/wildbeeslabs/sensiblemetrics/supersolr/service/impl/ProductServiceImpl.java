@@ -24,8 +24,9 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.ProductRepository;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.ProductService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -43,10 +44,7 @@ import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 /**
  * Custom product service implementation {@link Product}
@@ -55,6 +53,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Service(ProductService.SERVICE_ID)
+@Transactional
 public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> implements ProductService {
 
     @Autowired
@@ -69,39 +68,42 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Product> findByTitles(final String titles, final Pageable pageable) {
-        if (StringUtils.isBlank(titles)) {
+        if (StringUtils.isEmpty(titles)) {
             return getRepository().findAll(pageable);
         }
-        return getRepository().findByTitles(splitSearchTermAndRemoveIgnoredCharacters(titles), pageable);
+        return getRepository().findByTitles(tokenize(titles), pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public FacetPage<? extends Product> autocompleteTitleFragment(final String fragment, final Pageable pageable) {
-        if (StringUtils.isBlank(fragment)) {
+        if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByTitleStartsWith(splitSearchTermAndRemoveIgnoredCharacters(fragment), pageable);
+        return getRepository().findByTitleStartsWith(tokenize(fragment), pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HighlightPage<? extends Product> find(final String searchTerm, final Pageable page) {
-        final Criteria fileIdCriteria = new Criteria(SearchableOrder.ID_FIELD_NAME).boost(2).is(searchTerm);
-        final Criteria titleCriteria = new Criteria(SearchableOrder.TITLE_FIELD_NAME).fuzzy(searchTerm);
+        final Criteria fileIdCriteria = new Criteria(SearchableProduct.ID_FIELD_NAME).boost(2).is(searchTerm);
+        final Criteria titleCriteria = new Criteria(SearchableProduct.TITLE_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
                 .setSimplePrefix("<strong>")
                 .setSimplePostfix("</strong>")
-                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.TITLE_FIELD_NAME));
+                .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.TITLE_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Product.class);
     }
 
-    private Collection<String> splitSearchTermAndRemoveIgnoredCharacters(final String searchTerm) {
-        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
-        return Arrays.stream(searchTerms)
-                .filter(StringUtils::isNotEmpty)
-                .map(term -> DEFAULT_IGNORED_CHARS_PATTERN.matcher(term).replaceAll(DEFAULT_SEARСH_TERM_REPLACEMENT))
-                .collect(Collectors.toList());
+    protected Criteria getCriteria(final String searchTerm) {
+        Criteria conditions = new Criteria();
+        for (final String term : searchTerm.split(BaseModelService.DEFAULT_SEARСH_TERM_DELIMITER)) {
+            conditions = conditions
+                    .or(new Criteria(SearchableProduct.ID_FIELD_NAME).contains(term))
+                    .or(new Criteria(SearchableProduct.DESCRIPTION_FIELD_NAME).contains(term));
+        }
+        return conditions;
     }
 
     protected ProductRepository getRepository() {

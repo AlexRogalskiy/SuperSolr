@@ -46,8 +46,9 @@ import java.util.Optional;
 /**
  * Base controller implementation
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <T>  type of entity view model
+ * @param <ID> type of entity identifier
  */
 @Slf4j
 @NoArgsConstructor
@@ -76,18 +77,21 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         return item.get();
     }
 
-    protected E createItem(final T itemDto, final Class<? extends E> entityClass) {
-        log.debug("Creating item {}", itemDto);
+    protected E createItem(final T itemDto,
+                           final Class<? extends E> entityClass) {
+        log.debug("Creating new item: {}", itemDto);
         final E itemEntity = MapperUtils.map(itemDto, entityClass);
-        //if (getService().exists(itemEntity)) {
-        //    throw new ResourceAlreadyExistException(StringUtils.formatMessage(getMessageSource(), "error.already.exist.item"));
-        //}
+//        if (getService().exists(itemEntity)) {
+//            throw new ResourceAlreadyExistException(StringUtils.formatMessage(getMessageSource(), "error.already.exist.item"));
+//        }
         getService().save(itemEntity);
         return itemEntity;
     }
 
-    protected E updateItem(final ID id, final T itemDto, final Class<? extends E> entityClass) {
-        log.info("Updating item by ID: {}", id);
+    protected E updateItem(final ID id,
+                           final T itemDto,
+                           final Class<? extends E> entityClass) {
+        log.info("Updating item by ID: {}, itemDto: {}", id, itemDto);
         final Optional<? extends E> currentItem = getService().find(id);
         if (!currentItem.isPresent()) {
             throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
@@ -98,7 +102,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
     }
 
     protected E deleteItem(final ID id) {
-        log.info("Deleting order by ID {}", id);
+        log.info("Deleting item by ID: {}", id);
         final Optional<? extends E> item = getService().find(id);
         if (!item.isPresent()) {
             throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
@@ -107,8 +111,9 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         return item.get();
     }
 
-    protected void deleteItems(final List<? extends T> itemDtos, final Class<? extends E> entityClass) {
-        log.debug("Deleting items {}", org.apache.commons.lang3.StringUtils.join(itemDtos, ", "));
+    protected void deleteItems(final List<? extends T> itemDtos,
+                               final Class<? extends E> entityClass) {
+        log.debug("Deleting items: {}", org.apache.commons.lang3.StringUtils.join(itemDtos, ", "));
         final List<? extends E> items = MapperUtils.mapAll(itemDtos, entityClass);
         getService().deleteAll(items);
     }
@@ -119,9 +124,9 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
     }
 
     /**
-     * Custom base enum converter implementation
+     * Custom base enum converter implementation {@link PropertyEditorSupport}
      *
-     * @param <U>
+     * @param <U> type of enum value
      */
     @Data
     @EqualsAndHashCode(callSuper = true)
@@ -141,7 +146,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
 
         @Override
         public void setAsText(final String text) throws IllegalArgumentException {
-            final U item = Enum.valueOf(this.type, text.toUpperCase());
+            final U item = Enum.valueOf(getType(), text.toUpperCase());
             setValue(item);
         }
     }

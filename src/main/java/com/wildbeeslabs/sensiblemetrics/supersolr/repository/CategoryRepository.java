@@ -25,11 +25,14 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Facet;
+import org.springframework.data.solr.repository.Highlight;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -43,6 +46,14 @@ public interface CategoryRepository extends BaseModelRepository<Category, String
 
     //@Query("id:*?0* OR title:*?0* OR description:*?0*")
     //Page<Product> findCategoryByNamedQuery(final String searchTerm, final Pageable pageable);
+
+    @Highlight(prefix = "<strong>", postfix = "</strong>")
+    @Query(fields = {
+            SearchableCategory.ID_FIELD_NAME,
+            SearchableCategory.TITLE_FIELD_NAME,
+            SearchableCategory.DESCRIPTION_FIELD_NAME
+    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
+    HighlightPage<? extends Category> findByQuery(final Collection<String> values, final Pageable pageable);
 
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
 

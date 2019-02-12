@@ -36,6 +36,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -47,6 +48,9 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(name = "category", catalog = "market_data")
+@AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = SearchableCategory.ID_FIELD_NAME))
+})
 @Inheritance(strategy = InheritanceType.JOINED)
 @SolrDocument(solrCoreName = SearchableCategory.MODEL_ID)
 public class Category extends BaseModel<String> implements SearchableCategory {
@@ -69,7 +73,7 @@ public class Category extends BaseModel<String> implements SearchableCategory {
     @Indexed(name = SearchableCategory.PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
 
-    public void setProducts(final Set<Product> products) {
+    public void setProducts(final List<? extends Product> products) {
         this.products.clear();
         if (Objects.nonNull(products)) {
             this.products.addAll(products);

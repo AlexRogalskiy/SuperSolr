@@ -26,7 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseModelController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import lombok.EqualsAndHashCode;
@@ -46,21 +46,20 @@ import java.util.stream.Collectors;
 /**
  * Base model controller implementation
  *
- * @param <E>
- * @param <T>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <T>  type of entity view model
+ * @param <ID> type of entity identifier
  */
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends BaseView<ID>, ID extends Serializable> extends BaseControllerImpl<E, T, ID> implements BaseModelController<E, T, ID> {
+public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseControllerImpl<E, T, ID> implements BaseModelController<E, T, ID> {
 
     @Override
     public E updateItem(final ID id,
                         final T itemDto,
                         final Class<? extends E> entityClass) {
-        log.info("Updating item by ID: {}", id);
         final Optional<? extends E> currentItem = getService().find(id);
         if (!currentItem.isPresent()) {
             throw new ResourceNotFoundException(com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));

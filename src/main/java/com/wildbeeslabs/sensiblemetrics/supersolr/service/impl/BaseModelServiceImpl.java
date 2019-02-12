@@ -29,12 +29,21 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Custom base model service implementation
@@ -45,13 +54,13 @@ import java.util.Objects;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Transactional
 public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends Serializable> extends BaseServiceImpl<E, ID> implements BaseModelService<E, ID> {
 
     @Autowired
     private SolrTemplate solrTemplate;
 
     @Override
-    @Transactional(rollbackFor = {RuntimeException.class})
     public void saveOrUpdate(final E target, final Class<? extends E> clazz) {
         log.info("Saving or updating target entity: {}", target);
         if (target.isNew()) {
@@ -67,8 +76,24 @@ public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends S
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long count(final String searchTerm) {
         return getRepository().count(searchTerm);
+    }
+
+    protected Collection<String> tokenize(final String searchTerm) {
+        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
+        return Arrays.stream(searchTerms)
+                .filter(StringUtils::isNotEmpty)
+                .map(term -> DEFAULT_IGNORED_CHARS_PATTERN.matcher(term).replaceAll(DEFAULT_SEARСH_TERM_REPLACEMENT))
+                .collect(Collectors.toList());
+    }
+
+    protected List<? extends E> search(final Criteria criteria, final Sort sort, final Class<? extends E> clazz) {
+        final SimpleQuery search = new SimpleQuery(criteria);
+        search.addSort(sort);
+        final Page<? extends E> results = getSolrTemplate().queryForPage(search, clazz);
+        return results.getContent();
     }
 
     protected SolrTemplate getSolrTemplate() {

@@ -83,4 +83,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void configureDefaultServletHandling(final DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
+
+    @Override
+    public void addCorsMappings(final CorsRegistry registry) {
+        registry.addMapping("/api/")
+                .allowedOrigins("http://localhost:8484", "http://localhost:9000")
+                .allowedMethods("POST", "GET", "PUT", "DELETE")
+                .allowedHeaders("Content-Type")
+                .exposedHeaders("header-1", "header-2")
+                .allowCredentials(false)
+                .maxAge(6000);
+    }
 }

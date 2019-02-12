@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
 
 import java.io.Serializable;
 
@@ -38,7 +38,7 @@ import java.io.Serializable;
  * @version 1.0.0
  * @since 2017-08-08
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
+public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
 
     /**
      * Default page size

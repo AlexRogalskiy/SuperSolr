@@ -28,12 +28,12 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseSimpleService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.solr.core.SolrOperations;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.repository.support.SimpleSolrRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -45,6 +45,7 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Service(BaseSimpleService.SERVICE_ID)
+@Transactional
 public class BaseSimpleServiceImpl<E, ID extends Serializable> extends SimpleSolrRepository<E, ID> implements BaseSimpleService<E, ID> {
 
     /**
@@ -57,62 +58,115 @@ public class BaseSimpleServiceImpl<E, ID extends Serializable> extends SimpleSol
         super(solrOperations, entityClass);
     }
 
+    /**
+     * Return number of matched results by search term {@link String}
+     *
+     * @param searchTerm - initial input search term {@link String}
+     * @return number of matched results by search term
+     */
     @Override
-    public long count(final String searchTerm) {
-        final String[] words = searchTerm.split(StringUtils.SPACE);
-        final Criteria conditions = createSearchConditions(words);
-        final SimpleQuery countQuery = new SimpleQuery(conditions);
+    @Transactional(readOnly = true)
+    public long count(final String searchTerm, final Criteria criteria) {
+        final SimpleQuery countQuery = new SimpleQuery(criteria);
         return getSolrOperations().count(countQuery);
     }
 
-    private Criteria createSearchConditions(final String[] words) {
-        Criteria conditions = new Criteria();
+    /**
+     * Returns search criteria {@link Criteria} by input array of words / matched fields
+     *
+     * @param words  - initial input array of words to be matched with
+     * @param fields - initial input array of fields to be matched by
+     * @return search criteria {@link Criteria}
+     */
+    protected Criteria getSearchConditions(final String[] words, final String[] fields) {
+        Criteria criteria = new Criteria();
         for (final String word : words) {
-            //if (Objects.isNull(conditions)) {
-            //    conditions = new Criteria("title").contains(word)
-            //            .or(new Criteria("description").contains(word));
-            //} else {
-            conditions = conditions
-                    .or(new Criteria("title").contains(word))
-                    .or(new Criteria("description").contains(word));
+            for (final String field : fields) {
+                criteria = criteria.or(new Criteria(field).contains(word));
+            }
         }
-        return conditions;
+        return criteria;
     }
 
+    /**
+     * Returns iterable collection of saved entities {@link Iterable} by input collection of entities to be saved {@link Iterable}
+     *
+     * @param target - initial input iterable collection of entities to be saved {@link Iterable}
+     * @param <S>
+     * @return iterable collection of saved entities {@link Iterable}
+     */
     @Override
     public <S extends E> Iterable<S> saveAll(final Iterable<S> target) {
         return super.save(target);
     }
 
+    /**
+     * Returns optional of matched wrapped entity {@link Optional} by input ID
+     *
+     * @param id - initial input entity ID to be searched by
+     * @return optional of matched entity {@link Optional}
+     */
     @Override
+    @Transactional(readOnly = true)
     public Optional<E> findById(final ID id) {
         return this.find(id);
     }
 
+    /**
+     * Returns binary flag based on entities existence by input entity ID
+     *
+     * @param id - initial input entity ID to be searched by
+     * @return true - if entity exists, false - otherwise
+     */
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(final ID id) {
         return this.exists(id);
     }
 
+    /**
+     * Returns iterable collection of searchable entities {@link Iterable} by input collection of entity IDs {@link Iterable}
+     *
+     * @param ids - initial input collection of entity IDs {@link Iterable}
+     * @return iterable collection of searchable entities {@link Iterable}
+     */
     @Override
+    @Transactional(readOnly = true)
     public Iterable<E> findAllById(final Iterable<ID> ids) {
         return super.findAll(ids);
     }
 
+    /**
+     * Removes entity by input ID
+     *
+     * @param id - initial input entity ID to be removed by
+     */
     @Override
     public void deleteById(final ID id) {
-        final Optional<E> item = this.find(id);
-        if (!item.isPresent()) {
+        final Optional<E> entity = this.find(id);
+        if (!entity.isPresent()) {
             throw new ResourceNotFoundException(String.format("ERROR: cannot find resource with id={%s}", id));
         }
-        this.delete(item.get());
+        this.delete(entity.get());
     }
 
+    /**
+     * Returns optional of matched wrapped entity by input ID
+     *
+     * @param id - initial input entity ID to be removed by
+     * @return optional of matched entity {@link Optional}
+     */
     @Override
+    @Transactional(readOnly = true)
     public Optional<E> find(final ID id) {
         return Optional.ofNullable(super.findOne(id));
     }
 
+    /**
+     * Removes iterable collection of entities {@link Iterable} by input collection {@link Iterable}
+     *
+     * @param entities - initial input collection of entities {@link Iterable}
+     */
     @Override
     public void deleteAll(final Iterable<? extends E> entities) {
         super.delete(entities);

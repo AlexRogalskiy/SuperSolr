@@ -45,14 +45,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * Custom order controller implementation
+ * Custom order REST controller implementation
  */
 @Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(OrderController.CONTROLLER_ID)
-@RequestMapping("/api/order")
+@RequestMapping("/api")
 public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderView, Long> implements OrderController {
 
     @Autowired
@@ -62,8 +62,10 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
     private OrderService orderService;
 
     @PostMapping("/orders")
+    @ResponseBody
     @Override
     public ResponseEntity<?> getAll() {
+        log.info("Fetching all orders");
         try {
             return new ResponseEntity<>(MapperUtils.mapAll(this.getAllItems(), OrderView.class), HttpStatus.OK);
         } catch (EmptyContentException ex) {
@@ -72,7 +74,9 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
     }
 
     @PostMapping("/order")
+    @ResponseStatus
     public ResponseEntity<?> createOrder(final @RequestBody OrderView orderDto) {
+        log.info("Creating new order by view: {}", orderDto);
         final OrderView orderDtoCreated = MapperUtils.map(this.createItem(orderDto, Order.class), OrderView.class);
         final UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
         final HttpHeaders headers = new HttpHeaders();
@@ -81,38 +85,50 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
     }
 
     @GetMapping("/order/{orderId}")
+    @ResponseBody
     @Override
     public ResponseEntity<?> getById(final @PathVariable Long orderId) {
+        log.info("Fetching order by id: {}", orderId);
         return new ResponseEntity<>(MapperUtils.map(this.getItem(orderId), OrderView.class), HttpStatus.OK);
     }
 
     @PutMapping("/order")
+    @ResponseBody
     public ResponseEntity<?> updateOrder(final @RequestBody OrderView orderDto) {
-        log.info("Updating order by order: {}", orderDto);
+        log.info("Updating order by view: {}", orderDto);
         final OrderView orderDtoUpdated = MapperUtils.map(this.updateItem(orderDto.getId(), orderDto, Order.class), OrderView.class);
         return new ResponseEntity<>(orderDtoUpdated, HttpStatus.OK);
     }
 
     @DeleteMapping("/order/{orderId}")
+    @ResponseBody
     public ResponseEntity<?> deleteOrder(final @PathVariable Long orderId) {
+        log.info("Updating order by id: {}", orderId);
         final OrderView orderDtoDeleted = MapperUtils.map(this.deleteItem(orderId), OrderView.class);
         return new ResponseEntity<>(orderDtoDeleted, HttpStatus.OK);
     }
 
+    @DeleteMapping("/orders")
+    @ResponseStatus
     @Override
     public ResponseEntity<?> deleteAll() {
+        log.info("Deleting all orders");
         this.deleteAllItems();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/order/desc/{description}/{page}")
-    public ResponseEntity<?> findOrder(final @PathVariable String description, final @PathVariable int page) {
+    @ResponseBody
+    public ResponseEntity<?> find(final @PathVariable String description, final @PathVariable int page) {
+        log.info("Finding order by description: {}, page: {}", description, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByDescription(description, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }
 
     @GetMapping("/order/search/{searchTerm}/{page}")
-    public ResponseEntity<?> findOrderBySearchTerm(final @PathVariable String searchTerm, final @PathVariable int page) {
+    @ResponseBody
+    public ResponseEntity<?> findBySearchTerm(final @PathVariable String searchTerm, final @PathVariable int page) {
+        log.info("Finding order by searchTerm: {}, page: {}", searchTerm, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }

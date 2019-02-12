@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
@@ -33,7 +34,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Custom product view model
+ * Custom product model view
  */
 @Data
 @NoArgsConstructor
@@ -41,7 +42,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = SearchableProduct.MODEL_ID)
-public class ProductView extends BaseView<String> {
+public class ProductView extends BaseModelView<String> {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -49,8 +50,10 @@ public class ProductView extends BaseView<String> {
     private static final long serialVersionUID = 5714315073889762969L;
 
     @JacksonXmlProperty(localName = "title")
+    @JsonProperty("title")
     private String title;
 
     @JacksonXmlProperty(localName = "description")
+    @JsonProperty("description")
     private String description;
 }

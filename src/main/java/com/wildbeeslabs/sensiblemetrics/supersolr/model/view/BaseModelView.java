@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,14 +37,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Custom base view Model
+ * Custom base model view
  */
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class BaseView<T> implements Serializable {
+public abstract class BaseModelView<T> implements Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -51,23 +52,30 @@ public abstract class BaseView<T> implements Serializable {
     private static final long serialVersionUID = 602615748387358410L;
 
     @JacksonXmlProperty(localName = "id")
+    @JsonProperty("id")
     private T id;
 
-    @JacksonXmlProperty(localName = "created")
+    @JacksonXmlProperty(localName = "createdAt")
+    @JsonProperty("createdAt")
     private Date created;
 
     @JacksonXmlProperty(localName = "createdBy")
+    @JsonProperty("createdBy")
     private String createdBy;
 
-    @JacksonXmlProperty(localName = "changed")
+    @JacksonXmlProperty(localName = "changedAt")
+    @JsonProperty("changedAt")
     private Date changed;
 
     @JacksonXmlProperty(localName = "changedBy")
+    @JsonProperty("changedBy")
     private String changedBy;
 
     @JacksonXmlProperty(localName = "score")
+    @JsonProperty("score")
     private float score;
 
     @JacksonXmlProperty(localName = "highlights")
+    @JsonProperty("highlights")
     private Map<String, List<String>> highlights;
 }

@@ -45,6 +45,7 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode
 @ToString
+@Transactional
 public abstract class BaseServiceImpl<E, ID extends Serializable> implements BaseService<E, ID> {
 
     @PersistenceContext
@@ -71,35 +72,30 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
     }
 
     @Override
-    @Transactional(rollbackFor = {RuntimeException.class})
     public <S extends E> S save(final S target) {
         log.info("Saving target entity: {}", target);
         return getRepository().save(target);
     }
 
     @Override
-    @Transactional(rollbackFor = {RuntimeException.class})
     public <S extends E> Iterable<S> save(final Iterable<S> target) {
         log.info("Saving target entity: {}", StringUtils.join(target, "|"));
         return getRepository().saveAll(target);
     }
 
     @Override
-    @Transactional(rollbackFor = {RuntimeException.class})
     public void delete(final E target) {
         log.info("Deleting target entity: {}", target);
         getRepository().delete(target);
     }
 
     @Override
-    @Transactional(rollbackFor = {RuntimeException.class})
     public void deleteAll(final Iterable<? extends E> target) {
         log.info("Deleting target entities: {}", StringUtils.join(target, "|"));
         getRepository().deleteAll(target);
     }
 
     @Override
-    @Transactional(rollbackFor = {RuntimeException.class})
     public void deleteAll() {
         log.info("Deleting all target entities: {}");
         getRepository().deleteAll();

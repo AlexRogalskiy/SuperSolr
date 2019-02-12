@@ -24,8 +24,9 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.CategoryRepository;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -43,10 +44,7 @@ import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 /**
  * Custom category service implementation {@link Category}
@@ -55,6 +53,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Service(CategoryService.SERVICE_ID)
+@Transactional
 public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> implements CategoryService {
 
     @Autowired
@@ -72,7 +71,7 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
         if (StringUtils.isBlank(titles)) {
             return getRepository().findAll(pageable);
         }
-        return getRepository().findByTitles(splitSearchTermAndRemoveIgnoredCharacters(titles), pageable);
+        return getRepository().findByTitles(tokenize(titles), pageable);
     }
 
     @Override
@@ -81,27 +80,30 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
         if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByTitleStartsWith(splitSearchTermAndRemoveIgnoredCharacters(fragment), pageable);
+        return getRepository().findByTitleStartsWith(tokenize(fragment), pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HighlightPage<? extends Category> find(final String searchTerm, final Pageable page) {
-        final Criteria fileIdCriteria = new Criteria(SearchableOrder.ID_FIELD_NAME).boost(2).is(searchTerm);
-        final Criteria titleCriteria = new Criteria(SearchableOrder.TITLE_FIELD_NAME).fuzzy(searchTerm);
+        final Criteria fileIdCriteria = new Criteria(SearchableCategory.ID_FIELD_NAME).boost(2).is(searchTerm);
+        final Criteria titleCriteria = new Criteria(SearchableCategory.TITLE_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
                 .setSimplePrefix("<strong>")
                 .setSimplePostfix("</strong>")
-                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.TITLE_FIELD_NAME));
+                .addField(SearchableCategory.ID_FIELD_NAME, SearchableCategory.TITLE_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Category.class);
     }
 
-    private Collection<String> splitSearchTermAndRemoveIgnoredCharacters(final String searchTerm) {
-        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
-        return Arrays.stream(searchTerms)
-                .filter(StringUtils::isNotEmpty)
-                .map(term -> DEFAULT_IGNORED_CHARS_PATTERN.matcher(term).replaceAll(DEFAULT_SEARСH_TERM_REPLACEMENT))
-                .collect(Collectors.toList());
+    protected Criteria getCriteria(final String searchTerm) {
+        Criteria conditions = new Criteria();
+        for (final String term : searchTerm.split(BaseModelService.DEFAULT_SEARСH_TERM_DELIMITER)) {
+            conditions = conditions
+                    .or(new Criteria(SearchableCategory.ID_FIELD_NAME).contains(term))
+                    .or(new Criteria(SearchableCategory.DESCRIPTION_FIELD_NAME).contains(term));
+        }
+        return conditions;
     }
 
     @Override
