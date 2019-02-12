@@ -374,7 +374,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- DB Combo Pool library dependencies -->
+        <!-- Database Combo Pool library dependencies -->
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
@@ -516,7 +516,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.1.0</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
@@ -527,7 +527,6 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.1.0</version>
                     <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
