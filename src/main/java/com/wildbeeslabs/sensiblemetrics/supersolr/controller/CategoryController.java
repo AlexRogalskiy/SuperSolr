@@ -35,4 +35,12 @@ public interface CategoryController extends BaseModelController<Category, Catego
      * Default service ID
      */
     String CONTROLLER_ID = "CategoryController";
+    /**
+     * Default offset value
+     */
+    String DEFAULT_OFFSET_VALUE = "0";
+    /**
+     * Default limit value
+     */
+    String DEFAULT_LIMIT_VALUE = "10";
 }

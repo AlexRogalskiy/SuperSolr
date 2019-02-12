@@ -39,8 +39,8 @@ import java.util.Optional;
 /**
  * Custom base service implementation
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 @Slf4j
 @EqualsAndHashCode

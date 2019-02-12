@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
+
 /**
  * Base model controller implementation
  *
@@ -62,7 +64,7 @@ public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends
                         final Class<? extends E> entityClass) {
         final Optional<? extends E> currentItem = getService().find(id);
         if (!currentItem.isPresent()) {
-            throw new ResourceNotFoundException(com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+            throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
         }
         final E itemEntity = MapperUtils.map(itemDto, entityClass);
         getService().saveOrUpdate(itemEntity, entityClass);

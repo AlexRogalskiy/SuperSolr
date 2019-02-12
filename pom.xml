@@ -98,7 +98,6 @@
         <location>dev</location>
         <skip.integration.tests>true</skip.integration.tests>
         <solr.deps>solr/libs</solr.deps>
-        <tika.version>1.17</tika.version>
 
         <hikari.version>3.2.0</hikari.version>
         <mysql-connector.version>8.0.13</mysql-connector.version>
@@ -107,6 +106,7 @@
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <commons-text.version>1.6</commons-text.version>
 
+        <spring-boot-starter.version>2.1.1.RELEASE</spring-boot-starter.version>
         <spring.version>5.1.3.RELEASE</spring.version>
         <spring-data-commons.version>2.1.3.RELEASE</spring-data-commons.version>
         <spring-data-solr.version>2.0.5.RELEASE</spring-data-solr.version>
@@ -122,11 +122,11 @@
         <guava.version>27.0.1-jre</guava.version>
         <jackson-mapper.version>1.9.13</jackson-mapper.version>
         <joda-time.version>2.10.1</joda-time.version>
+        <solrj.version>7.7.0</solrj.version>
         <modelmapper.version>1.1.0</modelmapper.version>
 
         <validation-api.version>2.0.1.Final</validation-api.version>
         <javax.persistence.version>2.2</javax.persistence.version>
-        <spring-boot-starter.version>2.0.4.RELEASE</spring-boot-starter.version>
     </properties>
 
     <dependencies>
@@ -400,6 +400,11 @@
         </dependency>
 
         <!-- Solr library dependencies -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>${solrj.version}</version>
+        </dependency>
         <!--<dependency>-->
         <!--<groupId>org.apache.solr</groupId>-->
         <!--<artifactId>solr</artifactId>-->

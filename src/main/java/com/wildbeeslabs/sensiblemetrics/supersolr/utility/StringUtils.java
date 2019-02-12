@@ -37,11 +37,26 @@ import java.util.Locale;
 @UtilityClass
 public class StringUtils {
 
+    /**
+     * Returns localized string message {@link String} by initial message source {@link MessageSource} and raw string message {@link String}
+     *
+     * @param messageSource - initial input message source {@link MessageSource}
+     * @param message       - initial input raw string message {@link String}
+     * @return localized string message {@link String}
+     */
     public static String getLocaleMessage(final MessageSource messageSource, final String message) {
         final Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(message, null, locale);
     }
 
+    /**
+     * Returns formatted string message {@link String} by initial message source {@link MessageSource}, raw string message {@link String} and collection of arguments
+     *
+     * @param messageSource - initial input message source {@link MessageSource}
+     * @param message       - initial input raw string message {@link String}
+     * @param args          - initial input collection of arguments
+     * @return formatted string message {@link String}
+     */
     public static String formatMessage(final MessageSource messageSource, final String message, final Object... args) {
         return String.format(getLocaleMessage(messageSource, message), args);
     }

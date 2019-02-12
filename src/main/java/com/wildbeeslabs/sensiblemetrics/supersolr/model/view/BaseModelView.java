@@ -38,13 +38,15 @@ import java.util.Map;
 
 /**
  * Custom base model view
+ *
+ * @param <ID> type of entity identifier
  */
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
 @ToString
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class BaseModelView<T> implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public abstract class BaseModelView<ID extends Serializable> implements Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -53,7 +55,7 @@ public abstract class BaseModelView<T> implements Serializable {
 
     @JacksonXmlProperty(localName = "id")
     @JsonProperty("id")
-    private T id;
+    private ID id;
 
     @JacksonXmlProperty(localName = "createdAt")
     @JsonProperty("createdAt")

@@ -98,7 +98,7 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
 
     protected Criteria getCriteria(final String searchTerm) {
         Criteria conditions = new Criteria();
-        for (final String term : searchTerm.split(BaseModelService.DEFAULT_SEARСH_TERM_DELIMITER)) {
+        for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
             conditions = conditions
                     .or(new Criteria(SearchableProduct.ID_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableProduct.DESCRIPTION_FIELD_NAME).contains(term));

@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 /**
  * Custom base model service declaration
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializable> extends BaseService<E, ID> {
 

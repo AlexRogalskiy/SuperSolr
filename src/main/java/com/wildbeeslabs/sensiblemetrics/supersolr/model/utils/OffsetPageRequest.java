@@ -23,16 +23,14 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.utils;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 /**
  * Custom offset page request implementation {@link Pageable}
  */
+@Builder
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -90,17 +88,32 @@ public class OffsetPageRequest implements Pageable {
 
     @Override
     public Pageable next() {
-        return new OffsetPageRequest(getOffset() + getPageSize(), getPageSize(), getSort());
+        return OffsetPageRequest
+                .builder()
+                .offset(getOffset() + getPageSize())
+                .limit(getPageSize())
+                .sort(getSort())
+                .build();
     }
 
     @Override
     public Pageable previousOrFirst() {
-        return new OffsetPageRequest(Math.max(0, getOffset() - getPageSize()), getPageSize(), getSort());
+        return OffsetPageRequest
+                .builder()
+                .offset(Math.max(0, getOffset() - getPageSize()))
+                .limit(getPageSize())
+                .sort(getSort())
+                .build();
     }
 
     @Override
     public Pageable first() {
-        return new OffsetPageRequest(0, getPageSize(), getSort());
+        return OffsetPageRequest
+                .builder()
+                .offset(0)
+                .limit(getPageSize())
+                .sort(getSort())
+                .build();
     }
 
     @Override

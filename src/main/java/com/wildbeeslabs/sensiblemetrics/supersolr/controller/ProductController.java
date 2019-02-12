@@ -35,4 +35,12 @@ public interface ProductController extends BaseModelController<Product, ProductV
      * Default service ID
      */
     String CONTROLLER_ID = "ProductController";
+    /**
+     * Default offset value
+     */
+    String DEFAULT_OFFSET_VALUE = "0";
+    /**
+     * Default limit value
+     */
+    String DEFAULT_LIMIT_VALUE = "10";
 }

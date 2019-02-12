@@ -29,12 +29,12 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentExceptio
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
@@ -42,6 +42,8 @@ import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
  * Base controller implementation
@@ -63,7 +65,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         log.debug("Fetching all items");
         final List<? extends E> items = Lists.newArrayList(getService().findAll());
         if (items.isEmpty()) {
-            throw new EmptyContentException(StringUtils.formatMessage(getMessageSource(), "error.no.content"));
+            throw new EmptyContentException(formatMessage(getMessageSource(), "error.no.content"));
         }
         return items;
     }
@@ -72,7 +74,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         log.debug("Fetching item by ID: {}", id);
         final Optional<? extends E> item = getService().find(id);
         if (!item.isPresent()) {
-            throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+            throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
         }
         return item.get();
     }
@@ -82,7 +84,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         log.debug("Creating new item: {}", itemDto);
         final E itemEntity = MapperUtils.map(itemDto, entityClass);
 //        if (getService().exists(itemEntity)) {
-//            throw new ResourceAlreadyExistException(StringUtils.formatMessage(getMessageSource(), "error.already.exist.item"));
+//            throw new ResourceAlreadyExistException(formatMessage(getMessageSource(), "error.already.exist.item"));
 //        }
         getService().save(itemEntity);
         return itemEntity;
@@ -94,7 +96,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         log.info("Updating item by ID: {}, itemDto: {}", id, itemDto);
         final Optional<? extends E> currentItem = getService().find(id);
         if (!currentItem.isPresent()) {
-            throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+            throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
         }
         final E itemEntity = MapperUtils.map(itemDto, entityClass);
         getService().save(itemEntity);
@@ -105,7 +107,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
         log.info("Deleting item by ID: {}", id);
         final Optional<? extends E> item = getService().find(id);
         if (!item.isPresent()) {
-            throw new ResourceNotFoundException(StringUtils.formatMessage(getMessageSource(), "error.no.item.id", id));
+            throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
         }
         getService().delete(item.get());
         return item.get();
@@ -113,7 +115,7 @@ public abstract class BaseControllerImpl<E, T, ID extends Serializable> implemen
 
     protected void deleteItems(final List<? extends T> itemDtos,
                                final Class<? extends E> entityClass) {
-        log.debug("Deleting items: {}", org.apache.commons.lang3.StringUtils.join(itemDtos, ", "));
+        log.debug("Deleting items: {}", StringUtils.join(itemDtos, ", "));
         final List<? extends E> items = MapperUtils.mapAll(itemDtos, entityClass);
         getService().deleteAll(items);
     }

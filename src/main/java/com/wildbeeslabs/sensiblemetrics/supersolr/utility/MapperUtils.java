@@ -39,10 +39,10 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class MapperUtils {
 
-    private static ModelMapper modelMapper = new ModelMapper();
+    private static ModelMapper modelMapper;
 
     /**
-     * Model mapper property setting are specified in the following block.
+     * Model mapper property settings
      * Default property matching strategy is set to Strict see {@link MatchingStrategies}
      * Custom mappings are added using {@link ModelMapper#addMappings(PropertyMap)}
      */
@@ -52,26 +52,29 @@ public class MapperUtils {
     }
 
     /**
+     * Converts input entity by initial output class instance {@link Class}
+     *
      * <p>Note: outClass object must have default constructor with no arguments</p>
      *
      * @param <D>      type of result object.
      * @param <T>      type of source object to map from.
      * @param entity   entity that needs to be mapped.
      * @param outClass class of result object.
-     * @return new object of <code>outClass</code> type.
+     * @return mapped entity of <code>outClass</code> type
      */
     public static <D, T> D map(final T entity, final Class<D> outClass) {
         return modelMapper.map(entity, outClass);
     }
 
     /**
+     * Converts input collection of entities by initial output class instance {@link Class}
      * <p>Note: outClass object must have default constructor with no arguments</p>
      *
      * @param entityList list of entities that needs to be mapped
      * @param outCLass   class of result list element
      * @param <D>        type of objects in result list
      * @param <T>        type of entity in <code>entityList</code>
-     * @return list of mapped object with <code><D></code> type.
+     * @return list of mapped entities with <code><D></code> type
      */
     public static <D, T> List<D> mapAll(final Collection<T> entityList, final Class<D> outCLass) {
         return entityList.stream()
@@ -80,10 +83,11 @@ public class MapperUtils {
     }
 
     /**
-     * Maps {@code source} to {@code destination}.
+     * Converts input entity {@code source} to destination entity {@code destination}
      *
-     * @param source      object to map from
-     * @param destination object to map to
+     * @param source      - initial input source to be mapped from {@code source}
+     * @param destination - initial output source to be mapped to {@code destination}
+     * @return mapped object with <code><D></code> type
      */
     public static <S, D> D map(final S source, final D destination) {
         modelMapper.map(source, destination);

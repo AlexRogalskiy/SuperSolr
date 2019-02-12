@@ -31,8 +31,8 @@ import java.io.Serializable;
 /**
  * Custom base repository
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 @NoRepositoryBean
 public interface BaseRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {

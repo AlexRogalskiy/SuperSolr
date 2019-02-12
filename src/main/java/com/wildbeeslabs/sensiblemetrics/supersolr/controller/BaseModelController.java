@@ -31,9 +31,9 @@ import java.io.Serializable;
 /**
  * Base model controller declaration
  *
- * @param <E>
- * @param <T>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <T>  type of entity view model
+ * @param <ID> type of entity identifier
  * @author Alex
  * @version 1.0.0
  * @since 2017-08-08

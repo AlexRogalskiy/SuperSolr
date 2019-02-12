@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.handler;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.converter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

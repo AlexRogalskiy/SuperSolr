@@ -98,7 +98,7 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
 
     protected Criteria getCriteria(final String searchTerm) {
         Criteria conditions = new Criteria();
-        for (final String term : searchTerm.split(BaseModelService.DEFAULT_SEARСH_TERM_DELIMITER)) {
+        for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
             conditions = conditions
                     .or(new Criteria(SearchableCategory.ID_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableCategory.DESCRIPTION_FIELD_NAME).contains(term));

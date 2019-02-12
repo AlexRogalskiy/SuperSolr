@@ -25,7 +25,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -45,8 +44,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
+
 /**
  * Custom full-text search base model
+ *
+ * @param <ID> type of entity identifier
  */
 @Data
 @NoArgsConstructor
@@ -57,7 +60,7 @@ import java.util.Objects;
 @MappedSuperclass
 @ChronologicalDates
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseModel<T> implements SearchableModel, Persistable<T>, Serializable {
+public abstract class BaseModel<ID extends Serializable> implements SearchableModel, Persistable<ID>, Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -65,11 +68,14 @@ public abstract class BaseModel<T> implements SearchableModel, Persistable<T>, S
     private static final long serialVersionUID = 6444143028591284804L;
 
     @Id
+    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false)
     @Indexed(name = "id")
-    private T id;
+    private ID id;
 
     @CreationTimestamp
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
     @Column(name = SearchableModel.CREATED_FIELD_NAME, nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @Indexed(SearchableModel.CREATED_FIELD_NAME)
@@ -82,7 +88,7 @@ public abstract class BaseModel<T> implements SearchableModel, Persistable<T>, S
     private String createdBy;
 
     @UpdateTimestamp
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
     @Column(name = SearchableModel.CHANGED_FIELD_NAME, insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @Indexed(SearchableModel.CHANGED_FIELD_NAME)

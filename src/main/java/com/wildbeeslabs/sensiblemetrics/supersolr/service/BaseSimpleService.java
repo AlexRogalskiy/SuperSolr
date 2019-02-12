@@ -30,15 +30,15 @@ import java.io.Serializable;
 /**
  * Custom base simple service declaration
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 public interface BaseSimpleService<E, ID extends Serializable> extends BaseService<E, ID> {
 
     /**
      * Default service ID
      */
-    String SERVICE_ID = "SimpleService";
+    String SERVICE_ID = "BaseSimpleService";
 
     long count(final String searchTerm, final Criteria criteria);
 }

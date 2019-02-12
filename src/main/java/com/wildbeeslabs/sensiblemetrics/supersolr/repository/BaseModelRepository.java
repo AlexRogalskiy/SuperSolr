@@ -34,8 +34,8 @@ import java.util.Optional;
 /**
  * Custom base model repository
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 @NoRepositoryBean
 public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends BaseRepository<E, ID> {

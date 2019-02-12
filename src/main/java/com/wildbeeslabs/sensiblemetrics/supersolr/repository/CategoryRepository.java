@@ -25,7 +25,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
@@ -39,13 +38,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 /**
- * Custom cateogory repositorys
+ * Custom cateogory repository
  */
 @Repository
 public interface CategoryRepository extends BaseModelRepository<Category, String> {
-
-    //@Query("id:*?0* OR title:*?0* OR description:*?0*")
-    //Page<Product> findCategoryByNamedQuery(final String searchTerm, final Pageable pageable);
 
     @Highlight(prefix = "<strong>", postfix = "</strong>")
     @Query(fields = {

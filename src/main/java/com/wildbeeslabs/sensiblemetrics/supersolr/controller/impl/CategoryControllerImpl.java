@@ -101,9 +101,9 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
     @SuppressWarnings("unchecked")
     public ResponseEntity<?> find(
             final @RequestParam String searchTerm,
-            final @RequestParam(defaultValue = "0") int offset,
-            final @RequestParam(defaultValue = "10") int limit) {
-        final HighlightPage<Category> page = (HighlightPage<Category>) getService().find(searchTerm, new OffsetPageRequest(offset, limit));
+            final @RequestParam(defaultValue = DEFAULT_OFFSET_VALUE) int offset,
+            final @RequestParam(defaultValue = DEFAULT_LIMIT_VALUE) int limit) {
+        final HighlightPage<Category> page = (HighlightPage<Category>) getService().find(searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
         return new ResponseEntity<>(page
                 .stream()
                 .map(document -> getResult(document, page.getHighlights(document), CategoryView.class))

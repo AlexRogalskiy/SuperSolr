@@ -82,7 +82,7 @@ public class OrderServiceImpl extends BaseModelServiceImpl<Order, Long> implemen
 
     protected Criteria getCriteria(final String searchTerm) {
         Criteria conditions = new Criteria();
-        for (final String term : searchTerm.split(BaseModelService.DEFAULT_SEARСH_TERM_DELIMITER)) {
+        for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
             conditions = conditions
                     .or(new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));

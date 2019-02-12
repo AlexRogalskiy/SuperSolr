@@ -29,8 +29,8 @@ import java.util.Optional;
 /**
  * Custom base service declaration
  *
- * @param <E>
- * @param <ID>
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 public interface BaseService<E, ID extends Serializable> {
 

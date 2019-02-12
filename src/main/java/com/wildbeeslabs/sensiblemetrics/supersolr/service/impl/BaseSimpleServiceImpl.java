@@ -40,6 +40,9 @@ import java.util.Optional;
 
 /**
  * Custom base simple service implementation
+ *
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
