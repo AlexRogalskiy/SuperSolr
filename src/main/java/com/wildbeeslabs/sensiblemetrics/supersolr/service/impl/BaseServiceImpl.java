@@ -28,12 +28,12 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -79,9 +79,9 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})
-    public <S extends E> Iterable<S> save(final Iterable<S> targets) {
-        log.info("Saving target entity: {}", Arrays.asList(targets));
-        return getRepository().saveAll(targets);
+    public <S extends E> Iterable<S> save(final Iterable<S> target) {
+        log.info("Saving target entity: {}", StringUtils.join(target, "|"));
+        return getRepository().saveAll(target);
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
     @Override
     @Transactional(rollbackFor = {RuntimeException.class})
     public void deleteAll(final Iterable<? extends E> target) {
-        log.info("Deleting target entities: {}", Arrays.asList(target, ", "));
+        log.info("Deleting target entities: {}", StringUtils.join(target, "|"));
         getRepository().deleteAll(target);
     }
 

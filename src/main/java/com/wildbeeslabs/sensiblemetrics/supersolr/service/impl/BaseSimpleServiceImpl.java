@@ -80,8 +80,8 @@ public class BaseSimpleServiceImpl<E, ID extends Serializable> extends SimpleSol
     }
 
     @Override
-    public <S extends E> Iterable<S> saveAll(final Iterable<S> targets) {
-        return super.save(targets);
+    public <S extends E> Iterable<S> saveAll(final Iterable<S> target) {
+        return super.save(target);
     }
 
     @Override
