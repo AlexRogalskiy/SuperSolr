@@ -55,14 +55,14 @@ public class SolrConfig {
     private Environment environment;
 
     @Bean
-    public SolrClient solrClient(final @Value("${supersolr.config.server.url}") String baseUrl) {
+    public SolrClient solrClient(final @Value("${spring.data.solr.server.url}") String baseUrl) {
         return new HttpSolrClient.Builder()
                 .withBaseSolrUrl(baseUrl)
                 .build();
     }
 
     @Bean
-    public EmbeddedSolrServerFactoryBean solrServerFactoryBean(final @Value("${supersolr.config.solr.home}") String baseUrl) {
+    public EmbeddedSolrServerFactoryBean solrServerFactoryBean(final @Value("${spring.data.solr.solr.home}") String baseUrl) {
         final EmbeddedSolrServerFactoryBean factory = new EmbeddedSolrServerFactoryBean();
         factory.setSolrHome(environment.getRequiredProperty(baseUrl));
         return factory;
@@ -71,7 +71,7 @@ public class SolrConfig {
 //    @Bean
 //    public HttpSolrServerFactoryBean solrServerFactoryBean() {
 //        final HttpSolrServerFactoryBean factory = new HttpSolrServerFactoryBean();
-//        factory.setUrl(environment.getRequiredProperty("supersolr.config.server.url"));
+//        factory.setUrl(environment.getRequiredProperty("spring.data.solr.server.url"));
 //        return factory;
 //    }
 

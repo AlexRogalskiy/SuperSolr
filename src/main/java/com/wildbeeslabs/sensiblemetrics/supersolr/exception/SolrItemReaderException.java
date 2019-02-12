@@ -23,41 +23,30 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.batch.item.ItemReaderException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom "bad request" runtime exception implementation {@link RuntimeException}
+ * Custom solr item reader exception implementation {@link ItemReaderException}
  */
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Incorrect request parameters")
-public class BadRequestException extends RuntimeException {
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Service is not available")
+public class SolrItemReaderException extends ItemReaderException {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
-    private static final long serialVersionUID = -7693119675913317655L;
+    private static final long serialVersionUID = -8592739190893976477L;
 
-    public BadRequestException(final String message) {
-        super(message);
-    }
-
-    public BadRequestException(final Throwable cause) {
-        super(cause);
-    }
-
-    public BadRequestException(final String message, final Throwable cause) {
+    public SolrItemReaderException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    @Override
-    public String getMessage() {
-        return super.getMessage();
+    public SolrItemReaderException(String message) {
+        super(message);
     }
 }
