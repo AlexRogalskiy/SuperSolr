@@ -14,7 +14,7 @@ spring:
       solr.home:
       repository:
         query:
-          method.type: #methodName
+          method.type: #methodName, namedQuery, queryAnnotation
 
 logging:
   file: logs/application.log

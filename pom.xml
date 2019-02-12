@@ -8,20 +8,20 @@
     <version>1.0.0-RELEASE</version>
     <packaging>war</packaging>
 
-    <name>supersolr</name>
+    <name>SuperSolr</name>
     <url>https://github.com/AlexRogalskiy/supersolr</url>
-    <description>SuperSolr API</description>
+    <description>SuperSolr Core API</description>
     <inceptionYear>2019</inceptionYear>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.1.RELEASE</version>
+        <version>2.1.1.RELEASE</version>
     </parent>
 
     <issueManagement>
         <url>https://github.com/AlexRogalskiy/supersolr/issues</url>
-        <system>GitLab Issues</system>
+        <system>GitHub Issues</system>
     </issueManagement>
 
     <scm>
@@ -82,22 +82,45 @@
     </licenses>
 
     <reporting>
-        <outputDirectory>${project.build.directory}/site</outputDirectory>
+        <outputDirectory>${project.build.directory}/release</outputDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
     </reporting>
 
     <organization>
-        <name>Wildbees Labs, Inc.</name>
-        <url>http://www.wildbeeslabss.com</url>
+        <name>WildBees Labs, Inc.</name>
+        <url>http://www.wildbeeslabs.com/</url>
     </organization>
 
     <properties>
         <main.basedir>${project.basedir}/../..</main.basedir>
         <start-class>com.wildbeeslabs.sensiblemetrics.supersolr.SuperSolrAppLoader</start-class>
 
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
+
         <profileWebApp>src/main/webapp</profileWebApp>
         <location>dev</location>
-        <skip.integration.tests>true</skip.integration.tests>
         <solr.deps>solr/libs</solr.deps>
+
+        <unit-tests.skip>true</unit-tests.skip>
+        <integration-tests.skip>true</integration-tests.skip>
 
         <hikari.version>3.2.0</hikari.version>
         <mysql-connector.version>8.0.13</mysql-connector.version>
@@ -116,6 +139,7 @@
 
         <rest-assured.version>2.9.0</rest-assured.version>
         <junit.version>4.12</junit.version>
+        <hamcrest.version>1.3</hamcrest.version>
         <c3p0.version>0.9.1.2</c3p0.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.4</lombok.version>
@@ -127,6 +151,8 @@
 
         <validation-api.version>2.0.1.Final</validation-api.version>
         <javax.persistence.version>2.2</javax.persistence.version>
+
+        <surefire.forkNumber>0</surefire.forkNumber>
     </properties>
 
     <dependencies>
@@ -314,13 +340,18 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.8</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.9.6</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- Testing library dependencies -->
@@ -334,6 +365,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -376,6 +413,8 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda-time.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Guava library dependencies -->
@@ -405,11 +444,17 @@
             <artifactId>solr-solrj</artifactId>
             <version>${solrj.version}</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apache.solr</groupId>-->
-        <!--<artifactId>solr</artifactId>-->
-        <!--<version>RELEASE</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${solrj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-test-framework</artifactId>
+            <version>${solrj.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -418,19 +463,24 @@
         <finalName>${project.artifactId}-${project.version}</finalName>
         <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
             <resource>
                 <directory>${project.build.directory}/generated-resources</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <testResources>
             <testResource>
                 <directory>${project.basedir}/src/test/resources</directory>
+                <filtering>true</filtering>
             </testResource>
         </testResources>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -446,7 +496,7 @@
                         <verbose>false</verbose>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
-                        <encoding>UTF-8</encoding>
+                        <encoding>${project.build.outputEncoding}</encoding>
                         <compilerArgument>-Xlint:all</compilerArgument>
                     </configuration>
                     <executions>
@@ -465,9 +515,19 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.1.0</version>
                     <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
@@ -489,22 +549,8 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.1</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.0.0-M2</version>
                     <executions>
                         <execution>
                             <id>enforce-maven</id>
@@ -516,6 +562,9 @@
                                     <requireMavenVersion>
                                         <version>3.0</version>
                                     </requireMavenVersion>
+                                    <requireJavaVersion>
+                                        <version>[1.8,1.9)</version>
+                                    </requireJavaVersion>
                                 </rules>
                             </configuration>
                         </execution>
@@ -528,24 +577,10 @@
                     <version>3.0.0-M2</version>
                     <configuration>
                         <useSystemClassLoader>false</useSystemClassLoader>
+                        <skipTests>${unit-tests.skip}</skipTests>
                         <excludes>
                             <exclude>**/*IT.java</exclude>
                         </excludes>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.1</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addClasspath>true</addClasspath>
-                                <mainClass>${start-class}</mainClass>
-                                <classpathPrefix>dependency-jars/</classpathPrefix>
-                            </manifest>
-                        </archive>
                     </configuration>
                 </plugin>
 
@@ -562,6 +597,8 @@
                             </goals>
                             <configuration>
                                 <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+                                <includeScope>compile</includeScope>
+                                <excludeScope>test</excludeScope>
                                 <overWriteReleases>false</overWriteReleases>
                                 <overWriteSnapshots>false</overWriteSnapshots>
                                 <overWriteIfNewer>true</overWriteIfNewer>
@@ -586,33 +623,11 @@
                                 <goal>verify</goal>
                             </goals>
                             <configuration>
-                                <skipTests>${skip.integration.tests}</skipTests>
+                                <skipTests>${integration-tests.skip}</skipTests>
+                                <includes>
+                                    <include>**/*IT.java</include>
+                                </includes>
                             </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <mainClass>${start-class}</mainClass>
-                            </manifest>
-                        </archive>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>make-assembly</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
                         </execution>
                     </executions>
                 </plugin>
@@ -694,6 +709,17 @@
                         </filesets>
                     </configuration>
                 </plugin>
+
+                <!-- Deploy plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.11.1</version>
+                    <configuration>
+                        <pushChanges>false</pushChanges>
+                        <tag>${project.version}</tag>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -702,7 +728,7 @@
         <profile>
             <id>dev</id>
             <activation>
-                <!--<activeByDefault>true</activeByDefault>-->
+                <activeByDefault>true</activeByDefault>
                 <property>
                     <name>location</name>
                 </property>
@@ -1004,7 +1030,7 @@
         <pluginRepository>
             <id>spring-libs-snapshot</id>
             <name>Spring Libs Snapshot</name>
-            <url>https://repo.spring.io/libs-snapshot</url>
+            <url>https://repo.spring.io/libs-release</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
