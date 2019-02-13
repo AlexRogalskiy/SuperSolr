@@ -32,19 +32,14 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base model repository
+ * Custom base model repository declaration
  *
  * @param <E>  type of entity model
  * @param <ID> type of entity identifier
  */
 @NoRepositoryBean
-public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends BaseRepository<E, ID> {
-
-    //@Query("id:*?0*")
-    //Page<? extends E> findByCustomQuery(final String searchTerm, final Pageable pageable);
+public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends AuditModelRepository<E, ID> {
 
     @Query(name = "BaseModel.findById")
     Optional<E> findById(@Boost(2) final ID id);
-
-    long count(final String searchTerm);
 }

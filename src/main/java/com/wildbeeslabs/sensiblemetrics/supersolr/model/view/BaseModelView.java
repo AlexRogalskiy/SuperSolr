@@ -32,7 +32,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,11 +41,11 @@ import java.util.Map;
  * @param <ID> type of entity identifier
  */
 @Data
-@EqualsAndHashCode
 @NoArgsConstructor
-@ToString
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class BaseModelView<ID extends Serializable> implements Serializable {
+public abstract class BaseModelView<ID extends Serializable> extends AuditModelView {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -56,22 +55,6 @@ public abstract class BaseModelView<ID extends Serializable> implements Serializ
     @JacksonXmlProperty(localName = "id")
     @JsonProperty("id")
     private ID id;
-
-    @JacksonXmlProperty(localName = "createdAt")
-    @JsonProperty("createdAt")
-    private Date created;
-
-    @JacksonXmlProperty(localName = "createdBy")
-    @JsonProperty("createdBy")
-    private String createdBy;
-
-    @JacksonXmlProperty(localName = "changedAt")
-    @JsonProperty("changedAt")
-    private Date changed;
-
-    @JacksonXmlProperty(localName = "changedBy")
-    @JsonProperty("changedBy")
-    private String changedBy;
 
     @JacksonXmlProperty(localName = "score")
     @JsonProperty("score")

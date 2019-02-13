@@ -21,26 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * Base model controller declaration
- *
- * @param <E>  type of entity model
- * @param <T>  type of entity view model
- * @param <ID> type of entity identifier
- * @author Alex
- * @version 1.0.0
+ * Custom audit model view
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class AuditModelView implements Serializable {
 
     /**
-     * Default page size
+     * Default explicit serialVersionUID for interoperability
      */
-    int DEFAULT_PAGE_SIZE = 10;
+    private static final long serialVersionUID = -3372313387648971848L;
+
+    @JacksonXmlProperty(localName = "createdAt")
+    @JsonProperty("createdAt")
+    private Date created;
+
+    @JacksonXmlProperty(localName = "createdBy")
+    @JsonProperty("createdBy")
+    private String createdBy;
+
+    @JacksonXmlProperty(localName = "changedAt")
+    @JsonProperty("changedAt")
+    private Date changed;
+
+    @JacksonXmlProperty(localName = "changedBy")
+    @JsonProperty("changedBy")
+    private String changedBy;
 }

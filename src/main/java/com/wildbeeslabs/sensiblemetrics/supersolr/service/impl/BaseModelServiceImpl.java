@@ -30,12 +30,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -55,10 +51,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Transactional
-public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends Serializable> extends BaseServiceImpl<E, ID> implements BaseModelService<E, ID> {
-
-    @Autowired
-    private SolrTemplate solrTemplate;
+public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends Serializable> extends AuditModelServiceImpl<E, ID> implements BaseModelService<E, ID> {
 
     @Override
     public void saveOrUpdate(final E target, final Class<? extends E> clazz) {
@@ -75,12 +68,6 @@ public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends S
         }
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public long count(final String searchTerm) {
-        return getRepository().count(searchTerm);
-    }
-
     protected Collection<String> tokenize(final String searchTerm) {
         final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
         return Arrays.stream(searchTerms)
@@ -89,15 +76,9 @@ public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends S
                 .collect(Collectors.toList());
     }
 
-    protected List<? extends E> search(final Criteria criteria, final Sort sort, final Class<? extends E> clazz) {
-        final SimpleQuery search = new SimpleQuery(criteria);
-        search.addSort(sort);
-        final Page<? extends E> results = getSolrTemplate().queryForPage(search, clazz);
+    protected List<? extends E> search(final Query query, final Class<? extends E> clazz) {
+        final Page<? extends E> results = getSolrTemplate().queryForPage(query, clazz);
         return results.getContent();
-    }
-
-    protected SolrTemplate getSolrTemplate() {
-        return this.solrTemplate;
     }
 
     protected abstract BaseModelRepository<E, ID> getRepository();

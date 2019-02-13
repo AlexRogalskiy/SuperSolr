@@ -36,7 +36,6 @@ import java.io.Serializable;
  * @param <ID> type of entity identifier
  * @author Alex
  * @version 1.0.0
- * @since 2017-08-08
  */
 public interface BaseController<E, T, ID extends Serializable> {
 

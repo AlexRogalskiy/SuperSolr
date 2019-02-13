@@ -61,7 +61,7 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/orders")
+    @GetMapping("/orders")
     @ResponseBody
     @Override
     public ResponseEntity<?> getAll() {
@@ -84,12 +84,12 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @GetMapping("/order/{orderId}")
+    @GetMapping("/order/{id}")
     @ResponseBody
     @Override
-    public ResponseEntity<?> getById(final @PathVariable Long orderId) {
-        log.info("Fetching order by id: {}", orderId);
-        return new ResponseEntity<>(MapperUtils.map(this.getItem(orderId), OrderView.class), HttpStatus.OK);
+    public ResponseEntity<?> getById(final @PathVariable Long id) {
+        log.info("Fetching order by ID: {}", id);
+        return new ResponseEntity<>(MapperUtils.map(this.getItem(id), OrderView.class), HttpStatus.OK);
     }
 
     @PutMapping("/order")
@@ -100,11 +100,11 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
         return new ResponseEntity<>(orderDtoUpdated, HttpStatus.OK);
     }
 
-    @DeleteMapping("/order/{orderId}")
+    @DeleteMapping("/order/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteOrder(final @PathVariable Long orderId) {
-        log.info("Updating order by id: {}", orderId);
-        final OrderView orderDtoDeleted = MapperUtils.map(this.deleteItem(orderId), OrderView.class);
+    public ResponseEntity<?> deleteOrder(final @PathVariable Long id) {
+        log.info("Updating order by ID: {}", id);
+        final OrderView orderDtoDeleted = MapperUtils.map(this.deleteItem(id), OrderView.class);
         return new ResponseEntity<>(orderDtoDeleted, HttpStatus.OK);
     }
 
@@ -119,8 +119,8 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
 
     @GetMapping("/order/desc/{description}/{page}")
     @ResponseBody
-    public ResponseEntity<?> find(final @PathVariable String description, final @PathVariable int page) {
-        log.info("Finding order by description: {}, page: {}", description, page);
+    public ResponseEntity<?> findByDescription(final @PathVariable String description, final @PathVariable int page) {
+        log.info("Fetching order by description: {}, page: {}", description, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByDescription(description, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }
@@ -128,7 +128,7 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
     @GetMapping("/order/search/{searchTerm}/{page}")
     @ResponseBody
     public ResponseEntity<?> findBySearchTerm(final @PathVariable String searchTerm, final @PathVariable int page) {
-        log.info("Finding order by searchTerm: {}, page: {}", searchTerm, page);
+        log.info("Fetching order by term: {}, page: {}", searchTerm, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }

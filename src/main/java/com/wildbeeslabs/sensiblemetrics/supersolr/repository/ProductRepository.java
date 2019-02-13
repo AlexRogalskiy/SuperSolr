@@ -38,7 +38,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 /**
- * Custom product repository
+ * Custom product repository declaration
  */
 @Repository
 public interface ProductRepository extends BaseModelRepository<Product, String> {
@@ -51,7 +51,7 @@ public interface ProductRepository extends BaseModelRepository<Product, String> 
             SearchableProduct.FEATURES_FIELD_NAME,
             SearchableProduct.AVAILABLE_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Product> findByCustomQuery(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Product> findByQuery(final Collection<String> values, final Pageable pageable);
 
     Page<? extends Product> findByTitle(final String title, final Pageable pageable);
 

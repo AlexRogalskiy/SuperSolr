@@ -27,7 +27,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
-import org.springframework.data.solr.core.query.result.HighlightPage;
 
 /**
  * Custom category service declaration
@@ -43,7 +42,5 @@ public interface CategoryService extends BaseModelService<Category, String> {
 
     Page<? extends Category> findByTitles(final String titles, final Pageable pageable);
 
-    FacetPage<? extends Category> autocompleteTitleFragment(final String fragment, final Pageable pageable);
-
-    HighlightPage<? extends Category> find(final String searchTerm, final Pageable page);
+    FacetPage<? extends Category> autoCompleteTitleFragment(final String fragment, final Pageable pageable);
 }

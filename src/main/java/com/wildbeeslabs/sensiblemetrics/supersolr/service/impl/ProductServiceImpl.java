@@ -26,7 +26,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.ProductRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.ProductService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -68,7 +67,7 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Product> findByTitles(final String titles, final Pageable pageable) {
-        if (StringUtils.isEmpty(titles)) {
+        if (StringUtils.isBlank(titles)) {
             return getRepository().findAll(pageable);
         }
         return getRepository().findByTitles(tokenize(titles), pageable);
@@ -76,8 +75,8 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
 
     @Override
     @Transactional(readOnly = true)
-    public FacetPage<? extends Product> autocompleteTitleFragment(final String fragment, final Pageable pageable) {
-        if (StringUtils.isEmpty(fragment)) {
+    public FacetPage<? extends Product> autoCompleteTitleFragment(final String fragment, final Pageable pageable) {
+        if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
         return getRepository().findByTitleStartsWith(tokenize(fragment), pageable);

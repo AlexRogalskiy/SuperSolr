@@ -23,13 +23,13 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.AuditModelView;
 
 import java.io.Serializable;
 
 /**
- * Base model controller declaration
+ * Audit model controller declaration
  *
  * @param <E>  type of entity model
  * @param <T>  type of entity view model
@@ -37,10 +37,5 @@ import java.io.Serializable;
  * @author Alex
  * @version 1.0.0
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
-
-    /**
-     * Default page size
-     */
-    int DEFAULT_PAGE_SIZE = 10;
+public interface AuditModelController<E extends AuditModel, T extends AuditModelView, ID extends Serializable> extends BaseController<E, T, ID> {
 }

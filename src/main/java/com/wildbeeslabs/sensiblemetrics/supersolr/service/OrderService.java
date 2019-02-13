@@ -26,8 +26,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.HighlightPage;
 
 /**
  * Custom order service declaration
@@ -42,6 +40,4 @@ public interface OrderService extends BaseModelService<Order, Long> {
     Page<? extends Order> findByDescription(final String description, final PageRequest request);
 
     Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request);
-
-    HighlightPage<? extends Order> find(final String searchTerm, final Pageable page);
 }

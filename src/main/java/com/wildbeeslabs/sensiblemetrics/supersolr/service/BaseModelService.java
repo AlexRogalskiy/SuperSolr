@@ -25,6 +25,8 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 
 import java.io.Serializable;
 import java.util.regex.Pattern;
@@ -35,14 +37,14 @@ import java.util.regex.Pattern;
  * @param <E>  type of entity model
  * @param <ID> type of entity identifier
  */
-public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializable> extends BaseService<E, ID> {
+public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializable> extends AuditModelService<E, ID> {
 
     /**
      * Default search term delimiter
      */
     String DEFAULT_SEARСH_TERM_DELIMITER = StringUtils.SPACE;
     /**
-     * Default search term delimiter
+     * Default search term replacement
      */
     String DEFAULT_SEARСH_TERM_REPLACEMENT = StringUtils.EMPTY;
     /**
@@ -52,5 +54,5 @@ public interface BaseModelService<E extends BaseModel<ID>, ID extends Serializab
 
     void saveOrUpdate(final E target, final Class<? extends E> clazz);
 
-    long count(final String searchTerm);
+    HighlightPage<? extends E> find(final String searchTerm, final Pageable page);
 }

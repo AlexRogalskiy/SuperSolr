@@ -24,8 +24,8 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.ProductController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.utils.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.ProductView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.ProductService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
@@ -34,19 +34,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -64,36 +61,22 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Prod
     private ProductService productService;
 
     @GetMapping("/product/search")
-    public String search(final Model model,
-                         final @RequestParam(value = "q", required = false) String query,
-                         final @PageableDefault Pageable pageable,
-                         final HttpServletRequest request) {
-        log.info("Search by query: {}", query);
-        model.addAttribute("page", getService().findByTitle(query, pageable));
-        model.addAttribute("pageable", pageable);
-        model.addAttribute("query", query);
-        return "search";
+    @ResponseBody
+    public ResponseEntity<?> search(final @RequestParam(value = "q", required = false) String query,
+                                    final @PageableDefault Pageable pageable,
+                                    final HttpServletRequest request) {
+        log.info("Fetching products by query: {}", query);
+        final Page<? extends Product> productPage = getService().findByTitle(query, pageable);
+        return new ResponseEntity<>(MapperUtils.mapAll(productPage.getContent(), ProductView.class), getHeaders(productPage), HttpStatus.OK);
     }
 
     @GetMapping("/product/autocomplete")
     @ResponseBody
-    public ResponseEntity<?> autoComplete(final Model model,
-                                          final @RequestParam("term") String query,
+    public ResponseEntity<?> autoComplete(final @RequestParam("term") String searchTerm,
                                           final @PageableDefault(size = 1) Pageable pageable) {
-        log.info("Search autocomplete by query: {}", query);
-        if (!StringUtils.hasText(query)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        final Set<String> titles = new LinkedHashSet<>();
-        final FacetPage<? extends Product> result = getService().autocompleteTitleFragment(query, pageable);
-        result.getFacetResultPages().stream().forEach(page -> {
-            page.forEach(entry -> {
-                if (entry.getValue().contains(query)) {
-                    titles.add(entry.getValue());
-                }
-            });
-        });
-        return new ResponseEntity<>(MapperUtils.mapAll(titles, ProductView.class), getHeaders(result), HttpStatus.OK);
+        log.info("Fetching products by autocomplete search term: {}", searchTerm);
+        final FacetPage<? extends Product> productPage = getService().autoCompleteTitleFragment(searchTerm, pageable);
+        return new ResponseEntity<>(MapperUtils.mapAll(getResultSetByTerm(productPage, searchTerm), ProductView.class), getHeaders(productPage), HttpStatus.OK);
     }
 
     @GetMapping("/product/page")
@@ -103,25 +86,31 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Prod
             final @RequestParam String searchTerm,
             final @RequestParam(defaultValue = DEFAULT_OFFSET_VALUE) int offset,
             final @RequestParam(defaultValue = DEFAULT_LIMIT_VALUE) int limit) {
-        final HighlightPage<Product> page = (HighlightPage<Product>) getService().find(searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
+        log.info("Fetching products by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
+        final HighlightPage<Product> page = (HighlightPage<Product>) findBy(searchTerm, offset, limit);
         return new ResponseEntity<>(page
                 .stream()
-                .map(document -> getResult(document, page.getHighlights(document), ProductView.class))
+                .map(document -> getHighLightPageResult(document, page.getHighlights(document), ProductView.class))
                 .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 
     @GetMapping("/products")
     @ResponseBody
-    public Iterable<? extends Product> find() {
-        return getService().findAll();
+    public ResponseEntity<?> findAll() {
+        log.info("Fetching all products");
+        try {
+            return new ResponseEntity<>(MapperUtils.mapAll(this.getAllItems(), ProductView.class), HttpStatus.OK);
+        } catch (EmptyContentException ex) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @GetMapping("/product/{id}")
-    public String search(final Model model,
-                         final @PathVariable("id") String id,
-                         final HttpServletRequest request) {
-        model.addAttribute("product", getService().find(id));
-        return "product";
+    @ResponseBody
+    public ResponseEntity<?> search(final @PathVariable("id") String id,
+                                    final HttpServletRequest request) {
+        log.info("Fetching product by ID: {}", id);
+        return new ResponseEntity<>(MapperUtils.map(this.getItem(id), ProductView.class), HttpStatus.OK);
     }
 
     protected ProductService getService() {

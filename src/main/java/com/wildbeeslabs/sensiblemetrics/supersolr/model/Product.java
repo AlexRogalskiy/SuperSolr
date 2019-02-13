@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,10 +46,10 @@ import java.util.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(name = "products", catalog = "market_data",
-        indexes = {@Index(name = "product_category_idx", columnList = "product_id, category")}
+        indexes = {@Index(name = "product_category_idx", columnList = SearchableProduct.ID_FIELD_NAME + ", " + SearchableProduct.CATEGORY_FIELD_NAME)}
 )
 @AttributeOverrides({
-        @AttributeOverride(name = "id", column = @Column(name = SearchableProduct.ID_FIELD_NAME))
+        @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableProduct.ID_FIELD_NAME))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 @SolrDocument(solrCoreName = SearchableProduct.MODEL_ID)

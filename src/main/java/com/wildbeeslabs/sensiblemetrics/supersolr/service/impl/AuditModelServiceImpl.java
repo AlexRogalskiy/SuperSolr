@@ -21,26 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.repository.AuditModelRepository;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.AuditModelService;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 
 /**
- * Base model controller declaration
+ * Custom audit model service implementation
  *
  * @param <E>  type of entity model
- * @param <T>  type of entity view model
  * @param <ID> type of entity identifier
- * @author Alex
- * @version 1.0.0
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
+@Slf4j
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Transactional
+public abstract class AuditModelServiceImpl<E extends AuditModel, ID extends Serializable> extends BaseServiceImpl<E, ID> implements AuditModelService<E, ID> {
 
-    /**
-     * Default page size
-     */
-    int DEFAULT_PAGE_SIZE = 10;
+    @Autowired
+    private SolrTemplate solrTemplate;
+
+    @Override
+    @Transactional(readOnly = true)
+    public long count(final String searchTerm) {
+        return getRepository().count(searchTerm);
+    }
+
+    protected SolrTemplate getSolrTemplate() {
+        return this.solrTemplate;
+    }
+
+    protected abstract AuditModelRepository<E, ID> getRepository();
 }

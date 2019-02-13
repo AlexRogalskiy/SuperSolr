@@ -23,28 +23,19 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.repository.Score;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Objects;
-
-import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
 /**
  * Custom full-text search base model
@@ -53,14 +44,11 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
  */
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode
-@ToString
-@DynamicInsert
-@DynamicUpdate
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @MappedSuperclass
-@ChronologicalDates
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseModel<ID extends Serializable> implements SearchableModel, Persistable<ID>, Serializable {
+public abstract class BaseModel<ID extends Serializable> extends AuditModel implements SearchableBaseModel, Persistable<ID> {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -70,54 +58,13 @@ public abstract class BaseModel<ID extends Serializable> implements SearchableMo
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    @Indexed(name = "id")
+    @Column(name = SearchableBaseModel.ID_FIELD_NAME, unique = true, nullable = false)
+    @Indexed(name = SearchableBaseModel.ID_FIELD_NAME)
     private ID id;
 
-    @CreationTimestamp
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
-    @Column(name = SearchableModel.CREATED_FIELD_NAME, nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @Indexed(SearchableModel.CREATED_FIELD_NAME)
-    private Date created;
-
-    @CreatedBy
-    @NotNull(message = "Field <createdBy> cannot be blank")
-    @Column(name = SearchableModel.CREATED_BY_FIELD_NAME, nullable = false, updatable = false)
-    @Indexed(SearchableModel.CREATED_BY_FIELD_NAME)
-    private String createdBy;
-
-    @UpdateTimestamp
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
-    @Column(name = SearchableModel.CHANGED_FIELD_NAME, insertable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @Indexed(SearchableModel.CHANGED_FIELD_NAME)
-    private Date changed;
-
-    @LastModifiedBy
-    @Column(name = SearchableModel.CHANGED_BY_FIELD_NAME, insertable = false)
-    @Indexed(SearchableModel.CHANGED_BY_FIELD_NAME)
-    private String changedBy;
-
-    @Version
-    @ColumnDefault("0")
-    @Column(name = SearchableModel.VERSION_BY_FIELD_NAME, insertable = false, updatable = false)
-    //@Generated(GenerationTime.ALWAYS)
-    @Indexed(SearchableModel.VERSION_BY_FIELD_NAME)
-    private Long version;
-
     @Score
+    @Column(name = SearchableBaseModel.SCORE_FIELD_NAME)
     private float score;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdBy = getClass().getName();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.changedBy = getClass().getName();
-    }
 
     @Override
     public boolean isNew() {

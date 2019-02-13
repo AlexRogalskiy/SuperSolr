@@ -21,26 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.AuditModelController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.AuditModelView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.AuditModelService;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 
 import java.io.Serializable;
 
 /**
- * Base model controller declaration
+ * Audit model controller implementation
  *
  * @param <E>  type of entity model
  * @param <T>  type of entity view model
  * @param <ID> type of entity identifier
- * @author Alex
- * @version 1.0.0
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
+@Slf4j
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public abstract class AuditModelControllerImpl<E extends AuditModel, T extends AuditModelView, ID extends Serializable> extends BaseControllerImpl<E, T, ID> implements AuditModelController<E, T, ID> {
 
-    /**
-     * Default page size
-     */
-    int DEFAULT_PAGE_SIZE = 10;
+    protected HttpHeaders getHeaders(final Page<?> page) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Elements", Long.toString(page.getTotalElements()));
+        return headers;
+    }
+
+    protected abstract AuditModelService<E, ID> getService();
 }

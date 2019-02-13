@@ -38,7 +38,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 /**
- * Custom cateogory repository
+ * Custom category repository declaration
  */
 @Repository
 public interface CategoryRepository extends BaseModelRepository<Category, String> {

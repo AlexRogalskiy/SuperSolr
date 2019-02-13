@@ -28,16 +28,17 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrd
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.Query.Operator;
+import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
- * Custom order repository
+ * Custom order repository declaration
  */
 @Repository
 public interface OrderRepository extends BaseModelRepository<Order, Long> {
 
-    @Query("description:*?0*")
+    @Query(name = "Order.findByDescription")
     Page<? extends Order> findByDescription(final String description, final Pageable pageable);
 
     @Query(fields = {
@@ -45,5 +46,5 @@ public interface OrderRepository extends BaseModelRepository<Order, Long> {
             SearchableOrder.DESCRIPTION_FIELD_NAME,
             SearchableOrder.TITLE_FIELD_NAME
     }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByCustomQuery(final String searchTerm, final Pageable pageable);
+    Page<? extends Order> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 }

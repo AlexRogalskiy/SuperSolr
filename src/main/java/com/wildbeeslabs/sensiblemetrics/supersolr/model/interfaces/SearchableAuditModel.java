@@ -21,26 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
-
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
-
-import java.io.Serializable;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Base model controller declaration
- *
- * @param <E>  type of entity model
- * @param <T>  type of entity view model
- * @param <ID> type of entity identifier
- * @author Alex
- * @version 1.0.0
+ * Default searchable audit definition
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
+public interface SearchableAuditModel {
 
     /**
-     * Default page size
+     * Default document ID
      */
-    int DEFAULT_PAGE_SIZE = 10;
+    String MODEL_ID = "AuditModel";
+
+    /**
+     * Default field names
+     */
+    String CREATED_FIELD_NAME = "created";
+    String CHANGED_FIELD_NAME = "changed";
+    String CREATED_BY_FIELD_NAME = "createdBy";
+    String CHANGED_BY_FIELD_NAME = "changedBy";
+    String VERSION_BY_FIELD_NAME = "version";
 }

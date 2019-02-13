@@ -29,7 +29,7 @@ import org.springframework.data.solr.repository.SolrCrudRepository;
 import java.io.Serializable;
 
 /**
- * Custom base repository
+ * Custom base repository declaration
  *
  * @param <E>  type of entity model
  * @param <ID> type of entity identifier

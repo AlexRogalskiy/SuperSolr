@@ -24,29 +24,26 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.CategoryController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.utils.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.CategoryView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -64,36 +61,22 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
     private CategoryService categoryService;
 
     @GetMapping("/category/search")
-    public String search(final Model model,
-                         final @RequestParam(value = "q", required = false) String query,
-                         final @PageableDefault Pageable pageable,
-                         final HttpServletRequest request) {
-        log.info("Search by query: {}", query);
-        model.addAttribute("page", getService().findByTitle(query, pageable));
-        model.addAttribute("pageable", pageable);
-        model.addAttribute("query", query);
-        return "search";
+    @ResponseBody
+    public ResponseEntity<?> search(final @RequestParam(value = "q", required = false) String query,
+                                    final @PageableDefault Pageable pageable,
+                                    final HttpServletRequest request) {
+        log.info("Fetching categories by query: {}", query);
+        final Page<? extends Category> categoryPage = getService().findByTitle(query, pageable);
+        return new ResponseEntity<>(MapperUtils.mapAll(categoryPage.getContent(), CategoryView.class), getHeaders(categoryPage), HttpStatus.OK);
     }
 
     @GetMapping("/category/autocomplete")
     @ResponseBody
-    public Set<String> autoComplete(final Model model,
-                                    final @RequestParam("term") String query,
-                                    final @PageableDefault(size = 1) Pageable pageable) {
-        log.info("Search autocomplete by query: {}", query);
-        if (!StringUtils.hasText(query)) {
-            return Collections.emptySet();
-        }
-        final Set<String> titles = new LinkedHashSet<>();
-        final FacetPage<? extends Category> result = getService().autocompleteTitleFragment(query, pageable);
-        result.getFacetResultPages().stream().forEach(page -> {
-            page.forEach(entry -> {
-                if (entry.getValue().contains(query)) {
-                    titles.add(entry.getValue());
-                }
-            });
-        });
-        return titles;
+    public ResponseEntity<?> autoComplete(final @RequestParam("term") String searchTerm,
+                                          final @PageableDefault(size = 1) Pageable pageable) {
+        log.info("Fetching categories by autocomplete search term: {}", searchTerm);
+        final FacetPage<? extends Category> categoryPage = getService().autoCompleteTitleFragment(searchTerm, pageable);
+        return new ResponseEntity<>(MapperUtils.mapAll(getResultSetByTerm(categoryPage, searchTerm), CategoryView.class), getHeaders(categoryPage), HttpStatus.OK);
     }
 
     @GetMapping("/category/page")
@@ -103,25 +86,31 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
             final @RequestParam String searchTerm,
             final @RequestParam(defaultValue = DEFAULT_OFFSET_VALUE) int offset,
             final @RequestParam(defaultValue = DEFAULT_LIMIT_VALUE) int limit) {
-        final HighlightPage<Category> page = (HighlightPage<Category>) getService().find(searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
+        log.info("Fetching categories by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
+        final HighlightPage<Category> page = (HighlightPage<Category>) findBy(searchTerm, offset, limit);
         return new ResponseEntity<>(page
                 .stream()
-                .map(document -> getResult(document, page.getHighlights(document), CategoryView.class))
+                .map(document -> getHighLightPageResult(document, page.getHighlights(document), CategoryView.class))
                 .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 
     @GetMapping("/categories")
     @ResponseBody
-    public Iterable<? extends Category> find() {
-        return getService().findAll();
+    public ResponseEntity<?> findAll() {
+        log.info("Fetching all categories");
+        try {
+            return new ResponseEntity<>(MapperUtils.mapAll(this.getAllItems(), CategoryView.class), HttpStatus.OK);
+        } catch (EmptyContentException ex) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @GetMapping("/category/{id}")
-    public String search(final Model model,
-                         final @PathVariable("id") String id,
-                         final HttpServletRequest request) {
-        model.addAttribute("category", getService().find(id));
-        return "category";
+    @ResponseBody
+    public ResponseEntity<?> search(final @PathVariable("id") String id,
+                                    final HttpServletRequest request) {
+        log.info("Fetching category by ID: {}", id);
+        return new ResponseEntity<>(MapperUtils.map(this.getItem(id), CategoryView.class), HttpStatus.OK);
     }
 
     protected CategoryService getService() {

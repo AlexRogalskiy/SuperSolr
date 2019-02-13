@@ -21,26 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.BaseModelView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
 
 /**
- * Base model controller declaration
+ * Custom audit model repository declaration
  *
  * @param <E>  type of entity model
- * @param <T>  type of entity view model
  * @param <ID> type of entity identifier
- * @author Alex
- * @version 1.0.0
  */
-public interface BaseModelController<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends BaseController<E, T, ID> {
+@NoRepositoryBean
+public interface AuditModelRepository<E extends AuditModel, ID extends Serializable> extends BaseRepository<E, ID> {
 
-    /**
-     * Default page size
-     */
-    int DEFAULT_PAGE_SIZE = 10;
+    long count(final String searchTerm);
 }

@@ -26,7 +26,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.CategoryRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -76,7 +75,7 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
 
     @Override
     @Transactional(readOnly = true)
-    public FacetPage<? extends Category> autocompleteTitleFragment(final String fragment, final Pageable pageable) {
+    public FacetPage<? extends Category> autoCompleteTitleFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
