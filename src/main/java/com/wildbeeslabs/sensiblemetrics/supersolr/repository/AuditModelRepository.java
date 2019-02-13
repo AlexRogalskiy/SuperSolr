@@ -27,6 +27,9 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Custom audit model repository declaration
@@ -36,6 +39,12 @@ import java.io.Serializable;
  */
 @NoRepositoryBean
 public interface AuditModelRepository<E extends AuditModel, ID extends Serializable> extends BaseRepository<E, ID> {
+
+    CompletableFuture<List<? extends E>> findByCreatedAtLessThanEqual(final Date date);
+
+    CompletableFuture<List<? extends E>> findByCreatedAtGreaterThan(final Date date);
+
+    CompletableFuture<List<? extends E>> findByCreatedAtBetween(final Date dateFrom, final Date dateTo);
 
     long count(final String searchTerm);
 }
