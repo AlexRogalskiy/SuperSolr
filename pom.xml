@@ -151,6 +151,7 @@
         <joda-time.version>2.10.1</joda-time.version>
         <solrj.version>7.7.0</solrj.version>
         <modelmapper.version>1.1.0</modelmapper.version>
+        <jedis.version>3.0.0</jedis.version>
 
         <validation-api.version>2.0.1.Final</validation-api.version>
         <javax.persistence.version>2.2</javax.persistence.version>
@@ -200,6 +201,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <version>${spring-boot-starter.version}</version>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${spring-boot-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -457,6 +463,13 @@
             <artifactId>solr-test-framework</artifactId>
             <version>${solrj.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Redis library dependencies -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
         </dependency>
     </dependencies>
 

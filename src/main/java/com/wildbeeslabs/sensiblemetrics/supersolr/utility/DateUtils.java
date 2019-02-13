@@ -45,6 +45,10 @@ import java.util.TimeZone;
 public class DateUtils {
 
     /**
+     * Default date format locale
+     */
+    public static final String DEFAULT_DATE_FORMAT_LOCALE = "de_DE";
+    /**
      * Default date format pattern
      */
     public static final String DEFAULT_DATE_FORMAT_PATTERN_EXT = "yyyy-MM-dd HH:mm:ssZ";

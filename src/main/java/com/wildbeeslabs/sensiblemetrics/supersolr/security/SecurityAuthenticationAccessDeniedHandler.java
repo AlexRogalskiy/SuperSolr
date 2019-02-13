@@ -23,22 +23,22 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.security;
 
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Custom security authentication failure handler implementation
+ * Custom security authentication access denied handler implementation
  */
-public class SecurityAuthenticationFailureHandler implements AuthenticationFailureHandler {
-
-    protected static final String STATUS_MESSAGE_AUTHENTICATION_FAILED = "Bad credentials";
+@Component("customAccessDeniedHandler")
+public class SecurityAuthenticationAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, STATUS_MESSAGE_AUTHENTICATION_FAILED);
+    public void handle(final HttpServletRequest request, final HttpServletResponse response, final AccessDeniedException ex) throws IOException {
+        response.sendRedirect("/denied");
     }
 }

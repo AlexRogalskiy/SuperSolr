@@ -34,9 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SecurityLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
-    public void onLogoutSuccess(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                final Authentication authentication) {
+    public void onLogoutSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }

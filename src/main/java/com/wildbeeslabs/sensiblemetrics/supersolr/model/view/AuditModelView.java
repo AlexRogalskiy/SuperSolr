@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -33,6 +34,9 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_LOCALE;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
 /**
  * Custom audit model view
@@ -51,6 +55,7 @@ public class AuditModelView implements Serializable {
 
     @JacksonXmlProperty(localName = "createdAt")
     @JsonProperty("createdAt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT, locale = DEFAULT_DATE_FORMAT_LOCALE)
     private Date created;
 
     @JacksonXmlProperty(localName = "createdBy")
@@ -59,6 +64,7 @@ public class AuditModelView implements Serializable {
 
     @JacksonXmlProperty(localName = "changedAt")
     @JsonProperty("changedAt")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT, locale = DEFAULT_DATE_FORMAT_LOCALE)
     private Date changed;
 
     @JacksonXmlProperty(localName = "changedBy")
