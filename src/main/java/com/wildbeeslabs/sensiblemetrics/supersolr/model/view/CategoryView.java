@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.interfaces.ExposableCategoryView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -47,25 +47,29 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JacksonXmlRootElement(localName = SearchableCategory.MODEL_ID)
-public class CategoryView extends BaseModelView<String> {
+@JacksonXmlRootElement(localName = ExposableCategoryView.VIEW_ID)
+public class CategoryView extends BaseModelView<String> implements ExposableCategoryView {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -878245565646636436L;
 
-    @JacksonXmlProperty(localName = "title")
-    @JsonProperty("title")
+    @JacksonXmlProperty(localName = INDEX_FIELD_NAME)
+    @JsonProperty(INDEX_FIELD_NAME)
+    private Integer index;
+
+    @JacksonXmlProperty(localName = TITLE_FIELD_NAME)
+    @JsonProperty(TITLE_FIELD_NAME)
     private String title;
 
-    @JacksonXmlProperty(localName = "description")
-    @JsonProperty("description")
+    @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
+    @JsonProperty(DESCRIPTION_FIELD_NAME)
     private String description;
 
-    @JsonProperty("products")
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = "products")
+    @JacksonXmlProperty(localName = PRODUCTS_FIELD_NAME)
+    @JsonProperty(PRODUCTS_FIELD_NAME)
     private final Set<ProductView> products = new HashSet<>();
 
     public void setProducts(final List<? extends ProductView> products) {

@@ -59,9 +59,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends BaseModelView<ID>, ID extends Serializable> extends AuditModelControllerImpl<E, T, ID> implements BaseModelController<E, T, ID> {
 
     @Override
-    public E updateItem(final ID id,
-                        final T itemDto,
-                        final Class<? extends E> entityClass) {
+    public E updateItem(final ID id, final T itemDto, final Class<? extends E> entityClass) {
         final Optional<? extends E> currentItem = getService().find(id);
         if (!currentItem.isPresent()) {
             throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
@@ -71,9 +69,7 @@ public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends
         return currentItem.get();
     }
 
-    protected T getHighLightPageResult(final E entity,
-                                       final List<HighlightEntry.Highlight> highlights,
-                                       final Class<? extends T> dtoClass) {
+    protected T getHighLightSearchResult(final E entity, final List<HighlightEntry.Highlight> highlights, final Class<? extends T> dtoClass) {
         final Map<String, List<String>> highlightMap = highlights
                 .stream()
                 .collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
@@ -102,10 +98,23 @@ public abstract class BaseModelControllerImpl<E extends BaseModel<ID>, T extends
             return Collections.emptyMap();
         }
         final Map<String, Long> resultMap = new HashMap<>();
-        facetPage.getAllFacets().stream().forEach(page -> page.forEach(facetEntry -> {
-            resultMap.put(facetEntry.getValue(), facetEntry.getValueCount());
-        }));
+        facetPage.getAllFacets()
+                .stream()
+                .forEach(page -> page.forEach(facetEntry -> {
+                    resultMap.put(facetEntry.getValue(), facetEntry.getValueCount());
+                }));
         return resultMap;
+    }
+
+    protected List<String> getHighLightSearchSnipplets(final HighlightPage<? extends E> highlightPage) {
+        final List<String> resultList = new ArrayList<>();
+        highlightPage.getContent();
+        highlightPage.getHighlighted().stream().forEach(content -> {
+            content.getHighlights().forEach(highlight -> {
+                resultList.addAll(highlight.getSnipplets());
+            });
+        });
+        return resultList;
     }
 
     protected HighlightPage<? extends E> findBy(

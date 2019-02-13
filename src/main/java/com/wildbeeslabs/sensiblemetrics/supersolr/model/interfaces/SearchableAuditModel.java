@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Default searchable audit definition
+ * Searchable audit model definition
  */
 public interface SearchableAuditModel {
 

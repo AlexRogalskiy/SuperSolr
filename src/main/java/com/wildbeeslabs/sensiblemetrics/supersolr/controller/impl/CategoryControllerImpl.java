@@ -90,7 +90,7 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
         final HighlightPage<Category> page = (HighlightPage<Category>) findBy(searchTerm, offset, limit);
         return new ResponseEntity<>(page
                 .stream()
-                .map(document -> getHighLightPageResult(document, page.getHighlights(document), CategoryView.class))
+                .map(document -> getHighLightSearchResult(document, page.getHighlights(document), CategoryView.class))
                 .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 

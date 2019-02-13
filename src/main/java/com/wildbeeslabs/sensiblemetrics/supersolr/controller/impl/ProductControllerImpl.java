@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
 
 /**
- * Custom product controller implementation
+ * Custom product REST controller implementation
  */
 @Slf4j
 @NoArgsConstructor
@@ -90,7 +90,7 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Prod
         final HighlightPage<Product> page = (HighlightPage<Product>) findBy(searchTerm, offset, limit);
         return new ResponseEntity<>(page
                 .stream()
-                .map(document -> getHighLightPageResult(document, page.getHighlights(document), ProductView.class))
+                .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
                 .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 

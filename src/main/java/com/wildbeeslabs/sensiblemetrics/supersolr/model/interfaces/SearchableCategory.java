@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Default searchable category model definition
+ * Searchable category model definition
  */
 public interface SearchableCategory {
 
@@ -37,6 +37,7 @@ public interface SearchableCategory {
      * Default field names
      */
     String ID_FIELD_NAME = "id";
+    String INDEX_FIELD_NAME = "index";
     String TITLE_FIELD_NAME = "title";
     String DESCRIPTION_FIELD_NAME = "description";
     String CATEGORY_FIELD_NAME = "category";

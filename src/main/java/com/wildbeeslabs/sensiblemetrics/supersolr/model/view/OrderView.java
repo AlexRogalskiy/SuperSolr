@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.interfaces.ExposableOrderView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -41,19 +41,19 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JacksonXmlRootElement(localName = SearchableOrder.MODEL_ID)
-public class OrderView extends BaseModelView<Long> {
+@JacksonXmlRootElement(localName = ExposableOrderView.VIEW_ID)
+public class OrderView extends BaseModelView<Long> implements ExposableOrderView {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -5143268414907649969L;
 
-    @JacksonXmlProperty(localName = "title")
-    @JsonProperty("title")
+    @JacksonXmlProperty(localName = TITLE_FIELD_NAME)
+    @JsonProperty(TITLE_FIELD_NAME)
     private String title;
 
-    @JacksonXmlProperty(localName = "description")
-    @JsonProperty("description")
+    @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
+    @JsonProperty(DESCRIPTION_FIELD_NAME)
     private String description;
 }

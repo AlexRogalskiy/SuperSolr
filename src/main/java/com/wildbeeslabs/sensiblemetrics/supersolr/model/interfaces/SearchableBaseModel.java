@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Default searchable base model definition
+ * Searchable base model definition
  */
 public interface SearchableBaseModel {
 

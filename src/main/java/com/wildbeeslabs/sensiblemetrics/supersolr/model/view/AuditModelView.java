@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.interfaces.ExposableAuditModelView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -46,28 +47,28 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @EqualsAndHashCode
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuditModelView implements Serializable {
+public class AuditModelView implements ExposableAuditModelView, Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -3372313387648971848L;
 
-    @JacksonXmlProperty(localName = "createdAt")
-    @JsonProperty("createdAt")
+    @JacksonXmlProperty(localName = CREATED_FIELD_NAME)
+    @JsonProperty(CREATED_FIELD_NAME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT, locale = DEFAULT_DATE_FORMAT_LOCALE)
     private Date created;
 
-    @JacksonXmlProperty(localName = "createdBy")
-    @JsonProperty("createdBy")
+    @JacksonXmlProperty(localName = CREATED_BY_FIELD_NAME)
+    @JsonProperty(CREATED_BY_FIELD_NAME)
     private String createdBy;
 
-    @JacksonXmlProperty(localName = "changedAt")
-    @JsonProperty("changedAt")
+    @JacksonXmlProperty(localName = CHANGED_FIELD_NAME)
+    @JsonProperty(CHANGED_FIELD_NAME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT, locale = DEFAULT_DATE_FORMAT_LOCALE)
     private Date changed;
 
-    @JacksonXmlProperty(localName = "changedBy")
-    @JsonProperty("changedBy")
+    @JacksonXmlProperty(localName = CHANGED_BY_FIELD_NAME)
+    @JsonProperty(CHANGED_BY_FIELD_NAME)
     private String changedBy;
 }

@@ -61,17 +61,20 @@ public class Category extends BaseModel<String> implements SearchableCategory {
      */
     private static final long serialVersionUID = -107452074862198456L;
 
-    @Indexed(name = SearchableCategory.TITLE_FIELD_NAME, type = "string")
+    @Indexed(name = INDEX_FIELD_NAME)
+    private Integer index;
+
+    @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;
 
-    @Indexed(name = SearchableCategory.DESCRIPTION_FIELD_NAME, type = "string")
+    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
     private String description;
 
-    @OneToMany(mappedBy = SearchableCategory.CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @Column(name = SearchableCategory.PRODUCTS_FIELD_NAME, nullable = false)
+    @OneToMany(mappedBy = CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @Column(name = PRODUCTS_FIELD_NAME, nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @BatchSize(size = 10)
-    @Indexed(name = SearchableCategory.PRODUCTS_FIELD_NAME)
+    @Indexed(name = PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final List<? extends Product> products) {

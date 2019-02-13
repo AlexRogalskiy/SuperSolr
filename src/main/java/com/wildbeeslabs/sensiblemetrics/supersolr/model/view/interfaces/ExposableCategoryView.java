@@ -21,29 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.view.interfaces;
 
 /**
- * Searchable product model definition
+ * Custom exposable category model view definition
  */
-public interface SearchableProduct {
+public interface ExposableCategoryView {
 
     /**
-     * Default document ID
+     * Default view ID
      */
-    String MODEL_ID = "Product";
+    String VIEW_ID = "category";
 
     /**
      * Default field names
      */
-    String ID_FIELD_NAME = "id";
+    String INDEX_FIELD_NAME = "index";
     String TITLE_FIELD_NAME = "title";
     String DESCRIPTION_FIELD_NAME = "description";
-    String AVAILABLE_FIELD_NAME = "inStock";
-    String LOCATION_FIELD_NAME = "store";
-    String CATEGORY_FIELD_NAME = "category";
-    String PRICE_FIELD_NAME = "price";
-    String FEATURES_FIELD_NAME = "features";
-    String RATING_FIELD_NAME = "rating";
-    String ORDERS_FIELD_NAME = "orders";
+    String PRODUCTS_FIELD_NAME = "products";
 }

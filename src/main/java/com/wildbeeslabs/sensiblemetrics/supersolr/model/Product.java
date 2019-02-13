@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +37,10 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Custom full-text search product document model
@@ -71,7 +75,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     private boolean available;
 
     @Indexed(name = FEATURES_FIELD_NAME)
-    private final List<String> features = new ArrayList<>();
+    private final Set<String> features = new HashSet<>();
 
     @Indexed(name = PRICE_FIELD_NAME)
     private double price;
@@ -91,10 +95,10 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "Product_Order",
-            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "order_id", referencedColumnName = "id")}
+            joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
+            inverseJoinColumns = {@JoinColumn(name = SearchableOrder.ID_FIELD_NAME, referencedColumnName = SearchableOrder.ID_FIELD_NAME)}
     )
-    @Indexed(name = SearchableProduct.ORDERS_FIELD_NAME)
+    @Indexed(name = ORDERS_FIELD_NAME)
     private final Set<Order> orders = new HashSet<>();
 
     public void setFeatures(final List<String> features) {
@@ -110,7 +114,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
         }
     }
 
-    public void setOrders(final Set<Order> orders) {
+    public void setOrders(final List<Order> orders) {
         this.orders.clear();
         if (Objects.nonNull(orders)) {
             this.orders.addAll(orders);

@@ -64,34 +64,34 @@ public abstract class AuditModel implements SearchableAuditModel, Serializable {
 
     @CreationTimestamp
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
-    @Column(name = SearchableAuditModel.CREATED_FIELD_NAME, nullable = false, updatable = false)
+    @Column(name = CREATED_FIELD_NAME, nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @Indexed(SearchableAuditModel.CREATED_FIELD_NAME)
+    @Indexed(CREATED_FIELD_NAME)
     private Date created;
 
     @CreatedBy
     @NotNull(message = "Field <createdBy> cannot be blank")
-    @Column(name = SearchableAuditModel.CREATED_BY_FIELD_NAME, nullable = false, updatable = false)
-    @Indexed(SearchableAuditModel.CREATED_BY_FIELD_NAME)
+    @Column(name = CREATED_BY_FIELD_NAME, nullable = false, updatable = false)
+    @Indexed(CREATED_BY_FIELD_NAME)
     private String createdBy;
 
     @UpdateTimestamp
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
-    @Column(name = SearchableAuditModel.CHANGED_FIELD_NAME, insertable = false)
+    @Column(name = CHANGED_FIELD_NAME, insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @Indexed(SearchableAuditModel.CHANGED_FIELD_NAME)
+    @Indexed(CHANGED_FIELD_NAME)
     private Date changed;
 
     @LastModifiedBy
-    @Column(name = SearchableAuditModel.CHANGED_BY_FIELD_NAME, insertable = false)
-    @Indexed(SearchableAuditModel.CHANGED_BY_FIELD_NAME)
+    @Column(name = CHANGED_BY_FIELD_NAME, insertable = false)
+    @Indexed(CHANGED_BY_FIELD_NAME)
     private String changedBy;
 
     @Version
     @ColumnDefault("0")
-    @Column(name = SearchableAuditModel.VERSION_BY_FIELD_NAME, insertable = false, updatable = false)
+    @Column(name = VERSION_BY_FIELD_NAME, insertable = false, updatable = false)
     //@Generated(GenerationTime.ALWAYS)
-    @Indexed(SearchableAuditModel.VERSION_BY_FIELD_NAME)
+    @Indexed(VERSION_BY_FIELD_NAME)
     private Long version;
 
     @PrePersist

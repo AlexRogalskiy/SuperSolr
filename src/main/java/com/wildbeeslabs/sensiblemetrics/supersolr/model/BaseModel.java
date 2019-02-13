@@ -58,12 +58,12 @@ public abstract class BaseModel<ID extends Serializable> extends AuditModel impl
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = SearchableBaseModel.ID_FIELD_NAME, unique = true, nullable = false)
-    @Indexed(name = SearchableBaseModel.ID_FIELD_NAME)
+    @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
+    @Indexed(name = ID_FIELD_NAME)
     private ID id;
 
     @Score
-    @Column(name = SearchableBaseModel.SCORE_FIELD_NAME)
+    @Column(name = SCORE_FIELD_NAME)
     private float score;
 
     @Override
