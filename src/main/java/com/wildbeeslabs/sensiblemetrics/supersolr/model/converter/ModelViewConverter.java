@@ -36,11 +36,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Custom model converter implementation
+ * Custom model view converter implementation
  */
 @Slf4j
 @Component
-public class ModelConverter {
+public class ModelViewConverter {
 
     @Autowired
     private ModelMapper modelMapper;
