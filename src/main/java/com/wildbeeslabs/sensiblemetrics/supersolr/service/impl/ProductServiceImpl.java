@@ -115,7 +115,8 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
             conditions = conditions
                     .or(new Criteria(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(term));
+                    .or(new Criteria(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(term))
+                    .or(new Criteria(SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME).contains(term));
         }
         return conditions;
     }

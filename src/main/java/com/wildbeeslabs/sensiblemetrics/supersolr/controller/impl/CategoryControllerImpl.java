@@ -35,6 +35,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -44,6 +45,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -111,6 +113,16 @@ public class CategoryControllerImpl extends BaseModelControllerImpl<Category, Ca
                                     final HttpServletRequest request) {
         log.info("Fetching category by ID: {}", id);
         return new ResponseEntity<>(MapperUtils.map(this.getItem(id), CategoryView.class), HttpStatus.OK);
+    }
+
+    @GetMapping("/category/desc/{description}/{page}")
+    @ResponseBody
+    public ResponseEntity<?> findByDescription(
+            final @PathVariable String description,
+            final @PathVariable int page) {
+        log.info("Fetching category by description: {}, page: {}", description, page);
+        final List<? extends CategoryView> categoryViews = MapperUtils.mapAll(getService().findByDescription(description, PageRequest.of(page, 2)).getContent(), CategoryView.class);
+        return new ResponseEntity<>(categoryViews, HttpStatus.OK);
     }
 
     protected CategoryService getService() {

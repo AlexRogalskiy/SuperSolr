@@ -33,10 +33,9 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.ATTRIBUTES_FIELD_NAME;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Custom full-text search attribute document model
@@ -53,7 +52,37 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.Search
 @SolrDocument(solrCoreName = SearchableAttribute.MODEL_ID)
 public class Attribute extends BaseModel<String> implements SearchableAttribute {
 
-    @ManyToMany(mappedBy = ATTRIBUTES_FIELD_NAME)
-    @Indexed(name = ATTRIBUTES_FIELD_NAME)
-    private final Set<Attribute> attributes = new HashSet<>();
+    /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = -2796804385398260344L;
+
+    @Indexed(name = NAME_FIELD_NAME, type = "string")
+    private String name;
+
+    @Indexed(name = SYNONYM_FIELD_NAME, type = "string")
+    private String name2;
+
+    @Indexed(name = DESCRIPTION_TEXT_FIELD_NAME, type = "string")
+    private String descriptionText;
+
+    @Indexed(name = KEYWORDS_FIELD_NAME, type = "string")
+    private String keywords;
+
+    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME)
+    @Indexed(name = PRODUCTS_FIELD_NAME)
+    private final List<Product> products = new ArrayList<>();
+
+    public void setProducts(final List<? extends Product> products) {
+        this.products.clear();
+        if (Objects.nonNull(products)) {
+            this.products.addAll(products);
+        }
+    }
+
+    public void addProduct(final Product product) {
+        if (Objects.nonNull(product)) {
+            this.products.add(product);
+        }
+    }
 }

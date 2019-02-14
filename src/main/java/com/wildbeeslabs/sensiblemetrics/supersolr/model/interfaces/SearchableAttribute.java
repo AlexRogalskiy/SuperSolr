@@ -38,5 +38,8 @@ public interface SearchableAttribute {
      */
     String ID_FIELD_NAME = "id";
     String NAME_FIELD_NAME = "name";
-    String SHORT_DESCRIPTION_FIELD_NAME = "shortDescription";
+    String SYNONYM_FIELD_NAME = "synonym";
+    String DESCRIPTION_TEXT_FIELD_NAME = "descriptionText";
+    String KEYWORDS_FIELD_NAME = "keywords";
+    String PRODUCTS_FIELD_NAME = "products";
 }

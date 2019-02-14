@@ -42,5 +42,7 @@ public interface CategoryService extends BaseModelService<Category, String> {
 
     Page<? extends Category> findByTitles(final String titles, final Pageable pageable);
 
+    Page<? extends Category> findByDescription(final String description, final Pageable pageable);
+
     FacetPage<? extends Category> autoCompleteTitleFragment(final String fragment, final Pageable pageable);
 }

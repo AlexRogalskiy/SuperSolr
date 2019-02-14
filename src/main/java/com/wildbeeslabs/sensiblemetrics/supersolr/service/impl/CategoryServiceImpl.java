@@ -75,6 +75,12 @@ public class CategoryServiceImpl extends BaseModelServiceImpl<Category, String> 
 
     @Override
     @Transactional(readOnly = true)
+    public Page<? extends Category> findByDescription(final String description, final Pageable pageable) {
+        return getRepository().findByDescription(description, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public FacetPage<? extends Category> autoCompleteTitleFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());

@@ -37,6 +37,8 @@ public interface ExposableAttributetView {
      * Default field names
      */
     String NAME_FIELD_NAME = "name";
+    String SYNONYM_FIELD_NAME = "synonym";
+    String DESCRIPTION_TEXT_FIELD_NAME = "descriptionText";
+    String KEYWORDS_FIELD_NAME = "keywords";
     String PRODUCTS_FIELD_NAME = "products";
-    String LONG_DESCRIPTION_FIELD_NAME = "longDescription";
 }

@@ -90,6 +90,10 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
     @JsonProperty(PRICE_FIELD_NAME)
     private double price;
 
+    @JacksonXmlProperty(localName = RECOMMENDE_PRICE_FIELD_NAME)
+    @JsonProperty(RECOMMENDE_PRICE_FIELD_NAME)
+    private double recommendedPrice;
+
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = CATEGORIES_FIELD_NAME)
     @JsonProperty(CATEGORIES_FIELD_NAME)

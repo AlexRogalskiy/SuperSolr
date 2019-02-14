@@ -45,6 +45,7 @@ public interface ExposableProductView {
     String AVAILABLE_FIELD_NAME = "inStock";
     String ATTRIBUTES_FIELD_NAME = "attributes";
     String PRICE_FIELD_NAME = "price";
+    String RECOMMENDE_PRICE_FIELD_NAME = "recommendedPrice";
     String CATEGORIES_FIELD_NAME = "categories";
     String MAIN_CATEGORIES_FIELD_NAME = "mainCategories";
     String RATING_FIELD_NAME = "rating";

@@ -49,6 +49,27 @@ import java.util.Objects;
 @JacksonXmlRootElement(localName = ExposableAttributetView.VIEW_ID)
 public class AttributeView extends BaseModelView<String> implements ExposableAttributetView {
 
+    /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = -6304630916069644472L;
+
+    @JacksonXmlProperty(localName = NAME_FIELD_NAME)
+    @JsonProperty(NAME_FIELD_NAME)
+    private String name;
+
+    @JacksonXmlProperty(localName = SYNONYM_FIELD_NAME)
+    @JsonProperty(SYNONYM_FIELD_NAME)
+    private String name2;
+
+    @JacksonXmlProperty(localName = DESCRIPTION_TEXT_FIELD_NAME)
+    @JsonProperty(DESCRIPTION_TEXT_FIELD_NAME)
+    private String descriptionText;
+
+    @JacksonXmlProperty(localName = KEYWORDS_FIELD_NAME)
+    @JsonProperty(KEYWORDS_FIELD_NAME)
+    private String keywords;
+
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = PRODUCTS_FIELD_NAME)
     @JsonProperty(PRODUCTS_FIELD_NAME)

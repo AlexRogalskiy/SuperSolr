@@ -84,6 +84,9 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     @Indexed(name = PRICE_FIELD_NAME)
     private double price;
 
+    @Indexed(name = RECOMMENDED_PRICE_FIELD_NAME)
+    private double recommendedPrice;
+
 //    @Indexed(name = CATEGORY_FIELD_NAME)
 //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
 //    @Fetch(FetchMode.SELECT)
@@ -181,7 +184,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
         }
     }
 
-    public void setOrders(final List<Order> orders) {
+    public void setOrders(final List<? extends Order> orders) {
         this.orders.clear();
         if (Objects.nonNull(orders)) {
             this.orders.addAll(orders);

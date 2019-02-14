@@ -58,6 +58,9 @@ public interface CategoryRepository extends BaseModelRepository<Category, String
     @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
     FacetPage<? extends Category> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
 
+    @Query(name = "Category.findByDescription")
+    Page<? extends Category> findByDescription(final String description, final Pageable pageable);
+
     @Query(name = "Category.findByNamedQuery")
     Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 }
