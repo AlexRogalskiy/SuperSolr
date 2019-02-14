@@ -33,10 +33,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.CATEGORIES_FIELD_NAME;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.MAiN_CATEGORIES_FIELD_NAME;
@@ -85,11 +82,11 @@ public class Category extends BaseModel<String> implements SearchableCategory {
 //    @Indexed(name = PRODUCTS_FIELD_NAME)
 //    private final Set<Product> products = new HashSet<>();
 
-    public void setProducts(final List<? extends Product> products) {
+    public void setProducts(final Collection<? extends Product> products) {
         this.products.clear();
-        if (Objects.nonNull(products)) {
-            this.products.addAll(products);
-        }
+        Optional.ofNullable(products)
+                .orElseGet(Collections::emptyList)
+                .forEach(product -> addProduct(product));
     }
 
     public void addProduct(final Product product) {
@@ -98,11 +95,11 @@ public class Category extends BaseModel<String> implements SearchableCategory {
         }
     }
 
-    public void setMainProducts(final List<? extends Product> mainProducts) {
+    public void setMainProducts(final Collection<? extends Product> mainProducts) {
         this.mainProducts.clear();
-        if (Objects.nonNull(mainProducts)) {
-            this.mainProducts.addAll(mainProducts);
-        }
+        Optional.ofNullable(mainProducts)
+                .orElseGet(Collections::emptyList)
+                .forEach(mainProduct -> addMainProduct(mainProduct));
     }
 
     public void addMainProduct(final Product mainProduct) {

@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.ProductRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.ProductService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.impl.BaseModelServiceImpl;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

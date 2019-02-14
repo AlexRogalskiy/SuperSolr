@@ -34,9 +34,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Custom product model view
@@ -75,11 +73,11 @@ public class AttributeView extends BaseModelView<String> implements ExposableAtt
     @JsonProperty(PRODUCTS_FIELD_NAME)
     private final List<ProductView> products = new ArrayList<>();
 
-    public void setProducts(final List<? extends ProductView> products) {
+    public void setProducts(final Collection<? extends ProductView> products) {
         this.products.clear();
-        if (Objects.nonNull(products)) {
-            this.products.addAll(products);
-        }
+        Optional.ofNullable(products)
+                .orElseGet(Collections::emptyList)
+                .forEach(product -> addProduct(product));
     }
 
     public void addProduct(final ProductView product) {

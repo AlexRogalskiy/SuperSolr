@@ -145,11 +145,11 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     @Fetch(FetchMode.SELECT)
     private final Set<Order> orders = new HashSet<>();
 
-    public void setCategories(final List<? extends Category> categories) {
+    public void setCategories(final Collection<? extends Category> categories) {
         this.categories.clear();
-        if (Objects.nonNull(categories)) {
-            this.categories.addAll(categories);
-        }
+        Optional.ofNullable(categories)
+                .orElseGet(Collections::emptyList)
+                .forEach(category -> addCategory(category));
     }
 
     public void addCategory(final Category category) {
@@ -158,11 +158,11 @@ public class Product extends BaseModel<String> implements SearchableProduct {
         }
     }
 
-    public void setMainCategories(final List<? extends Category> mainCategories) {
+    public void setMainCategories(final Collection<? extends Category> mainCategories) {
         this.mainCategories.clear();
-        if (Objects.nonNull(mainCategories)) {
-            this.mainCategories.addAll(mainCategories);
-        }
+        Optional.ofNullable(mainCategories)
+                .orElseGet(Collections::emptyList)
+                .forEach(mainCategory -> addMainCategory(mainCategory));
     }
 
     public void addMainCategory(final Category mainCategory) {
@@ -171,11 +171,11 @@ public class Product extends BaseModel<String> implements SearchableProduct {
         }
     }
 
-    public void setAttributes(final List<? extends Attribute> attributes) {
+    public void setAttributes(final Collection<? extends Attribute> attributes) {
         this.attributes.clear();
-        if (Objects.nonNull(attributes)) {
-            this.attributes.addAll(attributes);
-        }
+        Optional.ofNullable(attributes)
+                .orElseGet(Collections::emptyList)
+                .forEach(attribute -> addAttribute(attribute));
     }
 
     public void addAttribute(final Attribute attribute) {
@@ -184,11 +184,11 @@ public class Product extends BaseModel<String> implements SearchableProduct {
         }
     }
 
-    public void setOrders(final List<? extends Order> orders) {
+    public void setOrders(final Collection<? extends Order> orders) {
         this.orders.clear();
-        if (Objects.nonNull(orders)) {
-            this.orders.addAll(orders);
-        }
+        Optional.ofNullable(orders)
+                .orElseGet(Collections::emptyList)
+                .forEach(order -> addOrder(order));
     }
 
     public void addOrder(final Order order) {

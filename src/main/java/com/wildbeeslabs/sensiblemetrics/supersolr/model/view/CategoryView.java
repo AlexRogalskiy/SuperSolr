@@ -34,10 +34,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Custom category model view
@@ -77,11 +74,11 @@ public class CategoryView extends BaseModelView<String> implements ExposableCate
     @JsonProperty(MAIN_PRODUCTS_FIELD_NAME)
     private final Set<ProductView> mainProducts = new HashSet<>();
 
-    public void setProducts(final List<? extends ProductView> products) {
+    public void setProducts(final Collection<? extends ProductView> products) {
         this.products.clear();
-        if (Objects.nonNull(products)) {
-            this.products.addAll(products);
-        }
+        Optional.ofNullable(products)
+                .orElseGet(Collections::emptyList)
+                .forEach(product -> addProduct(product));
     }
 
     public void addProduct(final ProductView product) {
@@ -90,11 +87,11 @@ public class CategoryView extends BaseModelView<String> implements ExposableCate
         }
     }
 
-    public void setMainProducts(final List<? extends ProductView> mainProducts) {
+    public void setMainProducts(final Collection<? extends ProductView> mainProducts) {
         this.mainProducts.clear();
-        if (Objects.nonNull(mainProducts)) {
-            this.mainProducts.addAll(mainProducts);
-        }
+        Optional.ofNullable(mainProducts)
+                .orElseGet(Collections::emptyList)
+                .forEach(mainProduct -> addMainProduct(mainProduct));
     }
 
     public void addMainProduct(final ProductView mainProduct) {

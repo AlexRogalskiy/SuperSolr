@@ -120,11 +120,11 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
     @JsonProperty(LOCATION_FIELD_NAME)
     private Point location;
 
-    public void setAttributes(final List<AttributeView> attributes) {
+    public void setAttributes(final Collection<? extends AttributeView> attributes) {
         this.attributes.clear();
-        if (Objects.nonNull(attributes)) {
-            this.attributes.addAll(attributes);
-        }
+        Optional.ofNullable(attributes)
+                .orElseGet(Collections::emptyList)
+                .forEach(attribute -> addAttribute(attribute));
     }
 
     public void addAttribute(final AttributeView attribute) {
@@ -133,11 +133,11 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
         }
     }
 
-    public void setCategories(final List<? extends CategoryView> categories) {
+    public void setCategories(final Collection<? extends CategoryView> categories) {
         this.categories.clear();
-        if (Objects.nonNull(categories)) {
-            this.categories.addAll(categories);
-        }
+        Optional.ofNullable(categories)
+                .orElseGet(Collections::emptyList)
+                .forEach(category -> addCategory(category));
     }
 
     public void addCategory(final CategoryView category) {
@@ -146,11 +146,11 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
         }
     }
 
-    public void setMainCategories(final List<? extends CategoryView> mainCategories) {
+    public void setMainCategories(final Collection<? extends CategoryView> mainCategories) {
         this.mainCategories.clear();
-        if (Objects.nonNull(mainCategories)) {
-            this.mainCategories.addAll(mainCategories);
-        }
+        Optional.ofNullable(mainCategories)
+                .orElseGet(Collections::emptyList)
+                .forEach(mainCategory -> addMainCategory(mainCategory));
     }
 
     public void addMainCategory(final CategoryView mainCategory) {

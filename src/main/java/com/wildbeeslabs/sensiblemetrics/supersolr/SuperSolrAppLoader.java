@@ -30,7 +30,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
- * Main supersolr application loader
+ * SuperSolr application loader
  */
 @SpringBootApplication(scanBasePackages = {"com.wildbeeslabs.sensiblemetrics.supersolr"}, exclude = {ErrorMvcAutoConfiguration.class})
 @EnableBatchProcessing

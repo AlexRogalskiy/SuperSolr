@@ -68,18 +68,6 @@ public class SolrConfig {
         return factory;
     }
 
-//    @Bean
-//    public HttpSolrServerFactoryBean solrServerFactoryBean() {
-//        final HttpSolrServerFactoryBean factory = new HttpSolrServerFactoryBean();
-//        factory.setUrl(environment.getRequiredProperty("supersolr.solr.server.url"));
-//        return factory;
-//    }
-
-//    @Bean
-//    public SolrServer solrServer(@Value("${supersolr.solr.host}") String solrHost) {
-//        return new HttpSolrServer(solrHost);
-//    }
-
     @Bean
     public SolrTemplate solrTemplate(final SolrClient solrClient) {
         return new SolrTemplate(solrClient);

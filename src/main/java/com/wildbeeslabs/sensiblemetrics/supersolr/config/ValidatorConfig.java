@@ -40,7 +40,7 @@ import javax.validation.ValidatorFactory;
  */
 @Configuration
 @EnableAutoConfiguration
-public class ValidatorConfiguration {
+public class ValidatorConfig {
 
 //    @Bean
 //    public MessageSource messageSource() {

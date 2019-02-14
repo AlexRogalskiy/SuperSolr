@@ -33,9 +33,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Custom full-text search attribute document model
@@ -73,11 +71,11 @@ public class Attribute extends BaseModel<String> implements SearchableAttribute 
     @Indexed(name = PRODUCTS_FIELD_NAME)
     private final List<Product> products = new ArrayList<>();
 
-    public void setProducts(final List<? extends Product> products) {
+    public void setProducts(final Collection<? extends Product> products) {
         this.products.clear();
-        if (Objects.nonNull(products)) {
-            this.products.addAll(products);
-        }
+        Optional.ofNullable(products)
+                .orElseGet(Collections::emptyList)
+                .forEach(product -> addProduct(product));
     }
 
     public void addProduct(final Product product) {
