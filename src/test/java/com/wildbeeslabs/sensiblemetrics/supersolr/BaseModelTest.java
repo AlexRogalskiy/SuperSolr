@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.service;
+package com.wildbeeslabs.sensiblemetrics.supersolr;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Attribute;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
@@ -41,10 +41,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base model service implementation unit test
+ * Base model test implementation
  */
 @Slf4j
-public abstract class BaseModelServiceImplTest {
+public abstract class BaseModelTest {
 
     protected Category createCategory(
             final String id,

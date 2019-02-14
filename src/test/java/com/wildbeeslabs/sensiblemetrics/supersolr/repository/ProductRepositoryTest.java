@@ -21,111 +21,139 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.service;
+package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
-import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseModelTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.utils.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
- * Product service implementation unit test
+ * Product repository implementation unit test
  */
 @Slf4j
-@RunWith(SpringJUnit4ClassRunner.class)
-public class ProductServiceImplTest extends BaseModelTest {
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class ProductRepositoryTest extends BaseModelTest {
 
     @Autowired
-    private ProductService productService;
+    private TestEntityManager entityManager;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Before
     public void before() {
-        getProductService().save(getSampleData());
-    }
-
-    @Test
-    public void testFindAll() {
-        final Iterable<? extends Product> productIterable = getProductService().findAll();
-        final List<? extends Product> products = Lists.newArrayList(productIterable);
-        assertThat(products, not(empty()));
-        assertEquals(10, products.size());
-    }
-
-    @Test
-    public void testFindAllByIds() {
-        final List<String> productIds = Arrays.asList("01", "02", "03");
-        final Iterable<? extends Product> productIterable = getProductService().findAll(productIds);
-        final List<? extends Product> products = Lists.newArrayList(productIterable);
-        assertThat(products, not(empty()));
-        assertEquals(productIds.size(), products.size());
+        getProductRepository().saveAll(getSampleData());
     }
 
     @Test
     public void testFindByName() {
-        final Page<? extends Product> productPage = getProductService().findByName("Test", OffsetPageRequest.builder().offset(0).limit(1).build());
-        assertEquals(4, productPage.getTotalElements());
-        assertEquals(4, productPage.getTotalPages());
+        // given
+        final Product product = createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        product.addCategory(createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null));
+
+        this.entityManager.persist(product);
+        this.entityManager.flush();
+
+        // when
+        final Page<? extends Product> productPage = getProductRepository().findByName(product.getName(), PageRequest.of(0, 2));
         final List<? extends Product> products = productPage.getContent();
-        assertTrue(containsIds(products, "01", "02", "05", "08"));
+
+        // then
+        assertTrue(products.contains(product));
     }
 
     @Test
     public void testFindByDescription() {
-        final Page<? extends Product> productPage = getProductService().findByDescription("Island", PageRequest.of(0, 10));
+        // initial search terms
+        final String searchTerm = "Test";
+
+        // given
+        final Product product = createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        product.addCategory(createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null));
+
+        this.entityManager.persist(product);
+        this.entityManager.flush();
+
+        // when
+        final Page<? extends Product> productPage = getProductRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
         final List<? extends Product> products = productPage.getContent();
-        assertEquals(5, products.size());
-        assertTrue(containsIds(products, "01", "02", "05", "07", "08"));
-        assertEquals("07", products.get(4).getId());
+
+        // then
+        assertTrue(products.contains(product));
     }
 
     @Test
-    public void testFindByNames() {
-        final Page<? extends Product> productPage = getProductService().findByNames("Island Planet", PageRequest.of(0, 2));
-        assertEquals(4, productPage.getTotalElements());
-        assertEquals(4, productPage.getTotalPages());
-        final List<? extends Product> products = productPage.getContent();
-        assertTrue(containsIds(products, "01", "02", "05", "08"));
+    public void testFindByNameStartsWith() {
+        // initial search terms
+        final List<String> titles = Arrays.asList("Title 01", "Title 02");
+
+        //given
+        final Product productFirst = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        productFirst.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
+        this.entityManager.persist(productFirst);
+
+        final Product productSecond = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        productSecond.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
+        this.entityManager.persist(productSecond);
+
+        final Product productThird = createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        productThird.addCategory(createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!", null));
+        this.entityManager.persist(productThird);
+        this.entityManager.flush();
+
+        // when
+        final FacetPage<? extends Product> productFacetPage = getProductRepository().findByNameStartsWith(titles, PageRequest.of(0, 10));
+        final List<? extends Product> products = productFacetPage.getContent();
+
+        // then
+        assertTrue(products.contains(productFirst));
+        assertTrue(products.contains(productSecond));
+        assertFalse(products.contains(productThird));
     }
 
     @Test
-    public void testFindByAutoCompleteNameFragment() {
-        final FacetPage<? extends Product> productFacetPage = getProductService().autoCompleteNameFragment("Island Planet", PageRequest.of(0, 2));
-        assertEquals(2, productFacetPage.getNumberOfElements());
+    public void testFind() {
+        // initial search terms
+        final List<String> titles = Arrays.asList("Title 01", "Title 02");
 
-        final Map<String, Long> productFacetCounts = getFacetCounts(productFacetPage);
-        assertEquals(new Long(3), productFacetCounts.get("Test01"));
-        assertEquals(new Long(2), productFacetCounts.get("Test02"));
-        assertEquals(new Long(1), productFacetCounts.get("Test03"));
-    }
+        // given
+        final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-    @Test
-    public void testFindByCustomQuery() {
-        final HighlightPage<? extends Product> productHighlightPage = getProductService().find("cookies", PageRequest.of(0, 10));
-        productHighlightPage.getContent();
-        assertTrue(containsSnipplet(productHighlightPage, "How to handle <highlight>cookies</highlight> in web applications"));
-        assertTrue(containsSnipplet(productHighlightPage, "Bake your own <highlight>cookies</highlight>, on a secret island!"));
+        this.entityManager.persist(category);
+        this.entityManager.flush();
+
+        // when
+        final HighlightPage<? extends Product> productHighlightPage = getProductRepository().findByQuery(titles, PageRequest.of(0, 10));
+        final List<? extends Product> products = productHighlightPage.getContent();
+
+        // then
+        assertTrue(products.contains(category));
     }
 
     private List<Product> getSampleData() {
-        if (getProductService().find("01").isPresent()) {
+        if (getProductRepository().findById("01").isPresent()) {
             log.debug("Data already exists");
             return Collections.emptyList();
         }
@@ -172,7 +200,7 @@ public class ProductServiceImplTest extends BaseModelTest {
         return products;
     }
 
-    protected ProductService getProductService() {
-        return this.productService;
+    protected ProductRepository getProductRepository() {
+        return this.productRepository;
     }
 }
