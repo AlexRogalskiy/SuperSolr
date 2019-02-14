@@ -28,6 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.BaseModelTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.utils.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,11 @@ public class CategoryServiceImplTest extends BaseModelTest {
     @Before
     public void before() {
         getCategoryService().save(getSampleData());
+    }
+
+    @After
+    public void after() {
+        getCategoryService().deleteAll();
     }
 
     @Test

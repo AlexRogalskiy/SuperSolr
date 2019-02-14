@@ -153,6 +153,7 @@
         <solrj.version>7.7.0</solrj.version>
         <modelmapper.version>1.1.0</modelmapper.version>
         <jedis.version>3.0.0</jedis.version>
+        <commonmark.version>0.12.1</commonmark.version>
 
         <validation-api.version>2.0.1.Final</validation-api.version>
         <javax.persistence.version>2.2</javax.persistence.version>
@@ -478,6 +479,17 @@
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>${commonmark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>${commonmark.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -650,7 +662,7 @@
                                 <includeScope>compile</includeScope>
                                 <excludeScope>test</excludeScope>
                                 <overWriteReleases>false</overWriteReleases>
-                                <overWriteSnapshots>false</overWriteSnapshots>
+                                <overWriteSnapshots>true</overWriteSnapshots>
                                 <overWriteIfNewer>true</overWriteIfNewer>
                             </configuration>
                         </execution>

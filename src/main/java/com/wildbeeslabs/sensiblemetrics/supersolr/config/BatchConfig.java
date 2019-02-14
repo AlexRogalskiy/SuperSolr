@@ -23,44 +23,59 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.processing.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Custom batch configuration
  */
 @Configuration
+@EnableBatchProcessing
+@EnableScheduling
+@EnableConfigurationProperties(BatchConfigProperties.class)
 public class BatchConfig {
 
     @Autowired
-    public JobBuilderFactory jobBuilderFactory;
+    private JobBuilderFactory jobBuilderFactory;
+
     @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job job() {
-        return this.jobBuilderFactory.get("job")
+    public Job indexBaseDocumentsJob(final Step indexingStep, final Step optimizeStep) {
+        return this.jobBuilderFactory.get("indexingBaseDocuments")
                 .incrementer(new RunIdIncrementer())
-                .flow(step1())
+                .flow(indexingStep)
+                .next(optimizeStep)
                 .end()
                 .build();
     }
 
     @Bean
-    public Step step1() {
-        return this.stepBuilderFactory.get("step1")
-                .<String, String>chunk(1)
-                .reader(() -> null)
-                .processor((ItemProcessor<String, String>) item -> null)
-                .writer(items -> {
-                })
+    public Step indexingStep(final BaseResourceReader reader, final BaseResourceProcessor processor, final BaseResourceWriter writer) {
+        return this.stepBuilderFactory.get("indexingStep")
+                .<Resource, BaseResource>chunk(10)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step optimizeStep(final BaseOptimizeTasklet tasklet) {
+        return this.stepBuilderFactory.get("optimizeStep")
+                .tasklet(tasklet)
                 .build();
     }
 }

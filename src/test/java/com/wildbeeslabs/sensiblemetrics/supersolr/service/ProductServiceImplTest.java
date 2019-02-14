@@ -28,6 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.BaseModelTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.utils.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,11 @@ public class ProductServiceImplTest extends BaseModelTest {
     @Before
     public void before() {
         getProductService().save(getSampleData());
+    }
+
+    @After
+    public void after() {
+        getProductService().deleteAll();
     }
 
     @Test

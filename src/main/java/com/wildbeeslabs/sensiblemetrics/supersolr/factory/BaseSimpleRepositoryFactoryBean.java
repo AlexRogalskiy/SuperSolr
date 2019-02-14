@@ -39,6 +39,9 @@ import java.io.Serializable;
 
 /**
  * Custom base simple repository factory bean implementation {@link SolrRepositoryFactoryBean}
+ *
+ * @param <E>  type of entity model
+ * @param <ID> type of entity identifier
  */
 public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends Serializable> extends SolrRepositoryFactoryBean<BaseSimpleServiceImpl<E, ID>, E, ID> {
 
@@ -55,8 +58,8 @@ public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends
     /**
      * Simple solr repository factory implementation {@link SolrRepositoryFactory}
      *
-     * @param <E>
-     * @param <ID>
+     * @param <E>  type of entity model
+     * @param <ID> type of entity identifier
      */
     @Data
     @EqualsAndHashCode(callSuper = true)

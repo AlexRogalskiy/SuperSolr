@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.BaseModelTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +65,11 @@ public class ProductRepositoryTest extends BaseModelTest {
     @Before
     public void before() {
         getProductRepository().saveAll(getSampleData());
+    }
+
+    @After
+    public void after() {
+        getProductRepository().deleteAll();
     }
 
     @Test
