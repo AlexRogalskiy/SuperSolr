@@ -119,7 +119,9 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
 
     @GetMapping("/order/desc/{description}/{page}")
     @ResponseBody
-    public ResponseEntity<?> findByDescription(final @PathVariable String description, final @PathVariable int page) {
+    public ResponseEntity<?> findByDescription(
+            final @PathVariable String description,
+            final @PathVariable int page) {
         log.info("Fetching order by description: {}, page: {}", description, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByDescription(description, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
@@ -127,7 +129,9 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
 
     @GetMapping("/order/search/{searchTerm}/{page}")
     @ResponseBody
-    public ResponseEntity<?> findBySearchTerm(final @PathVariable String searchTerm, final @PathVariable int page) {
+    public ResponseEntity<?> findBySearchTerm(
+            final @PathVariable String searchTerm,
+            final @PathVariable int page) {
         log.info("Fetching order by term: {}, page: {}", searchTerm, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);

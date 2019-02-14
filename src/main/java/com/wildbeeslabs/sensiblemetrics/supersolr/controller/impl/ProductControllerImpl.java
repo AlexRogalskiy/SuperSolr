@@ -35,6 +35,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -44,6 +45,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -66,7 +68,7 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Prod
                                     final @PageableDefault Pageable pageable,
                                     final HttpServletRequest request) {
         log.info("Fetching products by query: {}", query);
-        final Page<? extends Product> productPage = getService().findByTitle(query, pageable);
+        final Page<? extends Product> productPage = getService().findByName(query, pageable);
         return new ResponseEntity<>(MapperUtils.mapAll(productPage.getContent(), ProductView.class), getHeaders(productPage), HttpStatus.OK);
     }
 
@@ -75,7 +77,7 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Prod
     public ResponseEntity<?> autoComplete(final @RequestParam("term") String searchTerm,
                                           final @PageableDefault(size = 1) Pageable pageable) {
         log.info("Fetching products by autocomplete search term: {}", searchTerm);
-        final FacetPage<? extends Product> productPage = getService().autoCompleteTitleFragment(searchTerm, pageable);
+        final FacetPage<? extends Product> productPage = getService().autoCompleteNameFragment(searchTerm, pageable);
         return new ResponseEntity<>(MapperUtils.mapAll(getResultSetByTerm(productPage, searchTerm), ProductView.class), getHeaders(productPage), HttpStatus.OK);
     }
 
@@ -105,10 +107,31 @@ public class ProductControllerImpl extends BaseModelControllerImpl<Product, Prod
         }
     }
 
+    @GetMapping("/product/desc/{description}/{page}")
+    @ResponseBody
+    public ResponseEntity<?> findByDescription(
+            final @PathVariable String description,
+            final @PathVariable int page) {
+        log.info("Fetching product by description: {}, page: {}", description, page);
+        final List<? extends ProductView> productViews = MapperUtils.mapAll(getService().findByDescription(description, PageRequest.of(page, 2)).getContent(), ProductView.class);
+        return new ResponseEntity<>(productViews, HttpStatus.OK);
+    }
+
+    @GetMapping("/product/search/{searchTerm}/{page}")
+    @ResponseBody
+    public ResponseEntity<?> findBySearchTerm(
+            final @PathVariable String searchTerm,
+            final @PathVariable int page) {
+        log.info("Fetching product by term: {}, page: {}", searchTerm, page);
+        final List<? extends ProductView> productViews = MapperUtils.mapAll(getService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), ProductView.class);
+        return new ResponseEntity<>(productViews, HttpStatus.OK);
+    }
+
     @GetMapping("/product/{id}")
     @ResponseBody
-    public ResponseEntity<?> search(final @PathVariable("id") String id,
-                                    final HttpServletRequest request) {
+    public ResponseEntity<?> search(
+            final @PathVariable("id") String id,
+            final HttpServletRequest request) {
         log.info("Fetching product by ID: {}", id);
         return new ResponseEntity<>(MapperUtils.map(this.getItem(id), ProductView.class), HttpStatus.OK);
     }

@@ -42,4 +42,5 @@ public interface SearchableCategory {
     String DESCRIPTION_FIELD_NAME = "description";
     String CATEGORY_FIELD_NAME = "category";
     String PRODUCTS_FIELD_NAME = "products";
+    String MAIN_PRODUCTS_FIELD_NAME = "mainProducts";
 }

@@ -29,9 +29,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
@@ -40,6 +37,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.CATEGORIES_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.MAiN_CATEGORIES_FIELD_NAME;
 
 /**
  * Custom full-text search category document model
@@ -70,12 +70,20 @@ public class Category extends BaseModel<String> implements SearchableCategory {
     @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
     private String description;
 
-    @OneToMany(mappedBy = CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @Column(name = PRODUCTS_FIELD_NAME, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @BatchSize(size = 10)
+    @ManyToMany(mappedBy = CATEGORIES_FIELD_NAME)
     @Indexed(name = PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
+
+    @ManyToMany(mappedBy = MAiN_CATEGORIES_FIELD_NAME)
+    @Indexed(name = MAIN_PRODUCTS_FIELD_NAME)
+    private final Set<Product> mainProducts = new HashSet<>();
+
+//    @OneToMany(mappedBy = CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+//    @Column(name = PRODUCTS_FIELD_NAME, nullable = false)
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @BatchSize(size = 10)
+//    @Indexed(name = PRODUCTS_FIELD_NAME)
+//    private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final List<? extends Product> products) {
         this.products.clear();
@@ -87,6 +95,19 @@ public class Category extends BaseModel<String> implements SearchableCategory {
     public void addProduct(final Product product) {
         if (Objects.nonNull(product)) {
             this.products.add(product);
+        }
+    }
+
+    public void setMainProducts(final List<? extends Product> mainProducts) {
+        this.mainProducts.clear();
+        if (Objects.nonNull(mainProducts)) {
+            this.mainProducts.addAll(mainProducts);
+        }
+    }
+
+    public void addMainProduct(final Product mainProduct) {
+        if (Objects.nonNull(mainProduct)) {
+            this.mainProducts.add(mainProduct);
         }
     }
 }

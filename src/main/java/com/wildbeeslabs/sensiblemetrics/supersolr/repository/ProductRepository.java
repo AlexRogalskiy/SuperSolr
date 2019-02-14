@@ -46,19 +46,32 @@ public interface ProductRepository extends BaseModelRepository<Product, String> 
     @Highlight(prefix = "<strong>", postfix = "</strong>")
     @Query(fields = {
             SearchableProduct.ID_FIELD_NAME,
-            SearchableProduct.TITLE_FIELD_NAME,
+            SearchableProduct.NAME_FIELD_NAME,
             SearchableProduct.PRICE_FIELD_NAME,
-            SearchableProduct.FEATURES_FIELD_NAME,
-            SearchableProduct.AVAILABLE_FIELD_NAME
+            SearchableProduct.ATTRIBUTES_FIELD_NAME,
+            SearchableProduct.AVAILABLE_FIELD_NAME,
+            SearchableProduct.PAGE_TITLE_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
     HighlightPage<? extends Product> findByQuery(final Collection<String> values, final Pageable pageable);
 
-    Page<? extends Product> findByTitle(final String title, final Pageable pageable);
+    @Query(fields = {
+            SearchableProduct.NAME_FIELD_NAME,
+            SearchableProduct.PAGE_TITLE_FIELD_NAME,
+            SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME,
+            SearchableProduct.LONG_DESCRIPTION_FIELD_NAME,
+            SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME
+    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
+    Page<? extends Product> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    Page<? extends Product> findByTitles(final Collection<String> title, final Pageable pageable);
+    Page<? extends Product> findByName(final String name, final Pageable pageable);
 
-    @Facet(fields = {SearchableProduct.TITLE_FIELD_NAME})
-    FacetPage<? extends Product> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
+    Page<? extends Product> findByNames(final Collection<String> names, final Pageable pageable);
+
+    @Query(name = "Product.findByDescription")
+    Page<? extends Product> findByDescription(final String description, final Pageable pageable);
+
+    @Facet(fields = {SearchableProduct.NAME_FIELD_NAME})
+    FacetPage<? extends Product> findByNameStartsWith(final Collection<String> fragments, final Pageable pageable);
 
     @Query(name = "Product.findByNamedQuery")
     Page<? extends Product> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);

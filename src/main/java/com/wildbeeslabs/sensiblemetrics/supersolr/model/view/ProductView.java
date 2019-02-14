@@ -35,10 +35,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.solr.core.geo.Point;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Custom product model view
@@ -56,49 +53,105 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
      */
     private static final long serialVersionUID = 5714315073889762969L;
 
-    @JacksonXmlProperty(localName = TITLE_FIELD_NAME)
-    @JsonProperty(TITLE_FIELD_NAME)
-    private String title;
+    @JacksonXmlProperty(localName = NAME_FIELD_NAME)
+    @JsonProperty(NAME_FIELD_NAME)
+    private String name;
 
-    @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
-    @JsonProperty(DESCRIPTION_FIELD_NAME)
-    private String description;
+    @JacksonXmlProperty(localName = SHORT_DESCRIPTION_FIELD_NAME)
+    @JsonProperty(SHORT_DESCRIPTION_FIELD_NAME)
+    private String shortDescription;
+
+    @JacksonXmlProperty(localName = LONG_DESCRIPTION_FIELD_NAME)
+    @JsonProperty(LONG_DESCRIPTION_FIELD_NAME)
+    private String longDescription;
+
+    @JacksonXmlProperty(localName = PRICE_DESCRIPTION_FIELD_NAME)
+    @JsonProperty(PRICE_DESCRIPTION_FIELD_NAME)
+    private String priceDescription;
+
+    @JacksonXmlProperty(localName = CATALOG_NUMBER_FIELD_NAME)
+    @JsonProperty(CATALOG_NUMBER_FIELD_NAME)
+    private String catalogNumber;
+
+    @JacksonXmlProperty(localName = PAGE_TITLE_FIELD_NAME)
+    @JsonProperty(PAGE_TITLE_FIELD_NAME)
+    private String pageTitle;
 
     @JacksonXmlProperty(localName = AVAILABLE_FIELD_NAME)
     @JsonProperty(AVAILABLE_FIELD_NAME)
     private boolean available;
 
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = FEATURES_FIELD_NAME)
-    @JsonProperty(FEATURES_FIELD_NAME)
-    private final Set<String> features = new HashSet<>();
+    @JacksonXmlProperty(localName = ATTRIBUTES_FIELD_NAME)
+    @JsonProperty(ATTRIBUTES_FIELD_NAME)
+    private final List<AttributeView> attributes = new ArrayList<>();
 
     @JacksonXmlProperty(localName = PRICE_FIELD_NAME)
     @JsonProperty(PRICE_FIELD_NAME)
     private double price;
 
-    @JacksonXmlProperty(localName = CATEGORY_FIELD_NAME)
-    @JsonProperty(CATEGORY_FIELD_NAME)
-    private CategoryView category;
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = CATEGORIES_FIELD_NAME)
+    @JsonProperty(CATEGORIES_FIELD_NAME)
+    private final Set<CategoryView> categories = new HashSet<>();
+
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = MAIN_CATEGORIES_FIELD_NAME)
+    @JsonProperty(MAIN_CATEGORIES_FIELD_NAME)
+    private final Set<CategoryView> mainCategories = new HashSet<>();
 
     @JacksonXmlProperty(localName = RATING_FIELD_NAME)
     @JsonProperty(RATING_FIELD_NAME)
     private Integer rating;
 
+    @JacksonXmlProperty(localName = AGE_RESTRICTION_FIELD_NAME)
+    @JsonProperty(AGE_RESTRICTION_FIELD_NAME)
+    private Integer ageRestriction;
+
+    @JacksonXmlProperty(localName = LOCK_TYPE_FIELD_NAME)
+    @JsonProperty(LOCK_TYPE_FIELD_NAME)
+    private Integer lockType;
+
     @JacksonXmlProperty(localName = LOCATION_FIELD_NAME)
     @JsonProperty(LOCATION_FIELD_NAME)
     private Point location;
 
-    public void setFeatures(final List<String> features) {
-        this.features.clear();
-        if (Objects.nonNull(features)) {
-            this.features.addAll(features);
+    public void setAttributes(final List<AttributeView> attributes) {
+        this.attributes.clear();
+        if (Objects.nonNull(attributes)) {
+            this.attributes.addAll(attributes);
         }
     }
 
-    public void addFeature(final String feature) {
-        if (Objects.nonNull(feature)) {
-            this.features.add(feature);
+    public void addAttribute(final AttributeView attribute) {
+        if (Objects.nonNull(attribute)) {
+            this.attributes.add(attribute);
+        }
+    }
+
+    public void setCategories(final List<? extends CategoryView> categories) {
+        this.categories.clear();
+        if (Objects.nonNull(categories)) {
+            this.categories.addAll(categories);
+        }
+    }
+
+    public void addCategory(final CategoryView category) {
+        if (Objects.nonNull(category)) {
+            this.categories.add(category);
+        }
+    }
+
+    public void setMainCategories(final List<? extends CategoryView> mainCategories) {
+        this.mainCategories.clear();
+        if (Objects.nonNull(mainCategories)) {
+            this.mainCategories.addAll(mainCategories);
+        }
+    }
+
+    public void addMainCategory(final CategoryView mainCategory) {
+        if (Objects.nonNull(mainCategory)) {
+            this.mainCategories.add(mainCategory);
         }
     }
 }

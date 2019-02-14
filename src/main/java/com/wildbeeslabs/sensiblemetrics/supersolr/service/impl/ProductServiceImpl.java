@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.HighlightOptions;
@@ -60,38 +61,51 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByTitle(final String title, final Pageable pageable) {
-        return getRepository().findByTitle(title, pageable);
+    public Page<? extends Product> findByName(final String name, final Pageable pageable) {
+        return getRepository().findByName(name, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByTitles(final String titles, final Pageable pageable) {
-        if (StringUtils.isBlank(titles)) {
+    public Page<? extends Product> findByNames(final String names, final Pageable pageable) {
+        if (StringUtils.isEmpty(names)) {
             return getRepository().findAll(pageable);
         }
-        return getRepository().findByTitles(tokenize(titles), pageable);
+        return getRepository().findByNames(tokenize(names), pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public FacetPage<? extends Product> autoCompleteTitleFragment(final String fragment, final Pageable pageable) {
-        if (StringUtils.isBlank(fragment)) {
+    public Page<? extends Product> findByDescription(final String description, final Pageable pageable) {
+        return getRepository().findByDescription(description, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Product> autoCompleteNameFragment(final String fragment, final Pageable pageable) {
+        if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByTitleStartsWith(tokenize(fragment), pageable);
+        return getRepository().findByNameStartsWith(tokenize(fragment), pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByCustomQuery(final String searchTerm, final PageRequest request) {
+        return getRepository().findByCustomQuery(searchTerm, request);
     }
 
     @Override
     @Transactional(readOnly = true)
     public HighlightPage<? extends Product> find(final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableProduct.ID_FIELD_NAME).boost(2).is(searchTerm);
-        final Criteria titleCriteria = new Criteria(SearchableProduct.TITLE_FIELD_NAME).fuzzy(searchTerm);
-        final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
+        final Criteria pageTitleCriteria = new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).boost(2).is(searchTerm);
+        final Criteria nameCriteria = new Criteria(SearchableProduct.NAME_FIELD_NAME).fuzzy(searchTerm);
+        final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(pageTitleCriteria).or(nameCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
                 .setSimplePrefix("<strong>")
                 .setSimplePostfix("</strong>")
-                .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.TITLE_FIELD_NAME));
+                .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Product.class);
     }
 
@@ -99,8 +113,9 @@ public class ProductServiceImpl extends BaseModelServiceImpl<Product, String> im
         Criteria conditions = new Criteria();
         for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
             conditions = conditions
-                    .or(new Criteria(SearchableProduct.ID_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableProduct.DESCRIPTION_FIELD_NAME).contains(term));
+                    .or(new Criteria(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME).contains(term))
+                    .or(new Criteria(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME).contains(term))
+                    .or(new Criteria(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(term));
         }
         return conditions;
     }

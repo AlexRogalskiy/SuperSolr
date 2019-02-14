@@ -28,54 +28,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.interfaces.ExposableCategoryView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.interfaces.ExposableAttributetView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
- * Custom category model view
+ * Custom product model view
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JacksonXmlRootElement(localName = ExposableCategoryView.VIEW_ID)
-public class CategoryView extends BaseModelView<String> implements ExposableCategoryView {
-
-    /**
-     * Default explicit serialVersionUID for interoperability
-     */
-    private static final long serialVersionUID = -878245565646636436L;
-
-    @JacksonXmlProperty(localName = INDEX_FIELD_NAME)
-    @JsonProperty(INDEX_FIELD_NAME)
-    private Integer index;
-
-    @JacksonXmlProperty(localName = TITLE_FIELD_NAME)
-    @JsonProperty(TITLE_FIELD_NAME)
-    private String title;
-
-    @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
-    @JsonProperty(DESCRIPTION_FIELD_NAME)
-    private String description;
+@JacksonXmlRootElement(localName = ExposableAttributetView.VIEW_ID)
+public class AttributeView extends BaseModelView<String> implements ExposableAttributetView {
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = PRODUCTS_FIELD_NAME)
     @JsonProperty(PRODUCTS_FIELD_NAME)
-    private final Set<ProductView> products = new HashSet<>();
-
-    @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = MAIN_PRODUCTS_FIELD_NAME)
-    @JsonProperty(MAIN_PRODUCTS_FIELD_NAME)
-    private final Set<ProductView> mainProducts = new HashSet<>();
+    private final List<ProductView> products = new ArrayList<>();
 
     public void setProducts(final List<? extends ProductView> products) {
         this.products.clear();
@@ -87,19 +64,6 @@ public class CategoryView extends BaseModelView<String> implements ExposableCate
     public void addProduct(final ProductView product) {
         if (Objects.nonNull(product)) {
             this.products.add(product);
-        }
-    }
-
-    public void setMainProducts(final List<? extends ProductView> mainProducts) {
-        this.mainProducts.clear();
-        if (Objects.nonNull(mainProducts)) {
-            this.mainProducts.addAll(mainProducts);
-        }
-    }
-
-    public void addMainProduct(final ProductView mainProduct) {
-        if (Objects.nonNull(mainProduct)) {
-            this.mainProducts.add(mainProduct);
         }
     }
 }

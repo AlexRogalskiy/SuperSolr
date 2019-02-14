@@ -23,9 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -37,10 +35,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Custom full-text search product document model
@@ -50,7 +45,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Table(name = "products", catalog = "market_data",
-        indexes = {@Index(name = "product_category_idx", columnList = SearchableProduct.ID_FIELD_NAME + ", " + SearchableProduct.CATEGORY_FIELD_NAME)}
+        indexes = {@Index(name = "product_catalog_number_idx", columnList = SearchableProduct.ID_FIELD_NAME + ", " + SearchableProduct.CATALOG_NUMBER_FIELD_NAME)}
 )
 @AttributeOverrides({
         @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableProduct.ID_FIELD_NAME))
@@ -64,33 +59,78 @@ public class Product extends BaseModel<String> implements SearchableProduct {
      */
     private static final long serialVersionUID = 6034172782528641104L;
 
-    @Indexed(name = TITLE_FIELD_NAME, type = "string")
-    private String title;
+    @Indexed(name = NAME_FIELD_NAME, type = "string")
+    private String name;
+
+    @Indexed(name = SHORT_DESCRIPTION_FIELD_NAME, type = "string")
+    private String shortDescription;
 
     @Lob
-    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
-    private String description;
+    @Indexed(name = LONG_DESCRIPTION_FIELD_NAME, type = "string")
+    private String longDescription;
+
+    @Indexed(name = PRICE_DESCRIPTION_FIELD_NAME, type = "string")
+    private String priceDescription;
+
+    @Indexed(name = CATALOG_NUMBER_FIELD_NAME, type = "string")
+    private String catalogNumber;
+
+    @Indexed(name = PAGE_TITLE_FIELD_NAME, type = "string")
+    private String pageTitle;
 
     @Indexed(name = AVAILABLE_FIELD_NAME)
     private boolean available;
 
-    @Indexed(name = FEATURES_FIELD_NAME)
-    private final Set<String> features = new HashSet<>();
-
     @Indexed(name = PRICE_FIELD_NAME)
     private double price;
 
-    @Indexed(name = CATEGORY_FIELD_NAME)
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
+//    @Indexed(name = CATEGORY_FIELD_NAME)
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
+//    @Fetch(FetchMode.SELECT)
+//    @JoinColumn(name = CATEGORY_FIELD_NAME, nullable = false)
+//    private Category category;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "Product_Category",
+            joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
+            inverseJoinColumns = {@JoinColumn(name = SearchableCategory.ID_FIELD_NAME, referencedColumnName = SearchableCategory.ID_FIELD_NAME)}
+    )
+    @Indexed(name = CATEGORIES_FIELD_NAME)
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = CATEGORY_FIELD_NAME, nullable = false)
-    private Category category;
+    private final Set<Category> categories = new HashSet<>();
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "Product_Main_Category",
+            joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
+            inverseJoinColumns = {@JoinColumn(name = SearchableCategory.ID_FIELD_NAME, referencedColumnName = SearchableCategory.ID_FIELD_NAME)}
+    )
+    @Indexed(name = MAiN_CATEGORIES_FIELD_NAME)
+    @Fetch(FetchMode.SELECT)
+    private final Set<Category> mainCategories = new HashSet<>();
 
     @Indexed(name = RATING_FIELD_NAME, type = "integer")
     private Integer rating;
 
+    @Indexed(name = AGE_RESTRICTION_FIELD_NAME, type = "integer")
+    private Integer ageRestriction;
+
+    @Indexed(name = LOCK_TYPE_FIELD_NAME, type = "integer")
+    private Integer lockType;
+
     @Indexed(name = LOCATION_FIELD_NAME)
     private Point location;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "Product_Attribute",
+            joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
+            inverseJoinColumns = {@JoinColumn(name = SearchableAttribute.ID_FIELD_NAME, referencedColumnName = SearchableAttribute.ID_FIELD_NAME)}
+    )
+    @Fetch(FetchMode.SELECT)
+    @Indexed(name = ATTRIBUTES_FIELD_NAME)
+    private final List<Attribute> attributes = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
@@ -99,18 +139,45 @@ public class Product extends BaseModel<String> implements SearchableProduct {
             inverseJoinColumns = {@JoinColumn(name = SearchableOrder.ID_FIELD_NAME, referencedColumnName = SearchableOrder.ID_FIELD_NAME)}
     )
     @Indexed(name = ORDERS_FIELD_NAME)
+    @Fetch(FetchMode.SELECT)
     private final Set<Order> orders = new HashSet<>();
 
-    public void setFeatures(final List<String> features) {
-        this.features.clear();
-        if (Objects.nonNull(features)) {
-            this.features.addAll(features);
+    public void setCategories(final List<? extends Category> categories) {
+        this.categories.clear();
+        if (Objects.nonNull(categories)) {
+            this.categories.addAll(categories);
         }
     }
 
-    public void addFeature(final String feature) {
-        if (Objects.nonNull(feature)) {
-            this.features.add(feature);
+    public void addCategory(final Category category) {
+        if (Objects.nonNull(category)) {
+            this.categories.add(category);
+        }
+    }
+
+    public void setMainCategories(final List<? extends Category> mainCategories) {
+        this.mainCategories.clear();
+        if (Objects.nonNull(mainCategories)) {
+            this.mainCategories.addAll(mainCategories);
+        }
+    }
+
+    public void addMainCategory(final Category mainCategory) {
+        if (Objects.nonNull(mainCategory)) {
+            this.mainCategories.add(mainCategory);
+        }
+    }
+
+    public void setAttributes(final List<? extends Attribute> attributes) {
+        this.attributes.clear();
+        if (Objects.nonNull(attributes)) {
+            this.attributes.addAll(attributes);
+        }
+    }
+
+    public void addAttribute(final Attribute attribute) {
+        if (Objects.nonNull(attribute)) {
+            this.attributes.add(attribute);
         }
     }
 

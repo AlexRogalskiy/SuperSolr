@@ -23,8 +23,8 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableAttribute;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,60 +34,26 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.ATTRIBUTES_FIELD_NAME;
+
 /**
- * Custom full-text search order document model
+ * Custom full-text search attribute document model
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Table(name = "order", catalog = "market_data")
+@Table(name = "attributes", catalog = "market_data")
 @AttributeOverrides({
-        @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableOrder.ID_FIELD_NAME))
+        @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableAttribute.ID_FIELD_NAME))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableOrder.MODEL_ID)
-public class Order extends BaseModel<Long> implements SearchableOrder {
+@SolrDocument(solrCoreName = SearchableAttribute.MODEL_ID)
+public class Attribute extends BaseModel<String> implements SearchableAttribute {
 
-    /**
-     * Default explicit serialVersionUID for interoperability
-     */
-    private static final long serialVersionUID = -5055264765286046442L;
-
-    @Indexed(name = TITLE_FIELD_NAME, type = "string")
-    private String title;
-
-    @Lob
-    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
-    private String description;
-
-    @Indexed(name = "productName", type = "string")
-    private String productName;
-
-    @Indexed(name = CLIENT_NAME_FIELD_NAME, type = "string")
-    private String clientName;
-
-    @Indexed(name = CLIENT_MOBILE_FIELD_NAME, type = "string")
-    private String clientMobile;
-
-    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME)
-    @Indexed(name = PRODUCTS_FIELD_NAME)
-    private final Set<Product> products = new HashSet<>();
-
-    public void setProducts(final List<? extends Product> products) {
-        this.products.clear();
-        if (Objects.nonNull(products)) {
-            this.products.addAll(products);
-        }
-    }
-
-    public void addProduct(final Product product) {
-        if (Objects.nonNull(product)) {
-            this.products.add(product);
-        }
-    }
+    @ManyToMany(mappedBy = ATTRIBUTES_FIELD_NAME)
+    @Indexed(name = ATTRIBUTES_FIELD_NAME)
+    private final Set<Attribute> attributes = new HashSet<>();
 }

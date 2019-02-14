@@ -40,4 +40,5 @@ public interface ExposableCategoryView {
     String TITLE_FIELD_NAME = "title";
     String DESCRIPTION_FIELD_NAME = "description";
     String PRODUCTS_FIELD_NAME = "products";
+    String MAIN_PRODUCTS_FIELD_NAME = "mainProducts";
 }

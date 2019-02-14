@@ -37,13 +37,20 @@ public interface SearchableProduct {
      * Default field names
      */
     String ID_FIELD_NAME = "id";
-    String TITLE_FIELD_NAME = "title";
-    String DESCRIPTION_FIELD_NAME = "description";
+    String NAME_FIELD_NAME = "name";
+    String SHORT_DESCRIPTION_FIELD_NAME = "shortDescription";
+    String LONG_DESCRIPTION_FIELD_NAME = "longDescription";
+    String PRICE_DESCRIPTION_FIELD_NAME = "priceDescription";
+    String CATALOG_NUMBER_FIELD_NAME = "catalogNumber";
+    String PAGE_TITLE_FIELD_NAME = "pageTitle";
     String AVAILABLE_FIELD_NAME = "inStock";
     String LOCATION_FIELD_NAME = "store";
-    String CATEGORY_FIELD_NAME = "category";
+    String CATEGORIES_FIELD_NAME = "categories";
+    String MAiN_CATEGORIES_FIELD_NAME = "mainCategories";
     String PRICE_FIELD_NAME = "price";
-    String FEATURES_FIELD_NAME = "features";
+    String ATTRIBUTES_FIELD_NAME = "attributes";
     String RATING_FIELD_NAME = "rating";
+    String AGE_RESTRICTION_FIELD_NAME = "ageRestriction";
+    String LOCK_TYPE_FIELD_NAME = "lockType";
     String ORDERS_FIELD_NAME = "orders";
 }
