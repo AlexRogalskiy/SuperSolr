@@ -33,13 +33,14 @@ import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Facet;
 import org.springframework.data.solr.repository.Highlight;
 import org.springframework.data.solr.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
 /**
  * Custom category search repository declaration
  */
-//@Repository
+@Repository
 public interface CategorySearchRepository extends BaseDocumentSearchRepository<Category, String> {
 
     @Highlight(prefix = "<strong>", postfix = "</strong>")

@@ -55,5 +55,5 @@ target
 ### Lucene ###
 .lucene/
 
-### Lucene ###
+### Logs ###
 .logs/

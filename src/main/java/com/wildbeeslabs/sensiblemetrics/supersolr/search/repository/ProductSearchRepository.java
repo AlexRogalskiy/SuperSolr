@@ -36,6 +36,7 @@ import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Facet;
 import org.springframework.data.solr.repository.Highlight;
 import org.springframework.data.solr.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +44,7 @@ import java.util.List;
 /**
  * Custom product search repository declaration
  */
-//@Repository
+@Repository
 public interface ProductSearchRepository extends BaseDocumentSearchRepository<Product, String> {
 
     @Highlight(prefix = "<highlight>", postfix = "</highlight>")
