@@ -22,11 +22,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<configuration debug="false" scan="true" scanPeriod="3000 seconds">
+<configuration debug="true" scan="true" scanPeriod="3000 seconds">
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+
+    <!-- file audit appender configurations -->
+    <property name="FILE_AUDIT_NAME" value="application"/>
+    <property name="FILE_AUDIT_MAX_FILE_SIZE" value="100MB"/>
+    <property name="FILE_AUDIT_MAX_HISTORY" value="30"/>
+    <property name="FILE_AUDIT_TOTAL_SIZE_CAP" value="3GB"/>
+
+    <!-- file error appender configurations -->
+    <property name="FILE_ERROR_NAME" value="error"/>
+    <property name="FILE_ERROR_MAX_FILE_SIZE" value="100MB"/>
+    <property name="FILE_ERROR_MAX_HISTORY" value="30"/>
+    <property name="FILE_ERROR_TOTAL_SIZE_CAP" value="3GB"/>
 
     <property name="LOG_PATH" value="${LOG_TEMP:-${java.io.tmpdir:-/tmp}}"/>
     <property name="LOG_HOME" value="./logs"/>
@@ -46,7 +58,7 @@ THE SOFTWARE.
     </appender>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <withjansi>true</withjansi>
+        <!--<withjansi>true</withjansi>-->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -54,36 +66,37 @@ THE SOFTWARE.
     </appender>
 
     <appender name="FILE_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/application.log</file>
-        <append>true</append>
+        <file>${LOG_HOME}/${AUDIT_FILE_NAME}.log</file>
+        <append>false</append>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${FILE_AUDIT_LOG_PATTERN}</pattern>
+            <immediateFlush>false</immediateFlush>
+            <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- rollover daily -->
             <fileNamePattern>${LOG_ARCHIVE}/application_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!-- each file should be at most 100MB, keep 30 days worth of history, but at most 3GB -->
-            <maxFileSize>100MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>3GB</totalSizeCap>
+            <maxFileSize>${FILE_AUDIT_MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${FILE_AUDIT_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${FILE_AUDIT_TOTAL_SIZE_CAP}</totalSizeCap>
         </rollingPolicy>
     </appender>
 
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/error.log</file>
+        <file>${LOG_HOME}/${FILE_ERROR_NAME}.log</file>
+        <append>false</append>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${FILE_ERROR_LOG_PATTERN}</pattern>
+            <immediateFlush>false</immediateFlush>
+            <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_ARCHIVE}/error_%d{yyyy-MM-dd}.log.gz</fileNamePattern>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>3GB</totalSizeCap>
+            <maxFileSize>${FILE_ERROR_MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${FILE_ERROR_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${FILE_ERROR_TOTAL_SIZE_CAP}</totalSizeCap>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10MB</MaxFileSize>
-        </triggeringPolicy>
     </appender>
 
     <logger name="ROOT" level="WARN"/>
@@ -96,15 +109,12 @@ THE SOFTWARE.
     <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_AUDIT"/>
     </logger>
-
     <logger name="org.hibernate.type" level="TRACE" additivity="false">
         <appender-ref ref="FILE_AUDIT"/>
     </logger>
-
     <logger name="com.wildbeeslabs.sensiblemetrics.supersolr" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_AUDIT"/>
     </logger>
-
     <logger name="audit" level="DEBUG" additivity="false">
         <appender-ref ref="FILE_AUDIT"/>
     </logger>
@@ -118,15 +128,12 @@ THE SOFTWARE.
         <appender-ref ref="FILE_AUDIT"/>
         <appender-ref ref="FILE_ERROR"/>
     </root>
-
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
-
     <root level="WARN">
         <appender-ref ref="FILE_AUDIT"/>
     </root>
-
     <root level="ERROR">
         <appender-ref ref="FILE_ERROR"/>
     </root>
