@@ -55,19 +55,23 @@ public class Attribute extends BaseModel<String> implements SearchableAttribute 
      */
     private static final long serialVersionUID = -2796804385398260344L;
 
+    @Column(name = NAME_FIELD_NAME)
     @Indexed(name = NAME_FIELD_NAME, type = "string")
     private String name;
 
+    @Column(name = SYNONYM_FIELD_NAME)
     @Indexed(name = SYNONYM_FIELD_NAME, type = "string")
     private String name2;
 
+    @Column(name = DESCRIPTION_TEXT_FIELD_NAME, columnDefinition = "text")
     @Indexed(name = DESCRIPTION_TEXT_FIELD_NAME, type = "string")
     private String descriptionText;
 
+    @Column(name = KEYWORDS_FIELD_NAME)
     @Indexed(name = KEYWORDS_FIELD_NAME, type = "string")
     private String keywords;
 
-    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME)
+    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Indexed(name = PRODUCTS_FIELD_NAME)
     private final List<Product> products = new ArrayList<>();
 

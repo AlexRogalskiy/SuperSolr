@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -36,6 +37,8 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.Date;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableAuditModel.CHANGED_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableAuditModel.CREATED_FIELD_NAME;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_LOCALE;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
@@ -47,6 +50,10 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @EqualsAndHashCode
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(
+        value = {CREATED_FIELD_NAME, CHANGED_FIELD_NAME},
+        allowGetters = true
+)
 public class AuditModelView implements ExposableAuditModelView, Serializable {
 
     /**

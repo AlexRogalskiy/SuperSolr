@@ -30,6 +30,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
@@ -59,33 +61,58 @@ public class Product extends BaseModel<String> implements SearchableProduct {
      */
     private static final long serialVersionUID = 6034172782528641104L;
 
+    @Column(name = NAME_FIELD_NAME)
     @Indexed(name = NAME_FIELD_NAME, type = "string")
     private String name;
 
+    @Column(name = SHORT_DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     @Indexed(name = SHORT_DESCRIPTION_FIELD_NAME, type = "string")
     private String shortDescription;
 
     @Lob
+    @Column(name = LONG_DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     @Indexed(name = LONG_DESCRIPTION_FIELD_NAME, type = "string")
     private String longDescription;
 
+    @Column(name = PRICE_DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     @Indexed(name = PRICE_DESCRIPTION_FIELD_NAME, type = "string")
     private String priceDescription;
 
+    @Column(name = CATALOG_NUMBER_FIELD_NAME)
     @Indexed(name = CATALOG_NUMBER_FIELD_NAME, type = "string")
     private String catalogNumber;
 
+    @Column(name = PAGE_TITLE_FIELD_NAME)
     @Indexed(name = PAGE_TITLE_FIELD_NAME, type = "string")
     private String pageTitle;
 
+    @Column(name = AVAILABLE_FIELD_NAME)
     @Indexed(name = AVAILABLE_FIELD_NAME)
     private boolean available;
 
+    @Column(name = PRICE_FIELD_NAME)
     @Indexed(name = PRICE_FIELD_NAME)
     private double price;
 
+    @Column(name = RECOMMENDED_PRICE_FIELD_NAME)
     @Indexed(name = RECOMMENDED_PRICE_FIELD_NAME)
     private double recommendedPrice;
+
+    @Column(name = RATING_FIELD_NAME)
+    @Indexed(name = RATING_FIELD_NAME, type = "int")
+    private Integer rating;
+
+    @Column(name = AGE_RESTRICTION_FIELD_NAME)
+    @Indexed(name = AGE_RESTRICTION_FIELD_NAME, type = "int")
+    private Integer ageRestriction;
+
+    @Column(name = LOCK_TYPE_FIELD_NAME)
+    @Indexed(name = LOCK_TYPE_FIELD_NAME, type = "int")
+    private Integer lockType;
+
+    @Column(name = LOCATION_FIELD_NAME)
+    @Indexed(name = LOCATION_FIELD_NAME)
+    private Point location;
 
 //    @Indexed(name = CATEGORY_FIELD_NAME)
 //    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, optional = false)
@@ -93,7 +120,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
 //    @JoinColumn(name = CATEGORY_FIELD_NAME, nullable = false)
 //    private Category category;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Category",
             joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
@@ -101,31 +128,21 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     )
     @Indexed(name = CATEGORIES_FIELD_NAME)
     @Fetch(FetchMode.SELECT)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private final Set<Category> categories = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Main_Category",
             joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
             inverseJoinColumns = {@JoinColumn(name = SearchableCategory.ID_FIELD_NAME, referencedColumnName = SearchableCategory.ID_FIELD_NAME)}
     )
-    @Indexed(name = MAiN_CATEGORIES_FIELD_NAME)
+    @Indexed(name = MAIN_CATEGORIES_FIELD_NAME)
     @Fetch(FetchMode.SELECT)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private final Set<Category> mainCategories = new HashSet<>();
 
-    @Indexed(name = RATING_FIELD_NAME, type = "integer")
-    private Integer rating;
-
-    @Indexed(name = AGE_RESTRICTION_FIELD_NAME, type = "integer")
-    private Integer ageRestriction;
-
-    @Indexed(name = LOCK_TYPE_FIELD_NAME, type = "integer")
-    private Integer lockType;
-
-    @Indexed(name = LOCATION_FIELD_NAME)
-    private Point location;
-
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Attribute",
             joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
@@ -133,9 +150,10 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     )
     @Fetch(FetchMode.SELECT)
     @Indexed(name = ATTRIBUTES_FIELD_NAME)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private final List<Attribute> attributes = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Order",
             joinColumns = {@JoinColumn(name = SearchableProduct.ID_FIELD_NAME, referencedColumnName = SearchableProduct.ID_FIELD_NAME)},
@@ -143,6 +161,7 @@ public class Product extends BaseModel<String> implements SearchableProduct {
     )
     @Indexed(name = ORDERS_FIELD_NAME)
     @Fetch(FetchMode.SELECT)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private final Set<Order> orders = new HashSet<>();
 
     public void setCategories(final Collection<? extends Category> categories) {

@@ -46,7 +46,7 @@ public interface SearchableProduct {
     String AVAILABLE_FIELD_NAME = "inStock";
     String LOCATION_FIELD_NAME = "store";
     String CATEGORIES_FIELD_NAME = "categories";
-    String MAiN_CATEGORIES_FIELD_NAME = "mainCategories";
+    String MAIN_CATEGORIES_FIELD_NAME = "mainCategories";
     String PRICE_FIELD_NAME = "price";
     String RECOMMENDED_PRICE_FIELD_NAME = "recommendedPrice";
     String ATTRIBUTES_FIELD_NAME = "attributes";

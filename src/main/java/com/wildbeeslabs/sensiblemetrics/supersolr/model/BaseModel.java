@@ -57,7 +57,13 @@ public abstract class BaseModel<ID extends Serializable> extends AuditModel impl
 
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "base_generator")
+    @SequenceGenerator(
+            name = "base_generator",
+            sequenceName = "base_generator",
+            initialValue = 0
+    )
     @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
     @Indexed(name = ID_FIELD_NAME)
     private ID id;

@@ -36,7 +36,7 @@ import javax.persistence.*;
 import java.util.*;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.CATEGORIES_FIELD_NAME;
-import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.MAiN_CATEGORIES_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.MAIN_CATEGORIES_FIELD_NAME;
 
 /**
  * Custom full-text search category document model
@@ -58,20 +58,23 @@ public class Category extends BaseModel<String> implements SearchableCategory {
      */
     private static final long serialVersionUID = -107452074862198456L;
 
+    @Column(name = INDEX_FIELD_NAME)
     @Indexed(name = INDEX_FIELD_NAME)
     private Integer index;
 
+    @Column(name = TITLE_FIELD_NAME)
     @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;
 
+    @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
     private String description;
 
-    @ManyToMany(mappedBy = CATEGORIES_FIELD_NAME)
+    @ManyToMany(mappedBy = CATEGORIES_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Indexed(name = PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
 
-    @ManyToMany(mappedBy = MAiN_CATEGORIES_FIELD_NAME)
+    @ManyToMany(mappedBy = MAIN_CATEGORIES_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Indexed(name = MAIN_PRODUCTS_FIELD_NAME)
     private final Set<Product> mainProducts = new HashSet<>();
 

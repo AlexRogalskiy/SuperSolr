@@ -81,11 +81,6 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
     @JsonProperty(AVAILABLE_FIELD_NAME)
     private boolean available;
 
-    @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = ATTRIBUTES_FIELD_NAME)
-    @JsonProperty(ATTRIBUTES_FIELD_NAME)
-    private final List<AttributeView> attributes = new ArrayList<>();
-
     @JacksonXmlProperty(localName = PRICE_FIELD_NAME)
     @JsonProperty(PRICE_FIELD_NAME)
     private double price;
@@ -93,16 +88,6 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
     @JacksonXmlProperty(localName = RECOMMENDE_PRICE_FIELD_NAME)
     @JsonProperty(RECOMMENDE_PRICE_FIELD_NAME)
     private double recommendedPrice;
-
-    @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = CATEGORIES_FIELD_NAME)
-    @JsonProperty(CATEGORIES_FIELD_NAME)
-    private final Set<CategoryView> categories = new HashSet<>();
-
-    @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = MAIN_CATEGORIES_FIELD_NAME)
-    @JsonProperty(MAIN_CATEGORIES_FIELD_NAME)
-    private final Set<CategoryView> mainCategories = new HashSet<>();
 
     @JacksonXmlProperty(localName = RATING_FIELD_NAME)
     @JsonProperty(RATING_FIELD_NAME)
@@ -119,6 +104,21 @@ public class ProductView extends BaseModelView<String> implements ExposableProdu
     @JacksonXmlProperty(localName = LOCATION_FIELD_NAME)
     @JsonProperty(LOCATION_FIELD_NAME)
     private Point location;
+
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = ATTRIBUTES_FIELD_NAME)
+    @JsonProperty(ATTRIBUTES_FIELD_NAME)
+    private final List<AttributeView> attributes = new ArrayList<>();
+
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = CATEGORIES_FIELD_NAME)
+    @JsonProperty(CATEGORIES_FIELD_NAME)
+    private final Set<CategoryView> categories = new HashSet<>();
+
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = MAIN_CATEGORIES_FIELD_NAME)
+    @JsonProperty(MAIN_CATEGORIES_FIELD_NAME)
+    private final Set<CategoryView> mainCategories = new HashSet<>();
 
     public void setAttributes(final Collection<? extends AttributeView> attributes) {
         this.attributes.clear();

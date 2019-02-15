@@ -33,6 +33,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.*;
 
 /**
@@ -55,23 +56,26 @@ public class Order extends BaseModel<Long> implements SearchableOrder {
      */
     private static final long serialVersionUID = -5055264765286046442L;
 
+    @Column(name = TITLE_FIELD_NAME)
     @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;
 
     @Lob
+    @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
     private String description;
 
-    @Indexed(name = "productName", type = "string")
-    private String productName;
-
+    @Size(min = 3, max = 100)
+    @Column(name = CLIENT_NAME_FIELD_NAME)
     @Indexed(name = CLIENT_NAME_FIELD_NAME, type = "string")
     private String clientName;
 
+    @Size(min = 3, max = 50)
+    @Column(name = CLIENT_MOBILE_FIELD_NAME)
     @Indexed(name = CLIENT_MOBILE_FIELD_NAME, type = "string")
     private String clientMobile;
 
-    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME)
+    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Indexed(name = PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
 
