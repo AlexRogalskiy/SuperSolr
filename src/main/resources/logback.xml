@@ -28,6 +28,10 @@ THE SOFTWARE.
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
 
+    <!-- logger configurations -->
+    <property name="LOG_PATH" value="${LOG_TEMP:-${java.io.tmpdir:-/tmp}}"/>
+    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
+
     <!-- file audit appender configurations -->
     <property name="FILE_AUDIT_NAME" value="application"/>
     <property name="FILE_AUDIT_MAX_FILE_SIZE" value="100MB"/>
@@ -40,9 +44,7 @@ THE SOFTWARE.
     <property name="FILE_ERROR_MAX_HISTORY" value="30"/>
     <property name="FILE_ERROR_TOTAL_SIZE_CAP" value="3GB"/>
 
-    <property name="LOG_PATH" value="${LOG_TEMP:-${java.io.tmpdir:-/tmp}}"/>
-    <property name="LOG_HOME" value="./logs"/>
-    <property name="LOG_ARCHIVE" value="${LOG_HOME}/archive"/>
+    <!-- log pattern configurations -->
     <property name="CONSOLE_LOG_PATTERN"
               value="%d %-4relative [%thread] %highlight(%-5level) %cyan(%logger{35}) - %msg%n"/>
     <property name="CONSOLE_LOG_PATTERN_EXT"
@@ -66,7 +68,7 @@ THE SOFTWARE.
     </appender>
 
     <appender name="FILE_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/${AUDIT_FILE_NAME}.log</file>
+        <file>${LOG_PATH}/${FILE_AUDIT_NAME}.log</file>
         <append>false</append>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
@@ -75,7 +77,7 @@ THE SOFTWARE.
             <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_ARCHIVE}/application_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${LOG_ARCHIVE}/${FILE_AUDIT_NAME}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>${FILE_AUDIT_MAX_FILE_SIZE}</maxFileSize>
             <maxHistory>${FILE_AUDIT_MAX_HISTORY}</maxHistory>
             <totalSizeCap>${FILE_AUDIT_TOTAL_SIZE_CAP}</totalSizeCap>
@@ -83,7 +85,7 @@ THE SOFTWARE.
     </appender>
 
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/${FILE_ERROR_NAME}.log</file>
+        <file>${LOG_PATH}/${FILE_ERROR_NAME}.log</file>
         <append>false</append>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
@@ -92,7 +94,7 @@ THE SOFTWARE.
             <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_ARCHIVE}/error_%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <fileNamePattern>${LOG_ARCHIVE}/${FILE_ERROR_NAME}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>${FILE_ERROR_MAX_FILE_SIZE}</maxFileSize>
             <maxHistory>${FILE_ERROR_MAX_HISTORY}</maxHistory>
             <totalSizeCap>${FILE_ERROR_TOTAL_SIZE_CAP}</totalSizeCap>
