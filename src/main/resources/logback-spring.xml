@@ -43,11 +43,11 @@ THE SOFTWARE.
         <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
         <appender name="ROLLING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_PATH}/${LOG_FILE}.log</file>
-            <append>false</append>
+            <append>true</append>
+            <immediateFlush>false</immediateFlush>
             <encoder>
                 <charset>UTF-8</charset>
                 <pattern>${FILE_LOG_PATTERN}</pattern>
-                <immediateFlush>false</immediateFlush>
                 <outputPatternAsHeader>true</outputPatternAsHeader>
             </encoder>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -72,11 +72,11 @@ THE SOFTWARE.
         <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
         <appender name="ROLLING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_PATH}/${LOG_FILE}.log</file>
-            <append>false</append>
+            <append>true</append>
+            <immediateFlush>false</immediateFlush>
             <encoder>
                 <charset>UTF-8</charset>
                 <pattern>${FILE_LOG_PATTERN}</pattern>
-                <immediateFlush>false</immediateFlush>
                 <outputPatternAsHeader>true</outputPatternAsHeader>
             </encoder>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">

@@ -53,12 +53,6 @@ THE SOFTWARE.
     <property name="FILE_AUDIT_LOG_PATTERN" value="%d{[yyyy-MM-dd HH:mm:ss]} [%thread] %-5level %logger{36} - %msg%n"/>
     <property name="FILE_ERROR_LOG_PATTERN" value="%d{[yyyy-MM-dd HH:mm:ss]} [%thread] %-5level %logger{36} - %msg%n"/>
 
-    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>1024</queueSize>
-        <appender-ref ref="FILE"/>
-    </appender>
-
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!--<withjansi>true</withjansi>-->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -69,11 +63,11 @@ THE SOFTWARE.
 
     <appender name="FILE_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${FILE_AUDIT_NAME}.log</file>
-        <append>false</append>
+        <append>true</append>
+        <immediateFlush>false</immediateFlush>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${FILE_AUDIT_LOG_PATTERN}</pattern>
-            <immediateFlush>false</immediateFlush>
             <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -86,11 +80,11 @@ THE SOFTWARE.
 
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${FILE_ERROR_NAME}.log</file>
-        <append>false</append>
+        <append>true</append>
+        <immediateFlush>false</immediateFlush>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${FILE_ERROR_LOG_PATTERN}</pattern>
-            <immediateFlush>false</immediateFlush>
             <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -99,6 +93,12 @@ THE SOFTWARE.
             <maxHistory>${FILE_ERROR_MAX_HISTORY}</maxHistory>
             <totalSizeCap>${FILE_ERROR_TOTAL_SIZE_CAP}</totalSizeCap>
         </rollingPolicy>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="FILE_AUDIT"/>
     </appender>
 
     <logger name="ROOT" level="WARN"/>
