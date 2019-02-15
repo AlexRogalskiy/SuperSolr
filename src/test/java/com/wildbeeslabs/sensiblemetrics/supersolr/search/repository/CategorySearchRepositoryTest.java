@@ -150,7 +150,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         this.entityManager.flush();
 
         // when
-        final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByQuery(titles, PageRequest.of(0, 10));
+        final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByHighlightedMultiQuery(titles, PageRequest.of(0, 10));
         final List<? extends Category> categories = categoryHighlightPage.getContent();
 
         // then

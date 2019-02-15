@@ -113,7 +113,7 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
 
     @Test
     public void testFindByAutoCompleteTitle() {
-        final FacetPage<? extends Category> categoryFacetPage = getCategoryService().autoCompleteTitleFragment("Island Planet", PageRequest.of(0, 2));
+        final FacetPage<? extends Category> categoryFacetPage = getCategoryService().findByAutoCompleteTitleFragment("Island Planet", PageRequest.of(0, 2));
         assertEquals(2, categoryFacetPage.getNumberOfElements());
 
         final Map<String, Long> categoryFacetCounts = getFacetCounts(categoryFacetPage);

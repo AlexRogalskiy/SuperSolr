@@ -24,7 +24,6 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
-import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -37,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
  * @param <E>  type of audit document
  * @param <ID> type of audit document identifier
  */
-@NoRepositoryBean
+//@NoRepositoryBean
 public interface AuditDocumentSearchRepository<E extends AuditDocument, ID extends Serializable> extends BaseSearchRepository<E, ID> {
 
     CompletableFuture<List<? extends E>> findByCreatedAtLessThanEqual(final Date date);

@@ -113,7 +113,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
 
     @Test
     public void testFindByAutoCompleteNameFragment() {
-        final FacetPage<? extends Product> productFacetPage = getProductService().autoCompleteNameFragment("Island Planet", PageRequest.of(0, 2));
+        final FacetPage<? extends Product> productFacetPage = getProductService().findByAutoCompleteNameFragment("Island Planet", PageRequest.of(0, 2));
         assertEquals(2, productFacetPage.getNumberOfElements());
 
         final Map<String, Long> productFacetCounts = getFacetCounts(productFacetPage);

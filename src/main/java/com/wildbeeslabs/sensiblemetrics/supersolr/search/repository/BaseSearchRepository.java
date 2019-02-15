@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
-import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.solr.repository.SolrCrudRepository;
 
 import java.io.Serializable;
@@ -34,6 +33,6 @@ import java.io.Serializable;
  * @param <E>  type of document
  * @param <ID> type of document identifier
  */
-@NoRepositoryBean
+//@NoRepositoryBean
 public interface BaseSearchRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {
 }

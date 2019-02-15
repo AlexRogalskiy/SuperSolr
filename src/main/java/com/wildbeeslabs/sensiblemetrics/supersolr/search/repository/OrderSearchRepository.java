@@ -30,12 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.Query.Operator;
 import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Query;
-import org.springframework.stereotype.Repository;
 
 /**
  * Custom order search repository declaration
  */
-@Repository
+//@Repository
 public interface OrderSearchRepository extends BaseDocumentSearchRepository<Order, Long> {
 
     @Query(name = "Order.findByDescription")
