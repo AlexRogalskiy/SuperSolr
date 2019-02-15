@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.ProductView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.ProductService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public class ProductControllerImplTest {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private ProductService productService;
+    private ProductSearchService productService;
 
     @Test
     public void testSearch() {
@@ -109,7 +109,7 @@ public class ProductControllerImplTest {
                 .andExpect(content().string("Hello World"));
     }
 
-    protected ProductService getProductService() {
+    protected ProductSearchService getProductService() {
         return this.productService;
     }
 }

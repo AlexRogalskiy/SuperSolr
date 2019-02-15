@@ -23,35 +23,31 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableCategory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.SolrDocument;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.*;
 
-import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.CATEGORIES_FIELD_NAME;
-import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct.MAIN_CATEGORIES_FIELD_NAME;
-
 /**
- * Custom full-text search category document model
+ * Custom category model
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Entity(name = PersistableCategory.MODEL_ID)
+@BatchSize(size = 10)
 @Table(name = "category", catalog = "market_data")
 @AttributeOverrides({
-        @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableCategory.ID_FIELD_NAME))
+        @AttributeOverride(name = PersistableCategory.ID_FIELD_NAME, column = @Column(name = PersistableCategory.ID_FIELD_NAME))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableCategory.MODEL_ID)
-public class Category extends BaseModel<String> implements SearchableCategory {
+public class Category extends BaseModel<Long> implements PersistableCategory {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -59,55 +55,49 @@ public class Category extends BaseModel<String> implements SearchableCategory {
     private static final long serialVersionUID = -107452074862198456L;
 
     @Column(name = INDEX_FIELD_NAME)
-    @Indexed(name = INDEX_FIELD_NAME)
     private Integer index;
 
     @Column(name = TITLE_FIELD_NAME)
-    @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;
 
     @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
-    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
     private String description;
 
-    @ManyToMany(mappedBy = CATEGORIES_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Indexed(name = PRODUCTS_FIELD_NAME)
+    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Product> products = new HashSet<>();
 
-    @ManyToMany(mappedBy = MAIN_CATEGORIES_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Indexed(name = MAIN_PRODUCTS_FIELD_NAME)
+    @ManyToMany(mappedBy = MAIN_PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Product> mainProducts = new HashSet<>();
 
 //    @OneToMany(mappedBy = CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 //    @Column(name = PRODUCTS_FIELD_NAME, nullable = false)
 //    @OnDelete(action = OnDeleteAction.CASCADE)
 //    @BatchSize(size = 10)
-//    @Indexed(name = PRODUCTS_FIELD_NAME)
 //    private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final Collection<? extends Product> products) {
-        this.products.clear();
+        this.getProducts().clear();
         Optional.ofNullable(products)
                 .orElseGet(Collections::emptyList)
-                .forEach(product -> addProduct(product));
+                .forEach(product -> this.addProduct(product));
     }
 
     public void addProduct(final Product product) {
         if (Objects.nonNull(product)) {
-            this.products.add(product);
+            this.getProducts().add(product);
         }
     }
 
     public void setMainProducts(final Collection<? extends Product> mainProducts) {
-        this.mainProducts.clear();
+        this.getMainProducts().clear();
         Optional.ofNullable(mainProducts)
                 .orElseGet(Collections::emptyList)
-                .forEach(mainProduct -> addMainProduct(mainProduct));
+                .forEach(mainProduct -> this.addMainProduct(mainProduct));
     }
 
     public void addMainProduct(final Product mainProduct) {
         if (Objects.nonNull(mainProduct)) {
-            this.mainProducts.add(mainProduct);
+            this.getMainProducts().add(mainProduct);
         }
     }
 }

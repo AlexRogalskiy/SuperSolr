@@ -29,31 +29,32 @@ THE SOFTWARE.
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
 
-    <!-- logger configurations -->
+    <!-- logger configuration -->
     <property name="LOG_PATH" value="${LOG_TEMP:-${java.io.tmpdir:-/tmp}}"/>
     <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive"/>
 
-    <!-- file audit appender configurations -->
+    <!-- file audit appender configuration -->
     <property name="FILE_AUDIT_NAME" value="application"/>
     <property name="FILE_AUDIT_MAX_FILE_SIZE" value="100MB"/>
     <property name="FILE_AUDIT_MAX_HISTORY" value="30"/>
     <property name="FILE_AUDIT_TOTAL_SIZE_CAP" value="3GB"/>
 
-    <!-- file error appender configurations -->
+    <!-- file error appender configuration -->
     <property name="FILE_ERROR_NAME" value="error"/>
     <property name="FILE_ERROR_MAX_FILE_SIZE" value="100MB"/>
     <property name="FILE_ERROR_MAX_HISTORY" value="30"/>
     <property name="FILE_ERROR_TOTAL_SIZE_CAP" value="3GB"/>
 
-    <!-- log pattern configurations -->
+    <!-- log pattern configuration -->
     <property name="CONSOLE_LOG_PATTERN"
               value="%d %-4relative [%thread] %highlight(%-5level) %cyan(%logger{35}) - %msg%n"/>
     <property name="CONSOLE_LOG_PATTERN_EXT"
               value="%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable"/>
-    <property name="WEB_LOG_PATTERN" value="web - %date [%thread] %-5level %logger{36} - %messaging%n"/>
+    <property name="WEB_LOG_PATTERN" value="web - %date {%thread} %-5level %logger{50} - %msg%n"/>
     <property name="FILE_AUDIT_LOG_PATTERN" value="%d{[yyyy-MM-dd HH:mm:ss]} [%thread] %-5level %logger{36} - %msg%n"/>
     <property name="FILE_ERROR_LOG_PATTERN" value="%d{[yyyy-MM-dd HH:mm:ss]} [%thread] %-5level %logger{36} - %msg%n"/>
 
+    <!-- console appender configuration -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!--<withjansi>true</withjansi>-->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -62,6 +63,7 @@ THE SOFTWARE.
         </encoder>
     </appender>
 
+    <!-- file audit appender configuration -->
     <appender name="FILE_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${FILE_AUDIT_NAME}.log</file>
         <append>true</append>
@@ -81,6 +83,7 @@ THE SOFTWARE.
         </rollingPolicy>
     </appender>
 
+    <!-- file error appender configuration -->
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${FILE_ERROR_NAME}.log</file>
         <append>true</append>
@@ -100,6 +103,7 @@ THE SOFTWARE.
         </rollingPolicy>
     </appender>
 
+    <!-- async file audit appender configuration -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <discardingThreshold>0</discardingThreshold>
         <queueSize>1024</queueSize>

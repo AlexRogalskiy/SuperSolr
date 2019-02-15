@@ -3,6 +3,8 @@ spring:
     active: "local"
 ---
 spring:
+  main:
+    allow-bean-definition-overriding: false
   batch:
     job:
       enabled: false

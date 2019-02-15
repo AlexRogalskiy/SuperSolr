@@ -23,33 +23,32 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.SolrDocument;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.*;
 
 /**
- * Custom full-text search order document model
+ * Custom order model
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Entity(name = PersistableOrder.MODEL_ID)
+@BatchSize(size = 10)
 @Table(name = "order", catalog = "market_data")
 @AttributeOverrides({
-        @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableOrder.ID_FIELD_NAME))
+        @AttributeOverride(name = PersistableOrder.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableOrder.MODEL_ID)
-public class Order extends BaseModel<Long> implements SearchableOrder {
+public class Order extends BaseModel<Long> implements PersistableOrder {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -57,38 +56,33 @@ public class Order extends BaseModel<Long> implements SearchableOrder {
     private static final long serialVersionUID = -5055264765286046442L;
 
     @Column(name = TITLE_FIELD_NAME)
-    @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;
 
     @Lob
     @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
-    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
     private String description;
 
     @Size(min = 3, max = 100)
     @Column(name = CLIENT_NAME_FIELD_NAME)
-    @Indexed(name = CLIENT_NAME_FIELD_NAME, type = "string")
     private String clientName;
 
     @Size(min = 3, max = 50)
     @Column(name = CLIENT_MOBILE_FIELD_NAME)
-    @Indexed(name = CLIENT_MOBILE_FIELD_NAME, type = "string")
     private String clientMobile;
 
     @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Indexed(name = PRODUCTS_FIELD_NAME)
     private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final Collection<? extends Product> products) {
-        this.products.clear();
+        this.getProducts().clear();
         Optional.ofNullable(products)
                 .orElseGet(Collections::emptyList)
-                .forEach(product -> addProduct(product));
+                .forEach(product -> this.addProduct(product));
     }
 
     public void addProduct(final Product product) {
         if (Objects.nonNull(product)) {
-            this.products.add(product);
+            this.getProducts().add(product);
         }
     }
 }

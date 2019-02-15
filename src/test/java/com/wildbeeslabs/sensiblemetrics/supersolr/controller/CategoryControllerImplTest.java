@@ -23,10 +23,10 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.CategoryControllerImpl;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.CategorySearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.CategoryView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.CategoryService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@WebMvcTest(CategoryControllerImpl.class)
+@WebMvcTest(CategorySearchControllerImpl.class)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DirtiesContext
@@ -78,7 +78,7 @@ public class CategoryControllerImplTest {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private CategoryService categoryService;
+    private CategorySearchService categoryService;
 
     @Test
     public void testSearch() {
@@ -112,7 +112,7 @@ public class CategoryControllerImplTest {
                 .andExpect(content().string("Hello World"));
     }
 
-    protected CategoryService getCategoryService() {
+    protected CategorySearchService getCategoryService() {
         return this.categoryService;
     }
 }

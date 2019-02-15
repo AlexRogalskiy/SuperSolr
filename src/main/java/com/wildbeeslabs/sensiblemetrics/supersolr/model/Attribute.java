@@ -23,32 +23,31 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableAttribute;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAttribute;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.SolrDocument;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.*;
 
 /**
- * Custom full-text search attribute document model
+ * Custom attribute model
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Entity(name = PersistableAttribute.MODEL_ID)
+@BatchSize(size = 10)
 @Table(name = "attributes", catalog = "market_data")
 @AttributeOverrides({
-        @AttributeOverride(name = SearchableBaseModel.ID_FIELD_NAME, column = @Column(name = SearchableAttribute.ID_FIELD_NAME))
+        @AttributeOverride(name = PersistableAttribute.ID_FIELD_NAME, column = @Column(name = PersistableAttribute.ID_FIELD_NAME))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
-@SolrDocument(solrCoreName = SearchableAttribute.MODEL_ID)
-public class Attribute extends BaseModel<String> implements SearchableAttribute {
+public class Attribute extends BaseModel<Long> implements PersistableAttribute {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -56,35 +55,30 @@ public class Attribute extends BaseModel<String> implements SearchableAttribute 
     private static final long serialVersionUID = -2796804385398260344L;
 
     @Column(name = NAME_FIELD_NAME)
-    @Indexed(name = NAME_FIELD_NAME, type = "string")
     private String name;
 
     @Column(name = SYNONYM_FIELD_NAME)
-    @Indexed(name = SYNONYM_FIELD_NAME, type = "string")
     private String name2;
 
     @Column(name = DESCRIPTION_TEXT_FIELD_NAME, columnDefinition = "text")
-    @Indexed(name = DESCRIPTION_TEXT_FIELD_NAME, type = "string")
     private String descriptionText;
 
     @Column(name = KEYWORDS_FIELD_NAME)
-    @Indexed(name = KEYWORDS_FIELD_NAME, type = "string")
     private String keywords;
 
     @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Indexed(name = PRODUCTS_FIELD_NAME)
     private final List<Product> products = new ArrayList<>();
 
     public void setProducts(final Collection<? extends Product> products) {
-        this.products.clear();
+        this.getProducts().clear();
         Optional.ofNullable(products)
                 .orElseGet(Collections::emptyList)
-                .forEach(product -> addProduct(product));
+                .forEach(product -> this.addProduct(product));
     }
 
     public void addProduct(final Product product) {
         if (Objects.nonNull(product)) {
-            this.products.add(product);
+            this.getProducts().add(product);
         }
     }
 }

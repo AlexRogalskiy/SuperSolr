@@ -23,32 +23,28 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableBaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.domain.Persistable;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.repository.Score;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom full-text search base model
+ * Custom base model
  *
- * @param <ID> type of entity identifier
+ * @param <ID> type of model identifier
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public abstract class BaseModel<ID extends Serializable> extends AuditModel implements SearchableBaseModel, Persistable<ID> {
+public abstract class BaseModel<ID extends Serializable> extends AuditModel implements PersistableBaseModel, Persistable<ID> {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -65,12 +61,7 @@ public abstract class BaseModel<ID extends Serializable> extends AuditModel impl
             initialValue = 0
     )
     @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
-    @Indexed(name = ID_FIELD_NAME)
     private ID id;
-
-    @Score
-    @Column(name = SCORE_FIELD_NAME)
-    private float score;
 
     @Override
     public boolean isNew() {

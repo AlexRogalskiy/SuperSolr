@@ -25,8 +25,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.solr.repository.Boost;
-import org.springframework.data.solr.repository.Query;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -34,12 +32,11 @@ import java.util.Optional;
 /**
  * Custom base model repository declaration
  *
- * @param <E>  type of entity model
- * @param <ID> type of entity identifier
+ * @param <E>  type of base model
+ * @param <ID> type of base model identifier
  */
 @NoRepositoryBean
 public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends AuditModelRepository<E, ID> {
 
-    @Query(name = "BaseModel.findById")
-    Optional<E> findById(@Boost(2) final ID id);
+    Optional<E> findById(final ID id);
 }

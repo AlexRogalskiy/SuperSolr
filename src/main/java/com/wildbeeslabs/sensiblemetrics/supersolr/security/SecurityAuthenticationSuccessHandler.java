@@ -28,6 +28,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +36,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
- * Custom security authentication success handler implementation
+ * Custom security authentication success handler implementation {@link SimpleUrlAuthenticationSuccessHandler}
  */
+@Component
 public class SecurityAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     /**
-     * Default request cache {@link RequestCache}
+     * Default request cache {@link HttpSessionRequestCache}
      */
     private RequestCache requestCache = new HttpSessionRequestCache();
 
@@ -60,7 +62,7 @@ public class SecurityAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         clearAuthenticationAttributes(request);
     }
 
-    public void setRequestCache(RequestCache requestCache) {
+    public void setRequestCache(final RequestCache requestCache) {
         this.requestCache = requestCache;
     }
 

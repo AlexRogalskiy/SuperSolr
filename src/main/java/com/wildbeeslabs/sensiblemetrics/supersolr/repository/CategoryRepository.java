@@ -24,43 +24,17 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableCategory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.FacetPage;
-import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.data.solr.repository.Boost;
-import org.springframework.data.solr.repository.Facet;
-import org.springframework.data.solr.repository.Highlight;
-import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Custom category repository declaration
  */
 @Repository
-public interface CategoryRepository extends BaseModelRepository<Category, String> {
+public interface CategoryRepository extends BaseModelRepository<Category, Long> {
 
-    @Highlight(prefix = "<strong>", postfix = "</strong>")
-    @Query(fields = {
-            SearchableCategory.ID_FIELD_NAME,
-            SearchableCategory.TITLE_FIELD_NAME,
-            SearchableCategory.DESCRIPTION_FIELD_NAME
-    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Category> findByQuery(final Collection<String> values, final Pageable pageable);
+    List<? extends Category> findByTitle(final String title);
 
-    Page<? extends Category> findByTitle(final String title, final Pageable pageable);
-
-    Page<? extends Category> findByTitles(final Collection<String> title, final Pageable pageable);
-
-    @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
-    FacetPage<? extends Category> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
-
-    @Query(name = "Category.findByDescription")
-    Page<? extends Category> findByDescription(final String description, final Pageable pageable);
-
-    @Query(name = "Category.findByNamedQuery")
-    Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    List<? extends Category> findByDescription(final String description);
 }

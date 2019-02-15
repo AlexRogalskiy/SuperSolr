@@ -62,7 +62,7 @@ import java.util.UUID;
 @EnableJpaRepositories(
         basePackages = {
                 "com.wildbeeslabs.sensiblemetrics.supersolr",
-                "com.wildbeeslabs.sensiblemetrics.supersolr.repository",
+                "com.wildbeeslabs.sensiblemetrics.supersolr.search.repository",
         }
 )
 @PropertySource("classpath:application.properties")
@@ -71,8 +71,8 @@ public class DBConfig {
     /**
      * Default model/repository packages
      */
-    public static final String DEFAULT_TRIGGER_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr";
-    public static final String DEFAULT_TRIGGER_MODEL_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.model";
+    public static final String DEFAULT_BASE_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr";
+    public static final String DEFAULT_BASE_MODEL_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.model";
     /**
      * Default persistence unit name
      */
@@ -105,7 +105,7 @@ public class DBConfig {
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         factoryBean.setJpaProperties(jpaProperties);
         factoryBean.setJpaDialect(jpaDialect);
-        factoryBean.setPackagesToScan(DEFAULT_TRIGGER_PACKAGE, DEFAULT_TRIGGER_MODEL_PACKAGE);
+        factoryBean.setPackagesToScan(DEFAULT_BASE_PACKAGE, DEFAULT_BASE_MODEL_PACKAGE);
         factoryBean.setPersistenceUnitName(DEFAULT_PERSISTENCE_UNIT_NAME);
         return factoryBean;
     }
@@ -185,7 +185,7 @@ public class DBConfig {
     }
 
     @Bean
-    public JpaTransactionManager transactionManager(final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
+    public JpaTransactionManager jpaTransactionManager(final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
         final JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactoryBean.getObject());
         return transactionManager;
@@ -245,12 +245,12 @@ public class DBConfig {
         //jpaProperties.put("hibernate.multiTenancy", env.getRequiredProperty("supersolr.datasource.config.hibernate.multiTenancy"));
 
         // Hibernate cache properties
-        jpaProperties.put("hibernate.cache.ehcache.missing_cache_strategy", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.ehcache.missingCacheStrategy"));
-        jpaProperties.put("hibernate.cache.region.factory_class", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.region.factoryClass"));
-        jpaProperties.put("hibernate.cache.use_second_level_cache", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useSecondLevelCache"));
-        jpaProperties.put("hibernate.cache.use_structured_entries", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useStructuredEntries"));
-        jpaProperties.put("hibernate.cache.use_query_cache", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useQueryCache"));
-        jpaProperties.put("net.sf.ehcache.configurationResourceName", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.configurationResourceName"));
+//        jpaProperties.put("hibernate.cache.ehcache.missing_cache_strategy", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.ehcache.missingCacheStrategy"));
+//        jpaProperties.put("hibernate.cache.region.factory_class", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.region.factoryClass"));
+//        jpaProperties.put("hibernate.cache.use_second_level_cache", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useSecondLevelCache"));
+//        jpaProperties.put("hibernate.cache.use_structured_entries", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useStructuredEntries"));
+//        jpaProperties.put("hibernate.cache.use_query_cache", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useQueryCache"));
+//        jpaProperties.put("net.sf.ehcache.configurationResourceName", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.configurationResourceName"));
 
         // Hibernate search properties
         jpaProperties.put("hibernate.search.exclusive_index_use", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.exclusiveIndexUse"));
