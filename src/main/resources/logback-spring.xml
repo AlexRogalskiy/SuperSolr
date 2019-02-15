@@ -24,6 +24,7 @@ THE SOFTWARE.
 -->
 <configuration>
 
+    <!-- logger default configurations -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <!-- logger configurations -->

@@ -24,6 +24,7 @@ THE SOFTWARE.
 -->
 <configuration debug="true" scan="true" scanPeriod="3000 seconds">
 
+    <!-- logger default configurations -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
@@ -65,11 +66,13 @@ THE SOFTWARE.
         <file>${LOG_PATH}/${FILE_AUDIT_NAME}.log</file>
         <append>true</append>
         <immediateFlush>false</immediateFlush>
+
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${FILE_AUDIT_LOG_PATTERN}</pattern>
             <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_ARCHIVE}/${FILE_AUDIT_NAME}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>${FILE_AUDIT_MAX_FILE_SIZE}</maxFileSize>
@@ -82,11 +85,13 @@ THE SOFTWARE.
         <file>${LOG_PATH}/${FILE_ERROR_NAME}.log</file>
         <append>true</append>
         <immediateFlush>false</immediateFlush>
+
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
             <pattern>${FILE_ERROR_LOG_PATTERN}</pattern>
             <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_ARCHIVE}/${FILE_ERROR_NAME}_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxFileSize>${FILE_ERROR_MAX_FILE_SIZE}</maxFileSize>
