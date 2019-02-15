@@ -77,7 +77,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
     public ResponseEntity<?> autoComplete(final @RequestParam("term") String searchTerm,
                                           final @PageableDefault(size = 1) Pageable pageable) {
         log.info("Fetching categories by autocomplete search term: {}", searchTerm);
-        final FacetPage<? extends Category> categoryPage = getSearchService().autoCompleteTitleFragment(searchTerm, pageable);
+        final FacetPage<? extends Category> categoryPage = getSearchService().findByAutoCompleteTitleFragment(searchTerm, pageable);
         return new ResponseEntity<>(MapperUtils.mapAll(getResultSetByTerm(categoryPage, searchTerm), CategoryView.class), getHeaders(categoryPage), HttpStatus.OK);
     }
 

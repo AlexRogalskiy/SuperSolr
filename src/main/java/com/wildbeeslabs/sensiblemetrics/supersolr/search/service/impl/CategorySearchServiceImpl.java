@@ -30,6 +30,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchS
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,7 @@ import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -81,7 +83,16 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
-    public FacetPage<? extends Category> autoCompleteTitleFragment(final String fragment, final Pageable pageable) {
+    public HighlightPage<? extends Category> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable) {
+        if (CollectionUtils.isEmpty(values)) {
+            return new SolrResultPage<>(Collections.emptyList());
+        }
+        return getRepository().findByHighlightedMultiQuery(values, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Category> findByAutoCompleteTitleFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isBlank(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }

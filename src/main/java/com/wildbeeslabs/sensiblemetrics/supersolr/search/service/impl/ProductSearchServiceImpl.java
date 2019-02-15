@@ -30,11 +30,14 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchSe
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.solr.core.geo.GeoConverters;
+import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.HighlightOptions;
 import org.springframework.data.solr.core.query.SimpleHighlightQuery;
@@ -44,7 +47,9 @@ import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Custom product search service implementation {@link Product}
@@ -81,8 +86,22 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
+    public Page<? extends Product> findByNameOrDescription(final String searchTerm, final Pageable pageable) {
+        return getRepository().findByNameOrDescription(searchTerm, pageable);
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public FacetPage<? extends Product> autoCompleteNameFragment(final String fragment, final Pageable pageable) {
+    public HighlightPage<? extends Product> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable) {
+        if (CollectionUtils.isEmpty(values)) {
+            return new SolrResultPage<>(Collections.emptyList());
+        }
+        return getRepository().findByHighlightedMultiQuery(values, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Product> findByAutoCompleteNameFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
@@ -91,8 +110,49 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByCustomQuery(final String searchTerm, final PageRequest request) {
-        return getRepository().findByCustomQuery(searchTerm, request);
+    public Page<? extends Product> findByCustomQuery(final String searchTerm, final Pageable pageable) {
+        return getRepository().findByCustomQuery(searchTerm, pageable);
+    }
+
+    @Override
+    public Page<? extends Product> findByCategory(final String category, final Pageable pageable) {
+        return getRepository().findByCategory(category, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByRating(final Integer popularity, final Pageable pageable) {
+        return getRepository().findByRating(popularity, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByLockType(final Integer lockType, final Pageable pageable) {
+        return getRepository().findByLockType(lockType, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByLocation(final Point location, final Pageable pageable) {
+        return getRepository().findByLocation(location, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Product> findByLocation(final String location, int distanceRange) {
+        final org.springframework.data.geo.Point point = GeoConverters.StringToPointConverter.INSTANCE.convert(location);
+        return getRepository().findByLocationNear(new Point(point.getX(), point.getY()), new Distance(distanceRange));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Product> findAvailable() {
+        return getRepository().findByAvailableTrue();
+    }
+
+    @Override
+    public Page<? extends Product> findAllProducts(final Pageable pageable) {
+        return getRepository().findAllProducts(pageable);
     }
 
     @Override

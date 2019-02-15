@@ -57,7 +57,7 @@ public interface AuditModelRepository<E extends AuditModel, ID extends Serializa
     @Async
     CompletableFuture<List<? extends E>> findByCreatedByIgnoreCase(final String createdBy);
 
-    //@Query("SELECT e FROM #{#entityName} e WHERE e.modifiedBy = ?1")
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.changedBy = ?1")
     @Async
-    CompletableFuture<List<? extends E>> findByModifiedByIgnoreCase(final String modifiedBy);
+    CompletableFuture<List<? extends E>> findByChangedByIgnoreCase(final String changedBy);
 }

@@ -49,7 +49,7 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
             SearchableCategory.TITLE_FIELD_NAME,
             SearchableCategory.DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Category> findByQuery(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Category> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable);
 
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
 

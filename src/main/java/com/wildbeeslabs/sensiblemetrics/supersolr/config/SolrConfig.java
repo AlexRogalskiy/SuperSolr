@@ -43,7 +43,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Configuration
 @EnableAsync
 @EnableSolrRepositories(
-        basePackages = "com.wildbeeslabs.sensiblemetrics.supersolr.search.repository",
+        basePackages = {
+                "com.wildbeeslabs.sensiblemetrics.supersolr.search.document",
+                "com.wildbeeslabs.sensiblemetrics.supersolr.search.repository"
+        },
         namedQueriesLocation = "classpath:solr-named-queries.properties",
         multicoreSupport = true,
         schemaCreationSupport = true)

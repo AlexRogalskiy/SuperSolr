@@ -77,7 +77,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
     public ResponseEntity<?> autoComplete(final @RequestParam("term") String searchTerm,
                                           final @PageableDefault(size = 1) Pageable pageable) {
         log.info("Fetching products by autocomplete search term: {}", searchTerm);
-        final FacetPage<? extends Product> productPage = getSearchService().autoCompleteNameFragment(searchTerm, pageable);
+        final FacetPage<? extends Product> productPage = getSearchService().findByAutoCompleteNameFragment(searchTerm, pageable);
         return new ResponseEntity<>(MapperUtils.mapAll(getResultSetByTerm(productPage, searchTerm), ProductView.class), getHeaders(productPage), HttpStatus.OK);
     }
 

@@ -61,8 +61,8 @@ import java.util.UUID;
 @EnableTransactionManagement
 @EnableJpaRepositories(
         basePackages = {
-                "com.wildbeeslabs.sensiblemetrics.supersolr",
-                "com.wildbeeslabs.sensiblemetrics.supersolr.search.repository",
+                "com.wildbeeslabs.sensiblemetrics.supersolr.model",
+                "com.wildbeeslabs.sensiblemetrics.supersolr.repository",
         }
 )
 @PropertySource("classpath:application.properties")
@@ -71,8 +71,8 @@ public class DBConfig {
     /**
      * Default model/repository packages
      */
-    public static final String DEFAULT_BASE_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr";
-    public static final String DEFAULT_BASE_MODEL_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.model";
+    public static final String DEFAULT_REPOSITORY_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.repository";
+    public static final String DEFAULT_MODEL_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.model";
     /**
      * Default persistence unit name
      */
@@ -105,7 +105,7 @@ public class DBConfig {
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         factoryBean.setJpaProperties(jpaProperties);
         factoryBean.setJpaDialect(jpaDialect);
-        factoryBean.setPackagesToScan(DEFAULT_BASE_PACKAGE, DEFAULT_BASE_MODEL_PACKAGE);
+        factoryBean.setPackagesToScan(DEFAULT_REPOSITORY_PACKAGE, DEFAULT_MODEL_PACKAGE);
         factoryBean.setPersistenceUnitName(DEFAULT_PERSISTENCE_UNIT_NAME);
         return factoryBean;
     }
