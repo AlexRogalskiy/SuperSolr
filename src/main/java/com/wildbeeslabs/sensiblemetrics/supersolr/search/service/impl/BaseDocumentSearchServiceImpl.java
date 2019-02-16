@@ -74,7 +74,7 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
     @Override
     public Page<? extends E> findBySimpleQuery(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(criteria, pageable);
-        query.setRows(1000);
+        query.setRows(DEFAULT_QUERY_ROWS_SIZE);
         return getSolrTemplate().queryForPage(query, clazz);
     }
 

@@ -29,7 +29,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.utils.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +44,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_DOCTYPE;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_SEARСH_TERM_DELIMITER;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -57,11 +58,6 @@ import static org.junit.Assert.assertTrue;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ProductServiceImplTest extends BaseDocumentTest {
-
-    /**
-     * Default document type
-     */
-    private static final String DEFAULT_DOCTYPE = "doctype";
 
     @Autowired
     private ProductSearchService productService;
@@ -281,14 +277,14 @@ public class ProductServiceImplTest extends BaseDocumentTest {
     }
 
     private Criteria nameAndDescriptionCriteria(final String searchTerms) {
-        String[] words = searchTerms.split(StringUtils.SPACE);
+        final String[] words = searchTerms.split(DEFAULT_SEARСH_TERM_DELIMITER);
         Criteria criteria = new Criteria();
         for (final String word : words) {
             criteria = criteria
                     .and(new Criteria(SearchableProduct.NAME_FIELD_NAME).contains(word)
                             .or(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME).contains(word)
                             .or(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME).contains(word)
-                            .or(SearchableProduct.PRICE_FIELD_NAME).contains(word));
+                            .or(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(word));
         }
         return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.DOCUMENT_ID));
     }

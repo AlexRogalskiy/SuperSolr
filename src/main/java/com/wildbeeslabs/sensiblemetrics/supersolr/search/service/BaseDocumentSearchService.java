@@ -54,6 +54,10 @@ public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extend
      */
     Pattern DEFAULT_IGNORED_CHARS_PATTERN = Pattern.compile("\\p{Punct}");
     /**
+     * Default document type
+     */
+    String DEFAULT_DOCTYPE = "doctype";
+    /**
      * Default query rows size
      */
     int DEFAULT_QUERY_ROWS_SIZE = 1000;

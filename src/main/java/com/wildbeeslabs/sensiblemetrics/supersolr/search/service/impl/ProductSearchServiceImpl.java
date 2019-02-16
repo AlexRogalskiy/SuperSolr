@@ -169,16 +169,18 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         return getSolrTemplate().queryForHighlightPage(query, Product.class);
     }
 
-    protected Criteria getCriteria(final String searchTerm) {
-        Criteria conditions = new Criteria();
-        for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
-            conditions = conditions
+    protected Criteria nameAndDescriptionCriteria(final String searchTerm) {
+        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
+        Criteria criteria = new Criteria();
+        for (final String term : searchTerms) {
+            criteria = criteria
+                    .and(new Criteria(SearchableProduct.NAME_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME).contains(term));
         }
-        return conditions;
+        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.DOCUMENT_ID));
     }
 
     protected ProductSearchRepository getRepository() {
