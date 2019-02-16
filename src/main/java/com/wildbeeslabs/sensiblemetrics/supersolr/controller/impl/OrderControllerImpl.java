@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -75,7 +76,7 @@ public class OrderControllerImpl extends BaseModelControllerImpl<Order, OrderVie
 
     @PostMapping("/order")
     @ResponseStatus
-    public ResponseEntity<?> createOrder(final @RequestBody OrderView orderDto) {
+    public ResponseEntity<?> createOrder(final @RequestBody @Valid OrderView orderDto) {
         log.info("Creating new order by view: {}", orderDto);
         final OrderView orderDtoCreated = MapperUtils.map(this.createItem(orderDto, Order.class), OrderView.class);
         final UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
