@@ -78,14 +78,17 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
     Page<? extends Product> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    @Query("name:*?0* AND doctype:product")
+    @Query(name = "Product.findByNameStartsWith")
     Page<? extends Product> findByNameStartsWith(final String name, final Pageable pageable);
+
+    @Query(name = "Product.findById")
+    Page<? extends Product> findProductById(final String id);
 
     Page<? extends Product> findByName(final String name, final Pageable pageable);
 
     Page<? extends Product> findByNames(final Collection<String> names, final Pageable pageable);
 
-    @Query("doctype:product")
+    @Query(name = "Product.findAll")
     Page<? extends Product> findAllProducts(final Pageable pageable);
 
     @Query(name = "Product.findByDescription")
@@ -97,13 +100,10 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     @Query(name = "Product.findByNameOrDescription")
     Page<? extends Product> findByNameOrDescription(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    @Query("categories:*?0* AND doctype:product")
+    @Query(name = "Product.findByCategory")
     Page<? extends Product> findByCategory(final String category, final Pageable pageable);
 
-    @Query("(name:*?0* OR categories:*?0*) AND doctype:product")
-    List<? extends Product> findByAnnotatedQuery(final String searchTerm, final Sort sort);
-
-    @Query("inStock:true AND doctype:product")
+    @Query(name = "Product.findAvailable")
     List<? extends Product> findAvailableProducts();
 
     @Query(name = "Product.findByNameOrCategory")
@@ -123,7 +123,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
 
     List<? extends Product> findByAvailableTrue();
 
-    @Query("{!geofilt pt=?0 sfield=store d=?1}")
+    @Query(name = "Product.findByLocation")
     List<? extends Product> findByLocationSomewhereNear(final Point location, final Distance distance);
 
     List<? extends Product> findByNameContainsOrCategoriesContains(final String name, final String category, final Sort sort);

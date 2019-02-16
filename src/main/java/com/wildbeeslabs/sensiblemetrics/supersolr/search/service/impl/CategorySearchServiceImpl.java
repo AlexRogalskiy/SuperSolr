@@ -112,14 +112,15 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         return getSolrTemplate().queryForHighlightPage(query, Category.class);
     }
 
-    protected Criteria getCriteria(final String searchTerm) {
-        Criteria conditions = new Criteria();
-        for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
-            conditions = conditions
-                    .or(new Criteria(SearchableCategory.ID_FIELD_NAME).contains(term))
+    protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
+        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
+        Criteria criteria = new Criteria();
+        for (final String term : searchTerms) {
+            criteria = criteria
+                    .and(new Criteria(SearchableCategory.TITLE_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableCategory.DESCRIPTION_FIELD_NAME).contains(term));
         }
-        return conditions;
+        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableCategory.DOCUMENT_ID));
     }
 
     @Override

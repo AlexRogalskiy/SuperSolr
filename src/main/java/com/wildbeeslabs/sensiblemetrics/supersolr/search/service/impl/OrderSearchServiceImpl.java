@@ -30,6 +30,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.OrderSearchServ
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -79,14 +80,15 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
         return getSolrTemplate().queryForHighlightPage(query, Order.class);
     }
 
-    protected Criteria getCriteria(final String searchTerm) {
-        Criteria conditions = new Criteria();
-        for (final String term : searchTerm.split(DEFAULT_SEARСH_TERM_DELIMITER)) {
-            conditions = conditions
-                    .or(new Criteria(SearchableOrder.ID_FIELD_NAME).contains(term))
+    protected Criteria titleOrDescriptionCriteria(final String searchTerm) {
+        final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
+        Criteria criteria = new Criteria();
+        for (final String term : searchTerms) {
+            criteria = criteria
+                    .and(new Criteria(SearchableOrder.TITLE_FIELD_NAME).contains(term))
                     .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
         }
-        return conditions;
+        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableOrder.DOCUMENT_ID));
     }
 
     @Override

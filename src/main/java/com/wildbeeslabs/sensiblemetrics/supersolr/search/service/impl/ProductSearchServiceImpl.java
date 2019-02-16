@@ -169,7 +169,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         return getSolrTemplate().queryForHighlightPage(query, Product.class);
     }
 
-    protected Criteria nameAndDescriptionCriteria(final String searchTerm) {
+    protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
         final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {

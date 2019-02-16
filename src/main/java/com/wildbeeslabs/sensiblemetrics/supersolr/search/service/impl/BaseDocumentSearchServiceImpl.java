@@ -72,6 +72,7 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends E> findBySimpleQuery(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(criteria, pageable);
         query.setRows(DEFAULT_QUERY_ROWS_SIZE);
@@ -79,6 +80,7 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends E> findBySimpleQuery(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(queryString);
         query.addFilterQuery(new SimpleQuery(criteria));

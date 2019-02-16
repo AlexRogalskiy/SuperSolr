@@ -40,11 +40,11 @@ import java.util.concurrent.CompletableFuture;
 @NoRepositoryBean
 public interface AuditDocumentSearchRepository<E extends AuditDocument, ID extends Serializable> extends BaseSearchRepository<E, ID> {
 
-    CompletableFuture<List<? extends E>> findByCreatedAtLessThanEqual(final Date date);
+    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date date);
 
-    CompletableFuture<List<? extends E>> findByCreatedAtGreaterThan(final Date date);
+    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date date);
 
-    CompletableFuture<List<? extends E>> findByCreatedAtBetween(final Date dateFrom, final Date dateTo);
+    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
     long count(final String searchTerm);
 }
