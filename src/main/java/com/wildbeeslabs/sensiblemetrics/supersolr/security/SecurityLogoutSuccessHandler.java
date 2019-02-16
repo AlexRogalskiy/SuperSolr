@@ -25,14 +25,17 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Custom security logout success handler implementation
+ * Custom security logout success handler implementation {@link LogoutSuccessHandler}
  */
+@Component
 public class SecurityLogoutSuccessHandler implements LogoutSuccessHandler {
+
     @Override
     public void onLogoutSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
         response.setStatus(HttpServletResponse.SC_OK);

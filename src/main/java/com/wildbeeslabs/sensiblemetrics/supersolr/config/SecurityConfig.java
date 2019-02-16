@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationAccessDeniedHandler;
+import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAccessDeniedHandler;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationEntryPoint;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationSuccessHandler;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -103,8 +103,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public SecurityAuthenticationAccessDeniedHandler authenticationAccessDeniedHandler() {
-        return new SecurityAuthenticationAccessDeniedHandler();
+    public SecurityAccessDeniedHandler authenticationAccessDeniedHandler() {
+        return new SecurityAccessDeniedHandler();
     }
 
     @Bean

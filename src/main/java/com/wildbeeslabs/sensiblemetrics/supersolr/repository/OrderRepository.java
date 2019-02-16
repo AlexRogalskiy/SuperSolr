@@ -24,13 +24,9 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableOrder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Query.Operator;
-import org.springframework.data.solr.repository.Boost;
-import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Custom order repository declaration
@@ -38,13 +34,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends BaseModelRepository<Order, Long> {
 
-    @Query(name = "Order.findByDescription")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
+    List<? extends Order> findByTitle(final String title);
 
-    @Query(fields = {
-            SearchableOrder.ID_FIELD_NAME,
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.TITLE_FIELD_NAME
-    }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    List<? extends Order> findByDescription(final String description);
 }

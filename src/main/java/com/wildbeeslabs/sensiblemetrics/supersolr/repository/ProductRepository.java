@@ -24,55 +24,17 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableProduct;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.result.FacetPage;
-import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.data.solr.repository.Boost;
-import org.springframework.data.solr.repository.Facet;
-import org.springframework.data.solr.repository.Highlight;
-import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Custom product repository declaration
  */
 @Repository
-public interface ProductRepository extends BaseModelRepository<Product, String> {
+public interface ProductRepository extends BaseModelRepository<Product, Long> {
 
-    @Highlight(prefix = "<strong>", postfix = "</strong>")
-    @Query(fields = {
-            SearchableProduct.ID_FIELD_NAME,
-            SearchableProduct.NAME_FIELD_NAME,
-            SearchableProduct.PRICE_FIELD_NAME,
-            SearchableProduct.ATTRIBUTES_FIELD_NAME,
-            SearchableProduct.AVAILABLE_FIELD_NAME,
-            SearchableProduct.PAGE_TITLE_FIELD_NAME
-    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Product> findByQuery(final Collection<String> values, final Pageable pageable);
+    List<? extends Product> findByName(final String name);
 
-    @Query(fields = {
-            SearchableProduct.NAME_FIELD_NAME,
-            SearchableProduct.PAGE_TITLE_FIELD_NAME,
-            SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME,
-            SearchableProduct.LONG_DESCRIPTION_FIELD_NAME,
-            SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME
-    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
-    Page<? extends Product> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
-
-    Page<? extends Product> findByName(final String name, final Pageable pageable);
-
-    Page<? extends Product> findByNames(final Collection<String> names, final Pageable pageable);
-
-    @Query(name = "Product.findByDescription")
-    Page<? extends Product> findByDescription(final String description, final Pageable pageable);
-
-    @Facet(fields = {SearchableProduct.NAME_FIELD_NAME})
-    FacetPage<? extends Product> findByNameStartsWith(final Collection<String> fragments, final Pageable pageable);
-
-    @Query(name = "Product.findByNamedQuery")
-    Page<? extends Product> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    List<? extends Product> findByRating(final Integer rating);
 }

@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.exception.handler;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.*;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.view.ExceptionView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ExceptionView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;

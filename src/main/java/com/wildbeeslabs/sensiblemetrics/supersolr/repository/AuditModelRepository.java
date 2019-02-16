@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -34,17 +35,29 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Custom audit model repository declaration
  *
- * @param <E>  type of entity model
- * @param <ID> type of entity identifier
+ * @param <E>  type of audit model
+ * @param <ID> type of audit model identifier
  */
 @NoRepositoryBean
-public interface AuditModelRepository<E extends AuditModel, ID extends Serializable> extends BaseRepository<E, ID> {
+public interface AuditModelRepository<E extends AuditModel, ID extends Serializable> extends BaseJpaRepository<E, ID> {
 
-    CompletableFuture<List<? extends E>> findByCreatedAtLessThanEqual(final Date date);
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdAt <= ?1")
+    @Async
+    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date date);
 
-    CompletableFuture<List<? extends E>> findByCreatedAtGreaterThan(final Date date);
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdAt > ?1")
+    @Async
+    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date date);
 
-    CompletableFuture<List<? extends E>> findByCreatedAtBetween(final Date dateFrom, final Date dateTo);
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdAt > ?1 AND e.createdAt <= ?2")
+    @Async
+    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
-    long count(final String searchTerm);
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdBy = ?1")
+    @Async
+    CompletableFuture<List<? extends E>> findByCreatedByIgnoreCase(final String createdBy);
+
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.changedBy = ?1")
+    @Async
+    CompletableFuture<List<? extends E>> findByChangedByIgnoreCase(final String changedBy);
 }

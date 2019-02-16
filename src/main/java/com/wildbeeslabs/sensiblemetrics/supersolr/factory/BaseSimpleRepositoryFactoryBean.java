@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.factory;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.impl.BaseSimpleServiceImpl;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl.BaseSimpleSearchServiceImpl;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -43,7 +43,7 @@ import java.io.Serializable;
  * @param <E>  type of entity model
  * @param <ID> type of entity identifier
  */
-public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends Serializable> extends SolrRepositoryFactoryBean<BaseSimpleServiceImpl<E, ID>, E, ID> {
+public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends Serializable> extends SolrRepositoryFactoryBean<BaseSimpleSearchServiceImpl<E, ID>, E, ID> {
 
     /**
      * Custom string simple repository factory bean
@@ -84,12 +84,12 @@ public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends
         @Override
         @SuppressWarnings("unchecked")
         protected Object getTargetRepository(final RepositoryInformation metadata) {
-            return new BaseSimpleServiceImpl<>(getSolrOperations(), (Class<E>) metadata.getDomainType());
+            return new BaseSimpleSearchServiceImpl<>(getSolrOperations(), (Class<E>) metadata.getDomainType());
         }
 
         @Override
         protected Class<?> getRepositoryBaseClass(final RepositoryMetadata metadata) {
-            return BaseSimpleServiceImpl.class;
+            return BaseSimpleSearchServiceImpl.class;
         }
     }
 }

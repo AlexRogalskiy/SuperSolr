@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.SearchableAuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,6 @@ import org.hibernate.annotations.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -44,7 +43,7 @@ import java.util.Date;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
 /**
- * Custom full-text search audit model
+ * Custom audit model
  */
 @Data
 @NoArgsConstructor
@@ -55,7 +54,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @MappedSuperclass
 @ChronologicalDates
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AuditModel implements SearchableAuditModel, Serializable {
+public abstract class AuditModel implements PersistableAuditModel, Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
@@ -66,41 +65,36 @@ public abstract class AuditModel implements SearchableAuditModel, Serializable {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
     @Column(name = CREATED_FIELD_NAME, nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @Indexed(CREATED_FIELD_NAME)
     private Date created;
 
     @CreatedBy
     @NotNull(message = "Field <createdBy> cannot be blank")
     @Column(name = CREATED_BY_FIELD_NAME, nullable = false, updatable = false)
-    @Indexed(CREATED_BY_FIELD_NAME)
     private String createdBy;
 
     @UpdateTimestamp
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
     @Column(name = CHANGED_FIELD_NAME, insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @Indexed(CHANGED_FIELD_NAME)
     private Date changed;
 
     @LastModifiedBy
     @Column(name = CHANGED_BY_FIELD_NAME, insertable = false)
-    @Indexed(CHANGED_BY_FIELD_NAME)
     private String changedBy;
 
     @Version
     @ColumnDefault("0")
     @Column(name = VERSION_BY_FIELD_NAME, insertable = false, updatable = false)
     //@Generated(GenerationTime.ALWAYS)
-    @Indexed(VERSION_BY_FIELD_NAME)
     private Long version;
 
     @PrePersist
     protected void onCreate() {
-        this.createdBy = getClass().getName();
+        setCreatedBy(this.getClass().getName());
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.changedBy = getClass().getName();
+        setChangedBy(this.getClass().getName());
     }
 }

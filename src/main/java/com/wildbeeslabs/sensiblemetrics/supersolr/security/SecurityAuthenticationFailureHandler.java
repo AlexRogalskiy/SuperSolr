@@ -25,20 +25,22 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Custom security authentication failure handler implementation
+ * Custom security authentication failure handler implementation {@link AuthenticationFailureHandler}
  */
+@Component
 public class SecurityAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     protected static final String STATUS_MESSAGE_AUTHENTICATION_FAILED = "Bad credentials";
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+    public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, STATUS_MESSAGE_AUTHENTICATION_FAILED);
     }
 }
