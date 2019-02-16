@@ -31,7 +31,10 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.Query;
+import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -66,6 +69,22 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
                 getEntityManager().merge(target);
             }
         }
+    }
+
+    @Override
+    public Page<? extends E> findBySimpleQuery(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+        final Query query = new SimpleQuery(criteria, pageable);
+        query.setRows(1000);
+        return getSolrTemplate().queryForPage(query, clazz);
+    }
+
+    @Override
+    public Page<? extends E> findBySimpleQuery(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+        final Query query = new SimpleQuery(queryString);
+        query.addFilterQuery(new SimpleQuery(criteria));
+        query.setPageRequest(pageable);
+        query.setRows(DEFAULT_QUERY_ROWS_SIZE);
+        return getSolrTemplate().queryForPage(query, clazz);
     }
 
     protected Collection<String> tokenize(final String searchTerm) {

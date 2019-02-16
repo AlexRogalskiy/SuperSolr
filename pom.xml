@@ -480,6 +480,7 @@
             <version>${jedis.version}</version>
         </dependency>
 
+        <!-- CommonMark library dependencies -->
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
             <artifactId>commonmark</artifactId>

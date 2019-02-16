@@ -31,7 +31,7 @@ public interface SearchableOrder {
     /**
      * Default document ID
      */
-    String DOCUMENT_ID = "Order";
+    String DOCUMENT_ID = "order";
 
     /**
      * Default field names

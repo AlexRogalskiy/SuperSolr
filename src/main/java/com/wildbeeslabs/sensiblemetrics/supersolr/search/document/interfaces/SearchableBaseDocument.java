@@ -31,7 +31,7 @@ public interface SearchableBaseDocument {
     /**
      * Default document ID
      */
-    String DOCUMENT_ID = "BaseDocument";
+    String DOCUMENT_ID = "baseDocument";
 
     /**
      * Default field names

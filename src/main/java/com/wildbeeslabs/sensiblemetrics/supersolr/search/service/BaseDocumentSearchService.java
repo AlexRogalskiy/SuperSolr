@@ -25,7 +25,9 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 
 import java.io.Serializable;
@@ -51,8 +53,16 @@ public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extend
      * Default ignored characters pattern
      */
     Pattern DEFAULT_IGNORED_CHARS_PATTERN = Pattern.compile("\\p{Punct}");
+    /**
+     * Default query rows size
+     */
+    int DEFAULT_QUERY_ROWS_SIZE = 1000;
 
     void saveOrUpdate(final E target, final Class<? extends E> clazz);
 
     HighlightPage<? extends E> find(final String searchTerm, final Pageable page);
+
+    Page<? extends E> findBySimpleQuery(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
+
+    Page<? extends E> findBySimpleQuery(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
 }

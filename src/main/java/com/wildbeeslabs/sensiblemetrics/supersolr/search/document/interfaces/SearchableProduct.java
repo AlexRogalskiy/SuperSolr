@@ -31,7 +31,7 @@ public interface SearchableProduct {
     /**
      * Default document ID
      */
-    String DOCUMENT_ID = "Product";
+    String DOCUMENT_ID = "product";
 
     /**
      * Default field names

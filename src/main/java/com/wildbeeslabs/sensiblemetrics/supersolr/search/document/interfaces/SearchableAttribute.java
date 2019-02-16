@@ -31,7 +31,7 @@ public interface SearchableAttribute {
     /**
      * Default document ID
      */
-    String DOCUMENT_ID = "Attribute";
+    String DOCUMENT_ID = "attribute";
 
     /**
      * Default field names

@@ -31,7 +31,7 @@ public interface SearchableAuditDocument {
     /**
      * Default document ID
      */
-    String DOCUMENT_ID = "AuditDocument";
+    String DOCUMENT_ID = "auditDocument";
 
     /**
      * Default field names
