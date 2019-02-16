@@ -23,17 +23,18 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
-import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 import javax.validation.ValidatorFactory;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Custom validator configuration
@@ -42,34 +43,30 @@ import javax.validation.ValidatorFactory;
 @EnableAutoConfiguration
 public class ValidatorConfig {
 
-//    @Bean
-//    public MessageSource messageSource() {
-//        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-//        messageSource.setBasename("constraints");
-//        messageSource.setCacheSeconds(1);
-//        return messageSource;
-//    }
-
     @Bean
-    @Primary
-    public ValidatorFactory validator() {
-        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-//        validator.setValidationMessageSource(this.messageSource());
-        validator.setParameterNameDiscoverer(new LocalVariableTableParameterNameDiscoverer());
-        return validator;
+    public MessageSource validationMessageSource(final @Value("${supersolr.config.validation.location:'constraints'}") String sourceLocation,
+                                                 final @Value("${supersolr.config.validation.timeout:3600}") Integer cacheTimeout) {
+        final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename(sourceLocation);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        messageSource.setCacheSeconds(cacheTimeout);
+        messageSource.setUseCodeAsDefaultMessage(true);
+        messageSource.setFallbackToSystemLocale(true);
+        return messageSource;
     }
 
     @Bean
-    public Validator validator(final MessageSource messageSource) {
-        LocalValidatorFactoryBean factory = new LocalValidatorFactoryBean();
-        factory.setValidationMessageSource(messageSource);
-        return factory;
+    public ValidatorFactory validator(final MessageSource validationMessageSource) {
+        final LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
+        factoryBean.setValidationMessageSource(validationMessageSource);
+        factoryBean.setParameterNameDiscoverer(new LocalVariableTableParameterNameDiscoverer());
+        return factoryBean;
     }
 
     @Bean
-    public MethodValidationPostProcessor methodValidationPostProcessor() {
-        MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
-        processor.setValidatorFactory(this.validator());
+    public MethodValidationPostProcessor methodValidationPostProcessor(final MessageSource validationMessageSource) {
+        final MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
+        processor.setValidatorFactory(this.validator(validationMessageSource));
         return processor;
     }
 }
