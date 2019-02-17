@@ -73,7 +73,7 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends E> findBySimpleQuery(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+    public Page<? extends E> findByQueryAndCriteria(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(criteria, pageable);
         query.setRows(DEFAULT_QUERY_ROWS_SIZE);
         return getSolrTemplate().queryForPage(query, clazz);
@@ -81,7 +81,7 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends E> findBySimpleQuery(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+    public Page<? extends E> findByQueryAndCriteria(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(queryString);
         query.addFilterQuery(new SimpleQuery(criteria));
         query.setPageRequest(pageable);
@@ -99,6 +99,10 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
 
     protected List<? extends E> search(final Query query, final Class<? extends E> clazz) {
         return getSolrTemplate().queryForPage(query, clazz).getContent();
+    }
+
+    protected Page<? extends E> findByQuery(final Query query, final Class<? extends E> clazz) {
+        return getSolrTemplate().queryForPage(query, clazz);
     }
 
     protected abstract BaseDocumentSearchRepository<E, ID> getRepository();

@@ -37,6 +37,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.HighlightOptions;
+import org.springframework.data.solr.core.query.Query;
 import org.springframework.data.solr.core.query.SimpleHighlightQuery;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,11 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
                 .setSimplePostfix("</highlight>")
                 .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Order.class);
+    }
+
+    @Override
+    public Page<? extends Order> findByQuery(final Query query) {
+        return findByQuery(query, Order.class);
     }
 
     protected Criteria titleOrDescriptionCriteria(final String searchTerm) {

@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Shape;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -104,10 +105,10 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     Page<? extends Product> findByCategory(final String category, final Pageable pageable);
 
     @Query(name = "Product.findAvailable")
-    List<? extends Product> findAvailableProducts();
+    Page<? extends Product> findAvailableProducts();
 
     @Query(name = "Product.findByNameOrCategory")
-    List<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort);
+    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort);
 
     Page<? extends Product> findByRating(final Integer popularity, final Pageable pageable);
 
@@ -119,7 +120,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
 
     List<? extends Product> findByLocationWithin(final Point location, final Distance distance);
 
-    List<? extends Product> findByLocationNear(final Point location, final Distance distance);
+    List<? extends Product> findByLocationNear(final Shape shape);
 
     Page<? extends Product> findByAvailableTrue(final Pageable pageable);
 

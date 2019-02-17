@@ -26,6 +26,8 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Shape;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -51,7 +53,7 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     Page<? extends Product> findByNameOrDescription(final String searchTerm, final Pageable pageable);
 
-    HighlightPage<? extends Product> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Product> findByHighlightedNameIn(final Collection<String> names, final Pageable pageable);
 
     FacetPage<? extends Product> findByAutoCompleteNameFragment(final String fragment, final Pageable pageable);
 
@@ -65,7 +67,11 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     Page<? extends Product> findByLocation(final Point location, final Pageable pageable);
 
-    List<? extends Product> findByLocation(final String location, int distanceRange);
+    List<? extends Product> findByLocationWithin(final String location, int distanceRange);
+
+    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort);
+
+    List<? extends Product> findByLocationNear(final Shape shape);
 
     Page<? extends Product> findAvailable(final Pageable pageable);
 

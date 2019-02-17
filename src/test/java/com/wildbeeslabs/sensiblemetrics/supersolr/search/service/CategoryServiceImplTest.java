@@ -35,6 +35,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.SimpleStringCriteria;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -120,6 +123,16 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         assertEquals(new Long(3), categoryFacetCounts.get("Test01"));
         assertEquals(new Long(2), categoryFacetCounts.get("Test02"));
         assertEquals(new Long(1), categoryFacetCounts.get("Test03"));
+    }
+
+    @Test
+    public void testFindByQuery() {
+        //given
+        final Criteria criteria = new SimpleStringCriteria("doctype:category");
+        //assert
+        final Page<? extends Category> productPage = getCategoryService().findByQuery(new SimpleQuery(criteria));
+        productPage.getContent();
+        assertEquals(11, productPage.getTotalElements());
     }
 
     @Test

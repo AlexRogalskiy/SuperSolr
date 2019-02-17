@@ -36,8 +36,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Box;
+import org.springframework.data.geo.Distance;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -46,9 +50,11 @@ import java.util.*;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_DOCTYPE;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_SEARСH_TERM_DELIMITER;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -102,7 +108,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
     public void testFindBySimpleQuery() {
         //given
         final String searhTerms = "Test01 Test02";
-        final Page<? extends Product> productPage = getProductService().findBySimpleQuery(nameAndDescriptionCriteria(searhTerms), PageRequest.of(0, 10), Product.class);
+        final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria(nameAndDescriptionCriteria(searhTerms), PageRequest.of(0, 10), Product.class);
         //assert
         assertEquals(4, productPage.getTotalElements());
         assertEquals(4, productPage.getTotalPages());
@@ -114,7 +120,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
     public void testFindBySimpleQueryAndCriteria() {
         //given
         final String searhTerms = "Test01 Test02";
-        final Page<? extends Product> productPage = getProductService().findBySimpleQuery(searhTerms, new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.DOCUMENT_ID), PageRequest.of(0, 10), Product.class);
+        final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria(searhTerms, new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.DOCUMENT_ID), PageRequest.of(0, 10), Product.class);
         //assert
         assertEquals(4, productPage.getTotalElements());
         assertEquals(4, productPage.getTotalPages());
@@ -157,9 +163,10 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
-        final List<? extends Product> products = getProductService().findByLocation("35.10,-96.102", 30);
+        final List<? extends Product> products = getProductService().findByLocationWithin("35.10,-96.102", 30);
         assertEquals(2, products.size());
         assertTrue(products.contains(product));
+        assertThat(products.iterator().next().getLocation().getX(), is(lessThan((double) 30)));
     }
 
     @Test
@@ -169,8 +176,18 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
         final Page<? extends Product> productPage = getProductService().findByLocation(new Point(10, 20), PageRequest.of(0, 2));
-        assertEquals(2, productPage.getContent().size());
+        assertEquals(2, productPage.getTotalElements());
         assertTrue(productPage.getContent().contains(product));
+    }
+
+    @Test
+    public void testFindByLocationNear() {
+        //given
+        final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
+        //assert
+        final List<? extends Product> products = getProductService().findByLocationNear(new Box(new Point(22, -91), new Point(23, -90)));
+        assertEquals(2, products.size());
     }
 
     @Test
@@ -181,7 +198,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
         final Page<? extends Product> productPage = getProductService().findByRating(rating, PageRequest.of(0, 2));
-        assertEquals(3, productPage.getContent().size());
+        assertEquals(3, productPage.getTotalElements());
         assertTrue(productPage.getContent().contains(product));
     }
 
@@ -193,7 +210,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
         final Page<? extends Product> productPage = getProductService().findByLockType(lockType, PageRequest.of(0, 2));
-        assertEquals(3, productPage.getContent().size());
+        assertEquals(3, productPage.getTotalElements());
         assertTrue(productPage.getContent().contains(product));
     }
 
@@ -205,26 +222,49 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
         final Page<? extends Product> productPage = getProductService().findByNameOrDescription(searchTerm, PageRequest.of(0, 2));
-        assertEquals(3, productPage.getContent().size());
+        assertEquals(3, productPage.getTotalElements());
         assertTrue(productPage.getContent().contains(product));
+    }
+
+    @Test
+    public void testFindByNameOrCategory() {
+        //given
+        final String searchTerm = "Test";
+        final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
+        //assert
+        final Page<? extends Product> productPage = getProductService().findByNameOrCategory(searchTerm, new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
+        assertEquals(3, productPage.getTotalElements());
+        assertTrue(productPage.getContent().contains(product));
+    }
+
+    @Test
+    public void testFindByQuery() {
+        //given
+        final Point location = new Point(22.15, -90.85);
+        final Criteria criteria = new Criteria("store").near(location, new Distance(5));
+        //assert
+        final Page<? extends Product> productPage = getProductService().findByQuery(new SimpleQuery(criteria));
+        productPage.getContent();
+        assertEquals(3, productPage.getTotalElements());
     }
 
     @Test
     public void testFindByCustomQuery() {
         final HighlightPage<? extends Product> productHighlightPage = getProductService().find("cookies", PageRequest.of(0, 10));
         productHighlightPage.getContent();
-        assertTrue(containsSnipplet(productHighlightPage, "How to handle <highlight>cookies</highlight> in web applications"));
+        assertTrue(containsSnipplet(productHighlightPage, "<highlight>cookies</highlight>"));
         assertTrue(containsSnipplet(productHighlightPage, "Bake your own <highlight>cookies</highlight>, on a secret island!"));
     }
 
     @Test
     public void testFindByHighlightedMultiQuery() {
         //given
-        final List<String> searhTerms = Arrays.asList("a", "b");
-        final HighlightPage<? extends Product> productHighlightPage = getProductService().findByHighlightedMultiQuery(searhTerms, PageRequest.of(0, 10));
+        final List<String> searhTerms = Arrays.asList("aaa", "bbb");
+        final HighlightPage<? extends Product> productHighlightPage = getProductService().findByHighlightedNameIn(searhTerms, PageRequest.of(0, 10));
         productHighlightPage.getContent();
         //assert
-        assertTrue(containsSnipplet(productHighlightPage, "How to handle <highlight>cookies</highlight> in web applications"));
+        assertTrue(containsSnipplet(productHighlightPage, "<highlight>cookies</highlight>"));
         assertTrue(containsSnipplet(productHighlightPage, "Bake your own <highlight>cookies</highlight>, on a secret island!"));
     }
 

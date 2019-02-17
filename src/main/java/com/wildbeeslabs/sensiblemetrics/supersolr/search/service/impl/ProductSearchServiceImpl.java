@@ -35,14 +35,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Shape;
 import org.springframework.data.solr.UncategorizedSolrException;
 import org.springframework.data.solr.core.geo.GeoConverters;
 import org.springframework.data.solr.core.geo.Point;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.HighlightOptions;
-import org.springframework.data.solr.core.query.PartialUpdate;
-import org.springframework.data.solr.core.query.SimpleHighlightQuery;
+import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
@@ -94,11 +93,11 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public HighlightPage<? extends Product> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable) {
-        if (CollectionUtils.isEmpty(values)) {
+    public HighlightPage<? extends Product> findByHighlightedNameIn(final Collection<String> names, final Pageable pageable) {
+        if (CollectionUtils.isEmpty(names)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByHighlightedValueIn(values, pageable);
+        return getRepository().findByHighlightedNameIn(names, pageable);
     }
 
     @Override
@@ -142,9 +141,20 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByLocation(final String location, int distanceRange) {
+    public List<? extends Product> findByLocationWithin(final String location, int distanceRange) {
         final org.springframework.data.geo.Point point = GeoConverters.StringToPointConverter.INSTANCE.convert(location);
-        return getRepository().findByLocationNear(new Point(point.getX(), point.getY()), new Distance(distanceRange));
+        return getRepository().findByLocationWithin(new Point(point.getX(), point.getY()), new Distance(distanceRange));
+    }
+
+    @Override
+    public Page<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort) {
+        return getRepository().findByNameOrCategory(searchTerm, sort);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Product> findByLocationNear(final Shape shape) {
+        return getRepository().findByLocationNear(shape);
     }
 
     @Override
@@ -154,6 +164,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends Product> findUnavailable(final Pageable pageable) {
         return getRepository().findByAvailableFalse(pageable);
     }
@@ -197,6 +208,12 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
                 .setSimplePostfix("</highlight>")
                 .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Product.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByQuery(final Query query) {
+        return findByQuery(query, Product.class);
     }
 
     protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
