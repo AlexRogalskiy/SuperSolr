@@ -25,6 +25,7 @@ THE SOFTWARE.
 <configuration debug="true" scan="true" scanPeriod="3000 seconds">
 
     <!-- logger default configurations -->
+    <!--<include resource="org/springframework/boot/logging/logback/base.xml" />-->
     <!--<include resource="org/springframework/boot/logging/logback/defaults.xml"/>-->
     <!--<include resource="org/springframework/boot/logging/logback/console-appender.xml"/>-->
     <!--<include resource="org/springframework/boot/logging/logback/file-appender.xml"/>-->

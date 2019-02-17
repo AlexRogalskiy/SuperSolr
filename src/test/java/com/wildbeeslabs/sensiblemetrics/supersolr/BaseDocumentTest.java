@@ -35,10 +35,7 @@ import org.springframework.data.solr.core.query.result.HighlightEntry;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Base document test implementation
@@ -57,7 +54,7 @@ public abstract class BaseDocumentTest {
         category.setIndex(index);
         category.setTitle(description);
         category.setDescription(description);
-        category.setProducts(Arrays.asList(products));
+        category.setProducts(Arrays.asList(Optional.ofNullable(products).orElse(new Product[0])));
         return category;
     }
 
@@ -84,7 +81,7 @@ public abstract class BaseDocumentTest {
         product.setPrice(price);
         product.setRecommendedPrice(recommendedPrice);
         product.setAvailable(available);
-        product.setAttributes(Arrays.asList(attributes));
+        product.setAttributes(Arrays.asList(Optional.ofNullable(attributes).orElse(new Attribute[0])));
         return product;
     }
 
@@ -99,7 +96,7 @@ public abstract class BaseDocumentTest {
     }
 
     protected <E extends BaseDocument<ID>, ID extends Serializable> boolean containsIds(final List<? extends E> models, final String... idsToCheck) {
-        final String[] categoryIds = models.stream().map(category -> (category.getId())).toArray(String[]::new);
+        final String[] categoryIds = models.stream().map(category -> category.getId()).toArray(String[]::new);
         Arrays.sort(categoryIds);
         Arrays.sort(idsToCheck);
         return Arrays.equals(categoryIds, idsToCheck);

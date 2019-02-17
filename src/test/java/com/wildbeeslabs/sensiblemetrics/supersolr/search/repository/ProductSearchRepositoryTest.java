@@ -24,7 +24,8 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
+import com.wildbeeslabs.sensiblemetrics.supersolr.constraint.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
@@ -32,14 +33,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,13 +55,15 @@ import static org.junit.Assert.assertFalse;
  * Product repository implementation unit test
  */
 @Slf4j
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SolrConfig.class)
+@PostgresDataJpaTest
+@AutoConfigurationPackage
+@Transactional
 public class ProductSearchRepositoryTest extends BaseDocumentTest {
 
     @Autowired
-    private TestEntityManager entityManager;
+    private SolrTemplate solrTemplate;
 
     @Autowired
     private ProductSearchRepository productSearchRepository;
@@ -80,8 +84,8 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         final Product product = createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null));
 
-        this.entityManager.persist(product);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("product", product);
+        this.solrTemplate.commit("product");
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByName(product.getName(), PageRequest.of(0, 2));
@@ -100,8 +104,8 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         final Product product = createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null));
 
-        this.entityManager.persist(product);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("product", product);
+        this.solrTemplate.commit("product");
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
@@ -119,19 +123,19 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         //given
         final Product productFirst = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         productFirst.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
-        this.entityManager.persist(productFirst);
+        this.solrTemplate.saveBean("product", productFirst);
 
         final Product productSecond = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         productSecond.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
-        this.entityManager.persist(productSecond);
+        this.solrTemplate.saveBean("product", productSecond);
 
         final Product productThird = createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         productThird.addCategory(createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!", null));
-        this.entityManager.persist(productThird);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("product", productThird);
+        this.solrTemplate.commit("product");
 
         // when
-        final FacetPage<? extends Product> productFacetPage = getProductSearchRepository().findByNameStartsWith(titles, PageRequest.of(0, 10));
+        final FacetPage<? extends Product> productFacetPage = getProductSearchRepository().findByNameStartingWith(titles, PageRequest.of(0, 10));
         final List<? extends Product> products = productFacetPage.getContent();
 
         // then
@@ -141,23 +145,23 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
-    public void testFind() {
+    public void testFindByNameIn() {
         // initial search terms
         final List<String> titles = Arrays.asList("Title 01", "Title 02");
 
         // given
-        final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        final Product product = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
+        product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
 
-        this.entityManager.persist(category);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("product", product);
+        this.solrTemplate.commit("product");
 
         // when
         final HighlightPage<? extends Product> productHighlightPage = getProductSearchRepository().findByNameIn(titles, PageRequest.of(0, 10));
         final List<? extends Product> products = productHighlightPage.getContent();
 
         // then
-        assertTrue(products.contains(category));
+        assertTrue(products.contains(product));
     }
 
     private List<Product> getSampleData() {

@@ -97,7 +97,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByTitleStartsWith(tokenize(fragment), pageable);
+        return getRepository().findByTitleStartingWith(tokenize(fragment), pageable);
     }
 
     @Override

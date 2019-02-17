@@ -58,10 +58,10 @@ public class Category extends BaseDocument<String> implements SearchableCategory
     private String description;
 
     @Indexed(name = PRODUCTS_FIELD_NAME)
-    private final Set<Product> products = new HashSet<>();
+    private Set<Product> products = new HashSet<>();
 
     @Indexed(name = MAIN_PRODUCTS_FIELD_NAME)
-    private final Set<Product> mainProducts = new HashSet<>();
+    private Set<Product> mainProducts = new HashSet<>();
 
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();

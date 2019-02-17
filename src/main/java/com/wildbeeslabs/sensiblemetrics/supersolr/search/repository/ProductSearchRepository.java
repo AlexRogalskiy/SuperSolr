@@ -71,6 +71,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     HighlightPage<? extends Product> findByNameIn(final Collection<String> names, final Pageable page);
 
     @Query(fields = {
+            SearchableProduct.ID_FIELD_NAME,
             SearchableProduct.NAME_FIELD_NAME,
             SearchableProduct.PAGE_TITLE_FIELD_NAME,
             SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME,
@@ -80,7 +81,9 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     Page<? extends Product> findByShortDescription(@Boost(2) final String searchTerm, final Pageable pageable);
 
     @Query(name = "Product.findByNameStartsWith")
-    Page<? extends Product> findByNameStartsWith(@Boost(1.5f) final String name, final Pageable pageable);
+    Page<? extends Product> findByNameStartingWith(@Boost(1.5f) final String name, final Pageable pageable);
+
+    List<? extends Product> findByNameLike(final String name);
 
     @Query(name = "Product.findById")
     Page<? extends Product> findProductById(final String id, final Pageable pageable);
@@ -94,7 +97,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     Page<? extends Product> findByDescription(final String description, final Pageable pageable);
 
     @Facet(fields = {SearchableProduct.NAME_FIELD_NAME})
-    FacetPage<? extends Product> findByNameStartsWith(final Collection<String> fragments, final Pageable pageable);
+    FacetPage<? extends Product> findByNameStartingWith(final Collection<String> fragments, final Pageable pageable);
 
     @Query(name = "Product.findByNameOrDescription")
     Page<? extends Product> findByNameOrDescription(@Boost(2) final String searchTerm, final Pageable pageable);
@@ -104,6 +107,9 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
 
     @Query(name = "Product.findAvailable")
     Page<? extends Product> findAvailableProducts(final Pageable pageable);
+
+    @Query(name = "Product.findByAvailable")
+    Page<? extends Product> findByAvailableUsingAnnotatedQuery(boolean inStock, final Pageable page);
 
     @Query(name = "Product.findByNameOrCategory")
     Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);

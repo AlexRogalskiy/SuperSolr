@@ -19,6 +19,9 @@ spring:
           method.type: #methodName, namedQuery, queryAnnotation
   jpa:
     open-in-view: false
+  flyway:
+    locations: filesystem:db/migrations
+  check-location: false
 
 logging:
   config: classpath:logback.xml

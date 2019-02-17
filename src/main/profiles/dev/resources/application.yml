@@ -3,6 +3,8 @@ spring:
     active: "local"
 ---
 spring:
+  main:
+    #allow-bean-definition-overriding: true
   batch:
     job:
       enabled: false
@@ -15,8 +17,14 @@ spring:
       repository:
         query:
           method.type: #methodName, namedQuery, queryAnnotation
+  jpa:
+    open-in-view: false
+  flyway:
+    locations: filesystem:db/migrations
+  check-location: false
 
 logging:
+  config: classpath:logback.xml
   file: logs/application.log
   level:
     ROOT: DEBUG

@@ -89,16 +89,17 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
     private Point location;
 
     @Indexed(name = CATEGORIES_FIELD_NAME)
-    private final Set<Category> categories = new HashSet<>();
+    private Set<Category> categories = new HashSet<>();
 
     @Indexed(name = MAIN_CATEGORIES_FIELD_NAME)
-    private final Set<Category> mainCategories = new HashSet<>();
+    private Set<Category> mainCategories = new HashSet<>();
 
     @Indexed(name = ATTRIBUTES_FIELD_NAME)
-    private final List<Attribute> attributes = new ArrayList<>();
+    private List<Attribute> attributes = new ArrayList<>();
 
     @Indexed(name = ORDERS_FIELD_NAME)
-    private final Set<Order> orders = new HashSet<>();
+    private Set<Order> orders = new HashSet<>();
+
 
     public void setCategories(final Collection<? extends Category> categories) {
         this.getCategories().clear();

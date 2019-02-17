@@ -25,8 +25,8 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.CategorySearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +84,7 @@ public class CategorySearchControllerImplTest {
     public void testSearch() {
         final List<? extends CategoryView> list = new ArrayList<>();
         final ResponseEntity<? extends List> entity = this.restTemplate.getForEntity(this.url, list.getClass());
+
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals("Test", entity.getBody());
     }

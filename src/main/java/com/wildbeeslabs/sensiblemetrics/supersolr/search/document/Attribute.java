@@ -63,7 +63,7 @@ public class Attribute extends BaseModel<String> implements SearchableAttribute 
     private String keywords;
 
     @Indexed(name = PRODUCTS_FIELD_NAME)
-    private final List<Product> products = new ArrayList<>();
+    private List<Product> products = new ArrayList<>();
 
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();

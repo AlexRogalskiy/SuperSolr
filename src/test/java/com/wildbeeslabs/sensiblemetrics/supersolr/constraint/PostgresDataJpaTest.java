@@ -21,42 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.search.document;
+package com.wildbeeslabs.sensiblemetrics.supersolr.constraint;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableBaseDocument;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.Score;
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.io.Serializable;
-import java.util.Objects;
+import java.lang.annotation.*;
 
-/**
- * Custom full-text search document
- *
- * @param <ID> type of document identifier
- */
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public abstract class BaseDocument<ID extends Serializable> extends AuditDocument implements SearchableBaseDocument {
-
-    /**
-     * Default explicit serialVersionUID for interoperability
-     */
-    private static final long serialVersionUID = 6444143028591284804L;
-
-    @Indexed(name = ID_FIELD_NAME)
-    private ID id;
-
-    @Score
-    private float score;
-
-    public boolean isNew() {
-        return Objects.isNull(this.getId());
-    }
+@Documented
+@Inherited
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureEmbeddedDatabase
+@DataJpaTest
+public @interface PostgresDataJpaTest {
 }

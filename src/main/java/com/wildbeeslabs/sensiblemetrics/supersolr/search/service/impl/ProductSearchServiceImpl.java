@@ -111,7 +111,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByNameStartsWith(tokenize(fragment), pageable);
+        return getRepository().findByNameStartingWith(tokenize(fragment), pageable);
     }
 
     @Override

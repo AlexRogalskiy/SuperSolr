@@ -42,6 +42,4 @@ public interface BaseDocumentSearchRepository<E extends BaseDocument<ID>, ID ext
 
     @Query(name = "BaseDocument.findById")
     Optional<E> findById(@Boost(2) final ID id);
-
-    //long count(final String searchTerm);
 }

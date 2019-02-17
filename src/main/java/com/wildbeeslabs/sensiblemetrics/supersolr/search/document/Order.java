@@ -62,7 +62,7 @@ public class Order extends BaseDocument<Long> implements SearchableOrder {
     private String clientMobile;
 
     @Indexed(name = PRODUCTS_FIELD_NAME)
-    private final Set<Product> products = new HashSet<>();
+    private Set<Product> products = new HashSet<>();
 
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();

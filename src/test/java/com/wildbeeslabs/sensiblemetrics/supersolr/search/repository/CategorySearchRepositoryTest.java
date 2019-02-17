@@ -24,6 +24,8 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
+import com.wildbeeslabs.sensiblemetrics.supersolr.constraint.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
@@ -31,14 +33,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,13 +55,15 @@ import static org.junit.Assert.assertFalse;
  * Category repository implementation unit test
  */
 @Slf4j
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SolrConfig.class)
+@PostgresDataJpaTest
+@AutoConfigurationPackage
+@Transactional
 public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
     @Autowired
-    private TestEntityManager entityManager;
+    private SolrTemplate solrTemplate;
 
     @Autowired
     private CategorySearchRepository categorySearchRepository;
@@ -79,8 +84,8 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-        this.entityManager.persist(category);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("category", category);
+        this.solrTemplate.commit("category");
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByTitle(category.getTitle(), PageRequest.of(0, 2));
@@ -99,8 +104,8 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-        this.entityManager.persist(category);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("category", category);
+        this.solrTemplate.commit("category");
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
@@ -118,19 +123,19 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         //given
         final Category categoryFirst = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         categoryFirst.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        this.entityManager.persist(categoryFirst);
+        this.solrTemplate.saveBean("category", categoryFirst);
 
         final Category categorySecond = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null);
         categorySecond.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        this.entityManager.persist(categorySecond);
+        this.solrTemplate.saveBean("category", categorySecond);
 
         final Category categoryThird = createCategory("03", 3, "Solr for dummies", "Get started with solr", null);
         categoryThird.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        this.entityManager.persist(categoryThird);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("category", categoryThird);
+        this.solrTemplate.commit("category");
 
         // when
-        final FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartsWith(titles, PageRequest.of(0, 10));
+        final FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(titles, PageRequest.of(0, 10));
         final List<? extends Category> categories = categoryFacetPage.getContent();
 
         // then
@@ -140,7 +145,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
-    public void testFind() {
+    public void testFindByTitleIn() {
         // initial search terms
         final List<String> titles = Arrays.asList("Title 01", "Title 02");
 
@@ -148,8 +153,8 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-        this.entityManager.persist(category);
-        this.entityManager.flush();
+        this.solrTemplate.saveBean("category", category);
+        this.solrTemplate.commit("category");
 
         // when
         final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByTitleIn(titles, PageRequest.of(0, 10));

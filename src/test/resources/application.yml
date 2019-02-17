@@ -15,6 +15,9 @@ spring:
       repository:
         query:
           method.type: #methodName, namedQuery, queryAnnotation
+  flyway:
+    locations: filesystem:db/migrations
+  check-location: false
 
 logging:
   file: logs/application.log

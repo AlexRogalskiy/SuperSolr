@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.ProductSearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
@@ -31,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -61,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(ProductSearchControllerImpl.class)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DirtiesContext
@@ -81,6 +84,7 @@ public class ProductSearchControllerImplTest {
     public void testSearch() {
         final List<? extends ProductView> list = new ArrayList<>();
         final ResponseEntity<? extends List> entity = this.restTemplate.getForEntity(this.url, list.getClass());
+
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals("Test", entity.getBody());
     }

@@ -54,7 +54,7 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
 
     @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
-    FacetPage<? extends Category> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);
+    FacetPage<? extends Category> findByTitleStartingWith(final Collection<String> fragments, final Pageable pageable);
 
     @Query(name = "Category.findByDescription")
     Page<? extends Category> findByDescription(final String description, final Pageable pageable);
