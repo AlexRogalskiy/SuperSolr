@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -63,12 +63,13 @@ public abstract class AuditModel implements PersistableAuditModel, Serializable 
 
     @CreationTimestamp
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT)
+    @NotBlank(message = "{audit.created.notBlank}")
     @Column(name = CREATED_FIELD_NAME, nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
     @CreatedBy
-    @NotNull(message = "Field <createdBy> cannot be blank")
+    @NotBlank(message = "{audit.createdBy.notBlank}")
     @Column(name = CREATED_BY_FIELD_NAME, nullable = false, updatable = false)
     private String createdBy;
 

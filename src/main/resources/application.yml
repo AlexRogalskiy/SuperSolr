@@ -19,6 +19,7 @@ spring:
           method.type: #methodName, namedQuery, queryAnnotation
 
 logging:
+  config: classpath:logback.xml
   file: logs/application.log
   level:
     ROOT: DEBUG

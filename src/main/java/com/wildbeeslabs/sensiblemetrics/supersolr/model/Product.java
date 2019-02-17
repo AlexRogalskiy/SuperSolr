@@ -36,6 +36,7 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.*;
 
 /**
@@ -84,9 +85,11 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
     private boolean available;
 
     @Column(name = PRICE_FIELD_NAME)
+    @PositiveOrZero(message = "order.price.PositiveOrZero")
     private double price;
 
     @Column(name = RECOMMENDED_PRICE_FIELD_NAME)
+    @PositiveOrZero(message = "{order.recommendedPrice.PositiveOrZero}")
     private double recommendedPrice;
 
     @Column(name = RATING_FIELD_NAME)

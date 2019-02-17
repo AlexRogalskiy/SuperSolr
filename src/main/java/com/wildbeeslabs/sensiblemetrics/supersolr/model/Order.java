@@ -62,11 +62,11 @@ public class Order extends BaseModel<Long> implements PersistableOrder {
     @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     private String description;
 
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "{order.clientName.Size}")
     @Column(name = CLIENT_NAME_FIELD_NAME)
     private String clientName;
 
-    @Size(min = 3, max = 50)
+    @Size(min = 3, max = 50, message = "{order.clientMobile.Size}")
     @Column(name = CLIENT_MOBILE_FIELD_NAME)
     private String clientMobile;
 
