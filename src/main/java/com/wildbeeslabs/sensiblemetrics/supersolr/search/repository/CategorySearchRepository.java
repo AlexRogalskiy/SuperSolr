@@ -43,13 +43,13 @@ import java.util.Collection;
 @Repository
 public interface CategorySearchRepository extends BaseDocumentSearchRepository<Category, String> {
 
-    @Highlight(prefix = "<strong>", postfix = "</strong>")
+    @Highlight(prefix = "<highlight>", postfix = "</highlight>")
     @Query(fields = {
             SearchableCategory.ID_FIELD_NAME,
             SearchableCategory.TITLE_FIELD_NAME,
             SearchableCategory.DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Category> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Category> findByHighlightedValueIn(final Collection<String> values, final Pageable pageable);
 
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
 

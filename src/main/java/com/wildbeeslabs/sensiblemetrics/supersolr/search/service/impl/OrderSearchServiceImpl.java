@@ -64,7 +64,7 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request) {
-        return getRepository().findByCustomQuery(searchTerm, request);
+        return getRepository().findByTerm(searchTerm, request);
     }
 
     @Override
@@ -74,8 +74,8 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
         final Criteria descriptionCriteria = new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(descriptionCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
-                .setSimplePrefix("<strong>")
-                .setSimplePostfix("</strong>")
+                .setSimplePrefix("<highlight>")
+                .setSimplePostfix("</highlight>")
                 .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Order.class);
     }

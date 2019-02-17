@@ -62,7 +62,7 @@ import java.util.UUID;
 @EnableJpaRepositories(
         basePackages = {
                 "com.wildbeeslabs.sensiblemetrics.supersolr.model",
-                "com.wildbeeslabs.sensiblemetrics.supersolr.repository",
+                "com.wildbeeslabs.sensiblemetrics.supersolr.repository"
         }
 )
 @PropertySource("classpath:application.properties")

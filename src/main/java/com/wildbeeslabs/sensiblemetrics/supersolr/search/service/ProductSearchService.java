@@ -29,7 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
-import org.springframework.data.solr.repository.Boost;
 
 import java.util.Collection;
 import java.util.List;
@@ -68,7 +67,11 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     List<? extends Product> findByLocation(final String location, int distanceRange);
 
-    List<? extends Product> findAvailable();
+    Page<? extends Product> findAvailable(final Pageable pageable);
+
+    Page<? extends Product> findUnavailable(final Pageable pageable);
 
     Page<? extends Product> findAllProducts(final Pageable pageable);
+
+    void updatePartial(final Product product);
 }

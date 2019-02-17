@@ -98,8 +98,7 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
     }
 
     protected List<? extends E> search(final Query query, final Class<? extends E> clazz) {
-        final Page<? extends E> results = getSolrTemplate().queryForPage(query, clazz);
-        return results.getContent();
+        return getSolrTemplate().queryForPage(query, clazz).getContent();
     }
 
     protected abstract BaseDocumentSearchRepository<E, ID> getRepository();

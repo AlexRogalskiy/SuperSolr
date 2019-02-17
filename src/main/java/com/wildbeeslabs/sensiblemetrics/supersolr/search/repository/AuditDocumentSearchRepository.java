@@ -46,5 +46,7 @@ public interface AuditDocumentSearchRepository<E extends AuditDocument, ID exten
 
     CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
+    CompletableFuture<List<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
+
     long count(final String searchTerm);
 }

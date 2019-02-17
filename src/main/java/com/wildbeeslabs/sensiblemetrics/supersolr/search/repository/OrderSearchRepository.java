@@ -46,5 +46,5 @@ public interface OrderSearchRepository extends BaseDocumentSearchRepository<Orde
             SearchableOrder.DESCRIPTION_FIELD_NAME,
             SearchableOrder.TITLE_FIELD_NAME
     }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    Page<? extends Order> findByTerm(@Boost(2) final String searchTerm, final Pageable pageable);
 }

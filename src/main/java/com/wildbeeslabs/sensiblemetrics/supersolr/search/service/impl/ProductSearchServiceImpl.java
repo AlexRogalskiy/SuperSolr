@@ -36,10 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
+import org.springframework.data.solr.UncategorizedSolrException;
 import org.springframework.data.solr.core.geo.GeoConverters;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.HighlightOptions;
+import org.springframework.data.solr.core.query.PartialUpdate;
 import org.springframework.data.solr.core.query.SimpleHighlightQuery;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -96,7 +98,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         if (CollectionUtils.isEmpty(values)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByHighlightedMultiQuery(values, pageable);
+        return getRepository().findByHighlightedValueIn(values, pageable);
     }
 
     @Override
@@ -111,10 +113,11 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Product> findByCustomQuery(final String searchTerm, final Pageable pageable) {
-        return getRepository().findByCustomQuery(searchTerm, pageable);
+        return getRepository().findByTerm(searchTerm, pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends Product> findByCategory(final String category, final Pageable pageable) {
         return getRepository().findByCategory(category, pageable);
     }
@@ -146,13 +149,40 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findAvailable() {
-        return getRepository().findByAvailableTrue();
+    public Page<? extends Product> findAvailable(final Pageable pageable) {
+        return getRepository().findByAvailableTrue(pageable);
     }
 
     @Override
+    public Page<? extends Product> findUnavailable(final Pageable pageable) {
+        return getRepository().findByAvailableFalse(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<? extends Product> findAllProducts(final Pageable pageable) {
         return getRepository().findAllProducts(pageable);
+    }
+
+    @Override
+    @Transactional(rollbackFor = {UncategorizedSolrException.class})
+    public void updatePartial(final Product product) {
+        final PartialUpdate productUpdate = new PartialUpdate(SearchableProduct.ID_FIELD_NAME, product.getId());
+        productUpdate.add(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME, product.getShortDescription());
+        productUpdate.add(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME, product.getLongDescription());
+        productUpdate.add(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME, product.getPriceDescription());
+        productUpdate.add(SearchableProduct.CATALOG_NUMBER_FIELD_NAME, product.getCatalogNumber());
+        productUpdate.add(SearchableProduct.PAGE_TITLE_FIELD_NAME, product.getPageTitle());
+        productUpdate.add(SearchableProduct.AVAILABLE_FIELD_NAME, product.isAvailable());
+        productUpdate.add(SearchableProduct.LOCATION_FIELD_NAME, product.getLocation());
+        productUpdate.add(SearchableProduct.CATEGORIES_FIELD_NAME, product.getCategories());
+        productUpdate.add(SearchableProduct.MAIN_CATEGORIES_FIELD_NAME, product.getMainCategories());
+        productUpdate.add(SearchableProduct.PRICE_FIELD_NAME, product.getPrice());
+        productUpdate.add(SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME, product.getRecommendedPrice());
+        productUpdate.add(SearchableProduct.ATTRIBUTES_FIELD_NAME, product.getAttributes());
+        productUpdate.add(SearchableProduct.RATING_FIELD_NAME, product.getRating());
+        getSolrTemplate().saveBean(productUpdate);
+        getSolrTemplate().commit();
     }
 
     @Override
@@ -163,8 +193,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         final Criteria nameCriteria = new Criteria(SearchableProduct.NAME_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(pageTitleCriteria).or(nameCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
-                .setSimplePrefix("<strong>")
-                .setSimplePostfix("</strong>")
+                .setSimplePrefix("<highlight>")
+                .setSimplePostfix("</highlight>")
                 .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Product.class);
     }

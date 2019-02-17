@@ -29,10 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,14 +46,10 @@ public class DocumentViewConverter {
         return getModelMapper().map(item, clazz);
     }
 
-    public <M extends Serializable, N extends Serializable> List<? extends N> convert(final List<? extends M> items, final Class<? extends N> clazz) {
-        if (Objects.isNull(items)) {
-            return Collections.emptyList();
-        }
-        final List<? extends N> result = items.stream()
+    public <M extends Serializable, N extends Serializable> List<? extends N> convert(final Collection<? extends M> items, final Class<? extends N> clazz) {
+        return Optional.ofNullable(items).orElseGet(Collections::emptyList).stream()
                 .map(item -> convert(item, clazz))
                 .collect(Collectors.toCollection(LinkedList::new));
-        return result;
     }
 
     protected ModelMapper getModelMapper() {

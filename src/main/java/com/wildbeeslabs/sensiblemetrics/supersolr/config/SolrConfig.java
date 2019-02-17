@@ -25,16 +25,14 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.repository.config.EnableSolrRepositories;
 import org.springframework.data.solr.server.support.EmbeddedSolrServerFactoryBean;
+import org.springframework.data.solr.server.support.HttpSolrClientFactoryBean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
@@ -50,24 +48,31 @@ import org.springframework.scheduling.annotation.EnableAsync;
         namedQueriesLocation = "classpath:solr-named-queries.properties",
         multicoreSupport = true,
         schemaCreationSupport = true)
-@ComponentScan
 @PropertySource("classpath:application.properties")
 public class SolrConfig {
 
-    @Autowired
-    private Environment environment;
-
     @Bean
-    public SolrClient solrClient(final @Value("${supersolr.solr.server.url}") String baseUrl) {
+    public SolrClient solrClient(final @Value("${supersolr.solr.server.url}") String baseUrl,
+                                 final @Value("${supersolr.solr.timeout}") Integer timeout,
+                                 final @Value("${supersolr.solr.socketTimeout}") Integer socketTimeout) {
         return new HttpSolrClient.Builder()
                 .withBaseSolrUrl(baseUrl)
+                .withConnectionTimeout(timeout)
+                .withSocketTimeout(socketTimeout)
                 .build();
     }
 
-    @Bean
-    public EmbeddedSolrServerFactoryBean solrServerFactoryBean(final @Value("${supersolr.solr.solr.home}") String baseUrl) {
+    @Bean(name = "embeddedSolrServer")
+    public EmbeddedSolrServerFactoryBean embeddedSolrServerFactoryBean(final @Value("${supersolr.solr.home}") String solrHome) {
         final EmbeddedSolrServerFactoryBean factory = new EmbeddedSolrServerFactoryBean();
-        factory.setSolrHome(environment.getRequiredProperty(baseUrl));
+        factory.setSolrHome(solrHome);
+        return factory;
+    }
+
+    @Bean(name = "httpSolrClient")
+    public HttpSolrClientFactoryBean httpSolrClientFactoryBean(final SolrClient solrClient) {
+        final HttpSolrClientFactoryBean factory = new HttpSolrClientFactoryBean();
+        factory.setSolrClient(solrClient);
         return factory;
     }
 

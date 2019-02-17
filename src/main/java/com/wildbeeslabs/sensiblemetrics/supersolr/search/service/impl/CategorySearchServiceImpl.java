@@ -69,7 +69,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Category> findByTitles(final String titles, final Pageable pageable) {
-        if (StringUtils.isBlank(titles)) {
+        if (StringUtils.isEmpty(titles)) {
             return getRepository().findAll(pageable);
         }
         return getRepository().findByTitles(tokenize(titles), pageable);
@@ -87,13 +87,13 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         if (CollectionUtils.isEmpty(values)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByHighlightedMultiQuery(values, pageable);
+        return getRepository().findByHighlightedValueIn(values, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public FacetPage<? extends Category> findByAutoCompleteTitleFragment(final String fragment, final Pageable pageable) {
-        if (StringUtils.isBlank(fragment)) {
+        if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
         return getRepository().findByTitleStartsWith(tokenize(fragment), pageable);
@@ -106,8 +106,8 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         final Criteria titleCriteria = new Criteria(SearchableCategory.TITLE_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
-                .setSimplePrefix("<strong>")
-                .setSimplePostfix("</strong>")
+                .setSimplePrefix("<highlight>")
+                .setSimplePostfix("</highlight>")
                 .addField(SearchableCategory.ID_FIELD_NAME, SearchableCategory.TITLE_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(query, Category.class);
     }

@@ -56,7 +56,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
             SearchableProduct.AVAILABLE_FIELD_NAME,
             SearchableProduct.PAGE_TITLE_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Product> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Product> findByHighlightedValueIn(final Collection<String> values, final Pageable pageable);
 
     @Highlight(prefix = "<highlight>", postfix = "</highlight>")
     @Query(fields = {
@@ -76,9 +76,9 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
             SearchableProduct.LONG_DESCRIPTION_FIELD_NAME,
             SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
-    Page<? extends Product> findByCustomQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    Page<? extends Product> findByTerm(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    @Query(name = "Product.findByNameStartsWith")
+    @Query(name = "Product.findByName")
     Page<? extends Product> findByNameStartsWith(final String name, final Pageable pageable);
 
     @Query(name = "Product.findById")
@@ -121,7 +121,9 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
 
     List<? extends Product> findByLocationNear(final Point location, final Distance distance);
 
-    List<? extends Product> findByAvailableTrue();
+    Page<? extends Product> findByAvailableTrue(final Pageable pageable);
+
+    Page<? extends Product> findByAvailableFalse(final Pageable pageable);
 
     @Query(name = "Product.findByLocation")
     List<? extends Product> findByLocationSomewhereNear(final Point location, final Distance distance);
