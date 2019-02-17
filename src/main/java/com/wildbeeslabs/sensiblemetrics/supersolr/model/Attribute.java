@@ -42,7 +42,7 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableAttribute.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "attributes", catalog = "market_data")
+@Table(name = "attributes", catalog = "public")
 @AttributeOverrides({
         @AttributeOverride(name = PersistableAttribute.ID_FIELD_NAME, column = @Column(name = PersistableAttribute.ID_FIELD_NAME))
 })
@@ -66,7 +66,7 @@ public class Attribute extends BaseModel<Long> implements PersistableAttribute {
     @Column(name = KEYWORDS_FIELD_NAME)
     private String keywords;
 
-    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "attributes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<Product> products = new ArrayList<>();
 
     public void setProducts(final Collection<? extends Product> products) {

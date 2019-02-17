@@ -54,7 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order, Long> implements OrderSearchService {
 
     @Autowired
-    private OrderSearchRepository orderRepository;
+    private OrderSearchRepository orderSearchRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,7 +65,7 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request) {
-        return getRepository().findByTerm(searchTerm, request);
+        return getRepository().findByTitle(searchTerm, request);
     }
 
     @Override
@@ -78,12 +78,12 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
                 .setSimplePrefix("<highlight>")
                 .setSimplePostfix("</highlight>")
                 .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
-        return getSolrTemplate().queryForHighlightPage(query, Order.class);
+        return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Order.class);
     }
 
     @Override
     public Page<? extends Order> findByQuery(final Query query) {
-        return findByQuery(query, Order.class);
+        return findByQuery(COLLECTION_ID, query, Order.class);
     }
 
     protected Criteria titleOrDescriptionCriteria(final String searchTerm) {
@@ -99,6 +99,6 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
 
     @Override
     protected OrderSearchRepository getRepository() {
-        return this.orderRepository;
+        return this.orderSearchRepository;
     }
 }

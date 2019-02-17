@@ -42,9 +42,9 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableCategory.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "category", catalog = "market_data")
+@Table(name = "category", catalog = "public")
 @AttributeOverrides({
-        @AttributeOverride(name = PersistableCategory.ID_FIELD_NAME, column = @Column(name = PersistableCategory.ID_FIELD_NAME))
+        @AttributeOverride(name = BaseModel.ID_FIELD_NAME, column = @Column(name = PersistableCategory.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Category extends BaseModel<Long> implements PersistableCategory {
@@ -63,10 +63,10 @@ public class Category extends BaseModel<Long> implements PersistableCategory {
     @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     private String description;
 
-    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Product> products = new HashSet<>();
 
-    @ManyToMany(mappedBy = MAIN_PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "mainCategories", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Product> mainProducts = new HashSet<>();
 
 //    @OneToMany(mappedBy = CATEGORY_FIELD_NAME, cascade = CascadeType.MERGE, fetch = FetchType.LAZY)

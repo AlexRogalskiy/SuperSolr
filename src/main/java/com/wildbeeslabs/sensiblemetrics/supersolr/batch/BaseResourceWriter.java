@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.processing;
+package com.wildbeeslabs.sensiblemetrics.supersolr.batch;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.BatchConfigProperties;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.SolrItemWriterException;
@@ -70,7 +70,7 @@ public class BaseResourceWriter implements ItemWriter<BaseResource> {
 
     private ContentStreamUpdateRequest updateRequest(final BaseResource resource) {
         try {
-            ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getConfigurationProperties().getExtractPath());
+            final ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getConfigurationProperties().getExtractPath());
             updateRequest.addContentStream(new ContentStreamBase.StringStream(resource.getData(), "text/html;charset=UTF-8"));
             updateRequest.setParam(FILE_ID_LITERAL, resource.getResource().getFile().getAbsolutePath());
             updateRequest.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);

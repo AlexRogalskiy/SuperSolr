@@ -21,26 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.config;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Searchable order model definition
+ * Custom application configuration
  */
-public interface PersistableOrder {
+@Configuration
+public class AppConfig {
 
-    /**
-     * Default document ID
-     */
-    String MODEL_ID = "Order";
-
-    /**
-     * Default field names
-     */
-    String ID_FIELD_NAME = "id";
-    String ORDER_ID_FIELD_NAME = "orderId";
-    String TITLE_FIELD_NAME = "title";
-    String DESCRIPTION_FIELD_NAME = "description";
-    String CLIENT_NAME_FIELD_NAME = "clientName";
-    String CLIENT_MOBILE_FIELD_NAME = "clientMobile";
-    String PRODUCTS_FIELD_NAME = "products";
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 }

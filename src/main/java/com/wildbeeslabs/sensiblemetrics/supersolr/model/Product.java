@@ -23,6 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAttribute;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableCategory;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableOrder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableProduct;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,11 +51,11 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableProduct.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "products", catalog = "market_data",
+@Table(name = "products", catalog = "public",
         indexes = {@Index(name = "product_catalog_number_idx", columnList = PersistableProduct.ID_FIELD_NAME + ", " + PersistableProduct.CATALOG_NUMBER_FIELD_NAME)}
 )
 @AttributeOverrides({
-        @AttributeOverride(name = PersistableProduct.ID_FIELD_NAME, column = @Column(name = PersistableProduct.ID_FIELD_NAME))
+        @AttributeOverride(name = BaseModel.ID_FIELD_NAME, column = @Column(name = PersistableProduct.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Product extends BaseModel<Long> implements PersistableProduct {
@@ -113,8 +116,12 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Category",
-            joinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)},
-            inverseJoinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)}
+            joinColumns = {
+                    @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = PersistableCategory.CATEGORY_ID_FIELD_NAME, referencedColumnName = PersistableCategory.ID_FIELD_NAME)
+            }
     )
     @Fetch(FetchMode.SELECT)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -123,8 +130,12 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Main_Category",
-            joinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)},
-            inverseJoinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)}
+            joinColumns = {
+                    @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = PersistableCategory.CATEGORY_FIELD_NAME, referencedColumnName = PersistableCategory.ID_FIELD_NAME)
+            }
     )
     @Fetch(FetchMode.SELECT)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -133,8 +144,12 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Attribute",
-            joinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)},
-            inverseJoinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)}
+            joinColumns = {
+                    @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = PersistableAttribute.ATTRIBUTE_ID_FIELD_NAME, referencedColumnName = PersistableAttribute.ID_FIELD_NAME)
+            }
     )
     @Fetch(FetchMode.SELECT)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -143,8 +158,12 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "Product_Order",
-            joinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)},
-            inverseJoinColumns = {@JoinColumn(name = PersistableProduct.ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)}
+            joinColumns = {
+                    @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = PersistableOrder.ORDER_ID_FIELD_NAME, referencedColumnName = PersistableOrder.ID_FIELD_NAME)
+            }
     )
     @Fetch(FetchMode.SELECT)
     @OnDelete(action = OnDeleteAction.NO_ACTION)

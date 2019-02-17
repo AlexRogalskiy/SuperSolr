@@ -40,6 +40,10 @@ public interface CategorySearchService extends BaseDocumentSearchService<Categor
      * Default service ID
      */
     String SERVICE_ID = "CategorySearchService";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "category";
 
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
 

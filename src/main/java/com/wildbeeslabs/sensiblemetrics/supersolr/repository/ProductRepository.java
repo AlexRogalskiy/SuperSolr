@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Custom product repository declaration
+ * Custom product repository declaration {@link BaseModelRepository}
  */
 @Repository
 public interface ProductRepository extends BaseModelRepository<Product, Long> {

@@ -24,7 +24,6 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +39,6 @@ import java.nio.charset.StandardCharsets;
  * Custom validator configuration
  */
 @Configuration
-@EnableAutoConfiguration
 public class ValidatorConfig {
 
     @Bean

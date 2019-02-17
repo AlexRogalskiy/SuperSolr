@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.processing;
+package com.wildbeeslabs.sensiblemetrics.supersolr.batch;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

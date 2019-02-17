@@ -35,5 +35,5 @@ import java.io.Serializable;
  */
 public interface AuditDocumentSearchService<E extends AuditDocument, ID extends Serializable> extends BaseSearchService<E, ID> {
 
-    long count(final String searchTerm);
+    //long count(final String searchTerm);
 }

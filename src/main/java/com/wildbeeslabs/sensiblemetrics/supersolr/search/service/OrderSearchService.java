@@ -36,6 +36,10 @@ public interface OrderSearchService extends BaseDocumentSearchService<Order, Lon
      * Default service ID
      */
     String SERVICE_ID = "OrderSearchService";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "order";
 
     Page<? extends Order> findByDescription(final String description, final PageRequest request);
 

@@ -47,7 +47,7 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Service(BaseSimpleSearchService.SERVICE_ID)
+//@Service(BaseSimpleSearchService.SERVICE_ID)
 @Transactional
 public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends SimpleSolrRepository<E, ID> implements BaseSimpleSearchService<E, ID> {
 
@@ -69,9 +69,9 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
      */
     @Override
     @Transactional(readOnly = true)
-    public long count(final String searchTerm, final Criteria criteria) {
+    public long count(final String collection, final String searchTerm, final Criteria criteria) {
         final SimpleQuery countQuery = new SimpleQuery(criteria);
-        return getSolrOperations().count(countQuery);
+        return getSolrOperations().count(collection, countQuery);
     }
 
     /**
@@ -100,7 +100,7 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
      */
     @Override
     public <S extends E> Iterable<S> saveAll(final Iterable<S> target) {
-        return super.save(target);
+        return super.saveAll(target);
     }
 
     /**
@@ -136,7 +136,7 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
     @Override
     @Transactional(readOnly = true)
     public Iterable<E> findAllById(final Iterable<ID> ids) {
-        return super.findAll(ids);
+        return super.findAllById(ids);
     }
 
     /**
@@ -153,6 +153,11 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
         this.delete(entity.get());
     }
 
+    @Override
+    public Iterable<? extends E> findAll(Iterable<ID> ids) {
+        return null;
+    }
+
     /**
      * Returns optional of matched wrapped entity by input ID
      *
@@ -162,7 +167,17 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
     @Override
     @Transactional(readOnly = true)
     public Optional<E> find(final ID id) {
-        return Optional.ofNullable(super.findOne(id));
+        return super.findById(id);
+    }
+
+    @Override
+    public boolean exists(ID id) {
+        return false;
+    }
+
+    @Override
+    public <S extends E> Iterable<S> save(Iterable<S> entities) {
+        return null;
     }
 
     /**
@@ -171,7 +186,8 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
      * @param entities - initial input collection of entities {@link Iterable}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteAll(final Iterable<? extends E> entities) {
-        super.delete(entities);
+        super.delete((E) entities);
     }
 }

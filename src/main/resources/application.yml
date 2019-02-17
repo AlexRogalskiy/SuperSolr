@@ -4,7 +4,7 @@ spring:
 ---
 spring:
   main:
-    allow-bean-definition-overriding: false
+    #allow-bean-definition-overriding: true
   batch:
     job:
       enabled: false
@@ -17,6 +17,8 @@ spring:
       repository:
         query:
           method.type: #methodName, namedQuery, queryAnnotation
+  jpa:
+    open-in-view: false
 
 logging:
   config: classpath:logback.xml

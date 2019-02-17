@@ -44,6 +44,10 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
      * Default service ID
      */
     String SERVICE_ID = "ProductSearchService";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "product";
 
     Page<? extends Product> findByName(final String name, final Pageable pageable);
 
@@ -55,6 +59,8 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     HighlightPage<? extends Product> findByHighlightedNameIn(final Collection<String> names, final Pageable pageable);
 
+    Page<? extends Product> findByShortDescription(final String description, final Pageable pageable);
+
     FacetPage<? extends Product> findByAutoCompleteNameFragment(final String fragment, final Pageable pageable);
 
     Page<? extends Product> findByCustomQuery(final String searchTerm, final Pageable request);
@@ -63,13 +69,13 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     Page<? extends Product> findByRating(final Integer rating, final Pageable pageable);
 
-    Page<? extends Product> findByLockType(final Integer lockType, final Pageable pageable);
+    List<? extends Product> findByLockType(final Integer lockType, final Sort sort);
 
     Page<? extends Product> findByLocation(final Point location, final Pageable pageable);
 
     List<? extends Product> findByLocationWithin(final String location, int distanceRange);
 
-    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort);
+    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);
 
     List<? extends Product> findByLocationNear(final Shape shape);
 

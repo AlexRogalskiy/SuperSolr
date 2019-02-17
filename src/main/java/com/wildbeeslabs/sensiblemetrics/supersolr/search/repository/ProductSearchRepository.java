@@ -43,21 +43,21 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Custom product search repository declaration
+ * Custom product search repository declaration {@link BaseDocumentSearchRepository}
  */
 @Repository
 public interface ProductSearchRepository extends BaseDocumentSearchRepository<Product, String> {
 
-    @Highlight(prefix = "<highlight>", postfix = "</highlight>")
-    @Query(fields = {
-            SearchableProduct.ID_FIELD_NAME,
-            SearchableProduct.NAME_FIELD_NAME,
-            SearchableProduct.PRICE_FIELD_NAME,
-            SearchableProduct.ATTRIBUTES_FIELD_NAME,
-            SearchableProduct.AVAILABLE_FIELD_NAME,
-            SearchableProduct.PAGE_TITLE_FIELD_NAME
-    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Product> findByHighlightedValueIn(final Collection<String> values, final Pageable pageable);
+//    @Highlight(prefix = "<highlight>", postfix = "</highlight>")
+//    @Query(fields = {
+//            SearchableProduct.ID_FIELD_NAME,
+//            SearchableProduct.NAME_FIELD_NAME,
+//            SearchableProduct.PRICE_FIELD_NAME,
+//            SearchableProduct.ATTRIBUTES_FIELD_NAME,
+//            SearchableProduct.AVAILABLE_FIELD_NAME,
+//            SearchableProduct.PAGE_TITLE_FIELD_NAME
+//    }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
+//    HighlightPage<? extends Product> findByCustomQuery(final Collection<String> terms, final Pageable pageable);
 
     @Highlight(prefix = "<highlight>", postfix = "</highlight>")
     @Query(fields = {
@@ -68,7 +68,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
             SearchableProduct.RATING_FIELD_NAME,
             SearchableProduct.LOCATION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Product> findByHighlightedNameIn(final Collection<String> names, final Pageable page);
+    HighlightPage<? extends Product> findByNameIn(final Collection<String> names, final Pageable page);
 
     @Query(fields = {
             SearchableProduct.NAME_FIELD_NAME,
@@ -77,17 +77,15 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
             SearchableProduct.LONG_DESCRIPTION_FIELD_NAME,
             SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
-    Page<? extends Product> findByTerm(@Boost(2) final String searchTerm, final Pageable pageable);
+    Page<? extends Product> findByShortDescription(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    @Query(name = "Product.findByName")
-    Page<? extends Product> findByNameStartsWith(final String name, final Pageable pageable);
+    @Query(name = "Product.findByNameStartsWith")
+    Page<? extends Product> findByNameStartsWith(@Boost(1.5f) final String name, final Pageable pageable);
 
     @Query(name = "Product.findById")
-    Page<? extends Product> findProductById(final String id);
+    Page<? extends Product> findProductById(final String id, final Pageable pageable);
 
     Page<? extends Product> findByName(final String name, final Pageable pageable);
-
-    Page<? extends Product> findByNames(final Collection<String> names, final Pageable pageable);
 
     @Query(name = "Product.findAll")
     Page<? extends Product> findAllProducts(final Pageable pageable);
@@ -105,16 +103,16 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     Page<? extends Product> findByCategory(final String category, final Pageable pageable);
 
     @Query(name = "Product.findAvailable")
-    Page<? extends Product> findAvailableProducts();
+    Page<? extends Product> findAvailableProducts(final Pageable pageable);
 
     @Query(name = "Product.findByNameOrCategory")
-    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort);
+    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);
 
     Page<? extends Product> findByRating(final Integer popularity, final Pageable pageable);
 
     Page<? extends Product> findByRatingGreaterThanEqual(final Integer popularity, final Pageable page);
 
-    Page<? extends Product> findByLockType(final Integer lockType, final Pageable pageable);
+    List<? extends Product> findByLockType(final Integer lockType, final Sort sort);
 
     Page<? extends Product> findByLocation(final Point location, final Pageable pageable);
 
@@ -130,4 +128,11 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     List<? extends Product> findByLocationSomewhereNear(final Point location, final Distance distance);
 
     List<? extends Product> findByNameContainsOrCategoriesContains(final String name, final String category, final Sort sort);
+
+    @Query(name = "Product.findByNamedQuery")
+    Page<? extends Product> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+
+    @Query(name = "Product.findByName")
+    @Facet(fields = {SearchableProduct.CATEGORIES_FIELD_NAME}, limit = 20)
+    FacetPage<? extends Product> findByNameAndFacetOnCategory(final String name, Pageable page);
 }

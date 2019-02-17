@@ -29,12 +29,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Custom category repository declaration
+ * Custom category repository declaration {@link BaseModelRepository}
  */
 @Repository
 public interface CategoryRepository extends BaseModelRepository<Category, Long> {
 
     List<? extends Category> findByTitle(final String title);
+
+    List<? extends Category> findByIndex(final Integer index);
 
     List<? extends Category> findByDescription(final String description);
 }

@@ -40,5 +40,5 @@ public interface BaseSimpleSearchService<E, ID extends Serializable> extends Bas
      */
     String SERVICE_ID = "BaseSimpleSearchService";
 
-    long count(final String searchTerm, final Criteria criteria);
+    long count(final String collection, final String searchTerm, final Criteria criteria);
 }

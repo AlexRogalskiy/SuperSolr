@@ -46,9 +46,13 @@ import java.io.Serializable;
 public class BaseSimpleRepositoryFactoryBean<E extends BaseModel<ID>, ID extends Serializable> extends SolrRepositoryFactoryBean<BaseSimpleSearchServiceImpl<E, ID>, E, ID> {
 
     /**
-     * Custom string simple repository factory bean
+     * Creates a new {@link SolrRepositoryFactoryBean} for the given repository interface.
+     *
+     * @param repositoryInterface must not be {@literal null}.
      */
-    public static final BaseSimpleRepositoryFactoryBean<BaseModel<String>, String> DEFAULT_STRING_SIMPLE_REPOSITORY_FACTORY_BEAN = new BaseSimpleRepositoryFactoryBean<>();
+    public BaseSimpleRepositoryFactoryBean(final Class<? extends BaseSimpleSearchServiceImpl<E, ID>> repositoryInterface) {
+        super(repositoryInterface);
+    }
 
     @Override
     protected RepositoryFactorySupport doCreateRepositoryFactory() {

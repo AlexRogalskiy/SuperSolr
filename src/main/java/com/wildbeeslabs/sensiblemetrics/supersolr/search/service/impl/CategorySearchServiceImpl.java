@@ -59,7 +59,7 @@ import java.util.Collections;
 public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Category, String> implements CategorySearchService {
 
     @Autowired
-    private CategorySearchRepository categoryRepository;
+    private CategorySearchRepository categorySearchRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,7 +73,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         if (StringUtils.isEmpty(titles)) {
             return getRepository().findAll(pageable);
         }
-        return getRepository().findByTitles(tokenize(titles), pageable);
+        return getRepository().findByTitleIn(tokenize(titles), pageable);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         if (CollectionUtils.isEmpty(values)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByHighlightedValueIn(values, pageable);
+        return getRepository().findByTitleIn(values, pageable);
     }
 
     @Override
@@ -110,12 +110,12 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
                 .setSimplePrefix("<highlight>")
                 .setSimplePostfix("</highlight>")
                 .addField(SearchableCategory.ID_FIELD_NAME, SearchableCategory.TITLE_FIELD_NAME));
-        return getSolrTemplate().queryForHighlightPage(query, Category.class);
+        return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Category.class);
     }
 
     @Override
     public Page<? extends Category> findByQuery(final Query query) {
-        return findByQuery(query, Category.class);
+        return findByQuery(COLLECTION_ID, query, Category.class);
     }
 
     protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
@@ -131,6 +131,6 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     protected CategorySearchRepository getRepository() {
-        return this.categoryRepository;
+        return this.categorySearchRepository;
     }
 }

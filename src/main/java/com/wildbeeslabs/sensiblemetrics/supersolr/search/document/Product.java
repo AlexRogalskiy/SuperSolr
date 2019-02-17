@@ -49,22 +49,22 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
      */
     private static final long serialVersionUID = 6034172782528641104L;
 
-    @Indexed(name = NAME_FIELD_NAME, type = "string")
+    @Indexed(name = NAME_FIELD_NAME, type = "text_general")
     private String name;
 
-    @Indexed(name = SHORT_DESCRIPTION_FIELD_NAME, type = "string")
+    @Indexed(name = SHORT_DESCRIPTION_FIELD_NAME, type = "text_general")
     private String shortDescription;
 
-    @Indexed(name = LONG_DESCRIPTION_FIELD_NAME, type = "string")
+    @Indexed(name = LONG_DESCRIPTION_FIELD_NAME, type = "text_general")
     private String longDescription;
 
-    @Indexed(name = PRICE_DESCRIPTION_FIELD_NAME, type = "string")
+    @Indexed(name = PRICE_DESCRIPTION_FIELD_NAME, type = "text_general")
     private String priceDescription;
 
     @Indexed(name = CATALOG_NUMBER_FIELD_NAME, type = "string")
     private String catalogNumber;
 
-    @Indexed(name = PAGE_TITLE_FIELD_NAME, type = "string")
+    @Indexed(name = PAGE_TITLE_FIELD_NAME, type = "text_general")
     private String pageTitle;
 
     @Indexed(name = AVAILABLE_FIELD_NAME)

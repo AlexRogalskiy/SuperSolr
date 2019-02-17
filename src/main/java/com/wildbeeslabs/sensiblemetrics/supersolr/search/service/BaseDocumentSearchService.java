@@ -69,7 +69,7 @@ public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extend
 
     Page<? extends E> findByQuery(final Query query);
 
-    Page<? extends E> findByQueryAndCriteria(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
+    Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
 
-    Page<? extends E> findByQueryAndCriteria(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
+    Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
 }

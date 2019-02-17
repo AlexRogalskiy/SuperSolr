@@ -51,10 +51,10 @@ public class Category extends BaseDocument<String> implements SearchableCategory
     @Indexed(name = INDEX_FIELD_NAME)
     private Integer index;
 
-    @Indexed(name = TITLE_FIELD_NAME, type = "string")
+    @Indexed(name = TITLE_FIELD_NAME, type = "text_general")
     private String title;
 
-    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
+    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "text_general")
     private String description;
 
     @Indexed(name = PRODUCTS_FIELD_NAME)

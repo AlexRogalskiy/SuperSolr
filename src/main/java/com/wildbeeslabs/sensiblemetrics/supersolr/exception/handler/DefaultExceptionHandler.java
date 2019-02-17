@@ -44,14 +44,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException;
 
 /**
  * Custom default exception handler implementation
  */
 @Slf4j
 @RestControllerAdvice
-public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
+public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ResourceAlreadyExistException.class})
     @ResponseBody
@@ -131,10 +131,10 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ConstraintViolationException.class})
+    @ExceptionHandler({javax.validation.ConstraintViolationException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<?> handle(final HttpServletRequest req, final ConstraintViolationException ex) {
+    protected ResponseEntity<?> handle(final HttpServletRequest req, final javax.validation.ConstraintViolationException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
                 .builder()

@@ -21,34 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.processing;
+package com.wildbeeslabs.sensiblemetrics.supersolr.batch;
 
 import lombok.*;
-import org.springframework.core.io.Resource;
-
-import java.io.Serializable;
+import org.apache.solr.client.solrj.SolrClient;
+import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.stereotype.Component;
 
 /**
- * Custom base resource implementation
+ * Custom optimize tasklet implementation {@link Tasklet}
  */
 @Data
+@Component
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class BaseResource implements Serializable {
+public class BaseOptimizeTasklet implements Tasklet {
 
     /**
-     * Default explicit serialVersionUID for interoperability
+     * Default collection name
      */
-    private static final long serialVersionUID = 163289207849177014L;
+    public static final String DEFAULT_COLLECTION_NAME = "BaseModel";
 
     /**
-     * Default resource instance [@link Resource}
+     * Default solr client instance {@link SolrClient}
      */
-    private Resource resource;
-    /**
-     * Default resource data {@link String}
-     */
-    private String data;
+    private SolrClient solrClient;
+
+    @Override
+    public RepeatStatus execute(final StepContribution stepContribution, final ChunkContext chunkContext) throws Exception {
+        getSolrClient().optimize(DEFAULT_COLLECTION_NAME);
+        return RepeatStatus.FINISHED;
+    }
 }

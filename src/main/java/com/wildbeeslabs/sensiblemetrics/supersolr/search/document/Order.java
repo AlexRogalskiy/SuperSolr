@@ -52,7 +52,7 @@ public class Order extends BaseDocument<Long> implements SearchableOrder {
     @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;
 
-    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "string")
+    @Indexed(name = DESCRIPTION_FIELD_NAME, type = "text_general")
     private String description;
 
     @Indexed(name = CLIENT_NAME_FIELD_NAME, type = "string")

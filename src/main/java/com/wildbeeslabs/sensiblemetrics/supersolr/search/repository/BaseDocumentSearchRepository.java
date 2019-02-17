@@ -32,7 +32,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base document search repository declaration
+ * Custom base document search repository declaration {@link AuditDocumentSearchRepository}
  *
  * @param <E>  type of base document
  * @param <ID> type of base document identifier
@@ -42,4 +42,6 @@ public interface BaseDocumentSearchRepository<E extends BaseDocument<ID>, ID ext
 
     @Query(name = "BaseDocument.findById")
     Optional<E> findById(@Boost(2) final ID id);
+
+    //long count(final String searchTerm);
 }

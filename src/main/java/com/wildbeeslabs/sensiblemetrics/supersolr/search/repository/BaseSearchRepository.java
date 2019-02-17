@@ -29,7 +29,7 @@ import org.springframework.data.solr.repository.SolrCrudRepository;
 import java.io.Serializable;
 
 /**
- * Custom base search repository declaration
+ * Custom base search repository declaration {@link SolrCrudRepository}
  *
  * @param <E>  type of document
  * @param <ID> type of document identifier

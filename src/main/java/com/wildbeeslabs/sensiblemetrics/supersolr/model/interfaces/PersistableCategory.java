@@ -37,6 +37,7 @@ public interface PersistableCategory {
      * Default field names
      */
     String ID_FIELD_NAME = "id";
+    String CATEGORY_ID_FIELD_NAME = "categoryId";
     String INDEX_FIELD_NAME = "index";
     String TITLE_FIELD_NAME = "title";
     String DESCRIPTION_FIELD_NAME = "description";

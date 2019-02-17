@@ -50,16 +50,16 @@ public class Attribute extends BaseModel<String> implements SearchableAttribute 
      */
     private static final long serialVersionUID = -2796804385398260344L;
 
-    @Indexed(name = NAME_FIELD_NAME, type = "string")
+    @Indexed(name = NAME_FIELD_NAME, type = "text_general")
     private String name;
 
-    @Indexed(name = SYNONYM_FIELD_NAME, type = "string")
+    @Indexed(name = SYNONYM_FIELD_NAME, type = "text_general")
     private String name2;
 
-    @Indexed(name = DESCRIPTION_TEXT_FIELD_NAME, type = "string")
+    @Indexed(name = DESCRIPTION_TEXT_FIELD_NAME, type = "text_general")
     private String descriptionText;
 
-    @Indexed(name = KEYWORDS_FIELD_NAME, type = "string")
+    @Indexed(name = KEYWORDS_FIELD_NAME, type = "text_general")
     private String keywords;
 
     @Indexed(name = PRODUCTS_FIELD_NAME)

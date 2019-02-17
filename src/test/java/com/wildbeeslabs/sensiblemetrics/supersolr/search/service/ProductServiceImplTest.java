@@ -110,7 +110,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
     public void testFindBySimpleQuery() {
         //given
         final String searhTerms = "Test01 Test02";
-        final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria(nameAndDescriptionCriteria(searhTerms), PageRequest.of(0, 10), Product.class);
+        final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria("product", nameAndDescriptionCriteria(searhTerms), PageRequest.of(0, 10), Product.class);
         //assert
         assertEquals(4, productPage.getTotalElements());
         assertEquals(4, productPage.getTotalPages());
@@ -211,9 +211,8 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
-        final Page<? extends Product> productPage = getProductService().findByLockType(lockType, PageRequest.of(0, 2));
-        assertEquals(3, productPage.getTotalElements());
-        assertTrue(productPage.getContent().contains(product));
+        final List<? extends Product> products = getProductService().findByLockType(lockType, new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
+        assertEquals(3, products.size());
     }
 
     @Test
@@ -235,7 +234,7 @@ public class ProductServiceImplTest extends BaseDocumentTest {
         final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr", null));
         //assert
-        final Page<? extends Product> productPage = getProductService().findByNameOrCategory(searchTerm, new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
+        final Page<? extends Product> productPage = getProductService().findByNameOrCategory(searchTerm, PageRequest.of(0, 10));
         assertEquals(3, productPage.getTotalElements());
         assertTrue(productPage.getContent().contains(product));
     }

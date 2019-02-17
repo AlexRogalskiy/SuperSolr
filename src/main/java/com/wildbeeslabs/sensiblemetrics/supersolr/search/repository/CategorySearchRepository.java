@@ -38,7 +38,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 /**
- * Custom category search repository declaration
+ * Custom category search repository declaration {@link BaseDocumentSearchRepository}
  */
 @Repository
 public interface CategorySearchRepository extends BaseDocumentSearchRepository<Category, String> {
@@ -49,11 +49,9 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
             SearchableCategory.TITLE_FIELD_NAME,
             SearchableCategory.DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Category> findByHighlightedValueIn(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Category> findByTitleIn(final Collection<String> terms, final Pageable pageable);
 
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
-
-    Page<? extends Category> findByTitles(final Collection<String> title, final Pageable pageable);
 
     @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
     FacetPage<? extends Category> findByTitleStartsWith(final Collection<String> fragments, final Pageable pageable);

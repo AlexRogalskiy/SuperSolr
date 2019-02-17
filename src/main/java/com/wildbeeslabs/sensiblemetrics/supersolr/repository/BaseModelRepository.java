@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base model repository declaration
+ * Custom base model repository declaration {@link AuditModelRepository}
  *
  * @param <E>  type of base model
  * @param <ID> type of base model identifier

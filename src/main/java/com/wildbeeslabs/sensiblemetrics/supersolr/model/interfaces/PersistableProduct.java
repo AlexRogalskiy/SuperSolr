@@ -37,6 +37,7 @@ public interface PersistableProduct {
      * Default field names
      */
     String ID_FIELD_NAME = "id";
+    String PRODUCT_ID_FIELD_NAME = "productId";
     String NAME_FIELD_NAME = "name";
     String SHORT_DESCRIPTION_FIELD_NAME = "shortDescription";
     String LONG_DESCRIPTION_FIELD_NAME = "longDescription";

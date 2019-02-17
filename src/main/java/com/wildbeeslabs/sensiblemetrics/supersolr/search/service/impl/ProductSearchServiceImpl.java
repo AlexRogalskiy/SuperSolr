@@ -63,7 +63,7 @@ import java.util.List;
 public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Product, String> implements ProductSearchService {
 
     @Autowired
-    private ProductSearchRepository productRepository;
+    private ProductSearchRepository productSearchRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -77,7 +77,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         if (StringUtils.isEmpty(names)) {
             return getRepository().findAll(pageable);
         }
-        return getRepository().findByNames(tokenize(names), pageable);
+        return getRepository().findByNameIn(tokenize(names), pageable);
     }
 
     @Override
@@ -97,7 +97,12 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         if (CollectionUtils.isEmpty(names)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByHighlightedNameIn(names, pageable);
+        return getRepository().findByNameIn(names, pageable);
+    }
+
+    @Override
+    public Page<? extends Product> findByShortDescription(final String description, Pageable pageable) {
+        return getRepository().findByShortDescription(description, pageable);
     }
 
     @Override
@@ -112,7 +117,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Product> findByCustomQuery(final String searchTerm, final Pageable pageable) {
-        return getRepository().findByTerm(searchTerm, pageable);
+        return getRepository().findByShortDescription(searchTerm, pageable);
     }
 
     @Override
@@ -129,8 +134,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByLockType(final Integer lockType, final Pageable pageable) {
-        return getRepository().findByLockType(lockType, pageable);
+    public List<? extends Product> findByLockType(final Integer lockType, final Sort sort) {
+        return getRepository().findByLockType(lockType, sort);
     }
 
     @Override
@@ -147,8 +152,9 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
-    public Page<? extends Product> findByNameOrCategory(final String searchTerm, final Sort sort) {
-        return getRepository().findByNameOrCategory(searchTerm, sort);
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable) {
+        return getRepository().findByNameOrCategory(searchTerm, pageable);
     }
 
     @Override
@@ -192,8 +198,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         productUpdate.add(SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME, product.getRecommendedPrice());
         productUpdate.add(SearchableProduct.ATTRIBUTES_FIELD_NAME, product.getAttributes());
         productUpdate.add(SearchableProduct.RATING_FIELD_NAME, product.getRating());
-        getSolrTemplate().saveBean(productUpdate);
-        getSolrTemplate().commit();
+        getSolrTemplate().saveBean(COLLECTION_ID, productUpdate);
+        getSolrTemplate().commit(COLLECTION_ID);
     }
 
     @Override
@@ -207,13 +213,13 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
                 .setSimplePrefix("<highlight>")
                 .setSimplePostfix("</highlight>")
                 .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
-        return getSolrTemplate().queryForHighlightPage(query, Product.class);
+        return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Product.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<? extends Product> findByQuery(final Query query) {
-        return findByQuery(query, Product.class);
+        return findByQuery(COLLECTION_ID, query, Product.class);
     }
 
     protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
@@ -231,6 +237,6 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     protected ProductSearchRepository getRepository() {
-        return this.productRepository;
+        return this.productSearchRepository;
     }
 }

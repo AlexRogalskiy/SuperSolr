@@ -36,5 +36,4 @@ import java.io.Serializable;
  */
 @NoRepositoryBean
 public interface BaseJpaRepository<E, ID extends Serializable> extends JpaRepository<E, ID> {
-
 }

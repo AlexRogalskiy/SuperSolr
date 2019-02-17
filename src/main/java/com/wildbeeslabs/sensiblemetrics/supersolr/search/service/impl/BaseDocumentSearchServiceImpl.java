@@ -71,22 +71,27 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
         }
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public Page<? extends E> findByQueryAndCriteria(final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
-        final Query query = new SimpleQuery(criteria, pageable);
-        query.setRows(DEFAULT_QUERY_ROWS_SIZE);
-        return getSolrTemplate().queryForPage(query, clazz);
+    protected long count() {
+        return getRepository().count();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends E> findByQueryAndCriteria(final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+    public Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+        final Query query = new SimpleQuery(criteria, pageable);
+        query.setRows(DEFAULT_QUERY_ROWS_SIZE);
+        return getSolrTemplate().queryForPage(collection, query, clazz);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(queryString);
         query.addFilterQuery(new SimpleQuery(criteria));
         query.setPageRequest(pageable);
         query.setRows(DEFAULT_QUERY_ROWS_SIZE);
-        return getSolrTemplate().queryForPage(query, clazz);
+        return getSolrTemplate().queryForPage(collection, query, clazz);
     }
 
     protected Collection<String> tokenize(final String searchTerm) {
@@ -97,12 +102,12 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
                 .collect(Collectors.toList());
     }
 
-    protected List<? extends E> search(final Query query, final Class<? extends E> clazz) {
-        return getSolrTemplate().queryForPage(query, clazz).getContent();
+    protected List<? extends E> search(final String collection, final Query query, final Class<? extends E> clazz) {
+        return getSolrTemplate().queryForPage(collection, query, clazz).getContent();
     }
 
-    protected Page<? extends E> findByQuery(final Query query, final Class<? extends E> clazz) {
-        return getSolrTemplate().queryForPage(query, clazz);
+    protected Page<? extends E> findByQuery(final String collection, final Query query, final Class<? extends E> clazz) {
+        return getSolrTemplate().queryForPage(collection, query, clazz);
     }
 
     protected abstract BaseDocumentSearchRepository<E, ID> getRepository();

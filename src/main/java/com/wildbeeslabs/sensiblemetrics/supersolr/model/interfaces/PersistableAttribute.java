@@ -37,6 +37,7 @@ public interface PersistableAttribute {
      * Default field names
      */
     String ID_FIELD_NAME = "id";
+    String ATTRIBUTE_ID_FIELD_NAME = "attributeId";
     String NAME_FIELD_NAME = "name";
     String SYNONYM_FIELD_NAME = "synonym";
     String DESCRIPTION_TEXT_FIELD_NAME = "descriptionText";

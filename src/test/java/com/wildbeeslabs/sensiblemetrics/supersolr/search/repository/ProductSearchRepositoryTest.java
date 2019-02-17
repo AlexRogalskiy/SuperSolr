@@ -153,7 +153,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         this.entityManager.flush();
 
         // when
-        final HighlightPage<? extends Product> productHighlightPage = getProductSearchRepository().findByHighlightedValueIn(titles, PageRequest.of(0, 10));
+        final HighlightPage<? extends Product> productHighlightPage = getProductSearchRepository().findByNameIn(titles, PageRequest.of(0, 10));
         final List<? extends Product> products = productHighlightPage.getContent();
 
         // then

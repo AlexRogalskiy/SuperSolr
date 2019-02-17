@@ -50,12 +50,6 @@ public abstract class AuditDocumentSearchServiceImpl<E extends AuditDocument, ID
     @Autowired
     private SolrTemplate solrTemplate;
 
-    @Override
-    @Transactional(readOnly = true)
-    public long count(final String searchTerm) {
-        return getRepository().count(searchTerm);
-    }
-
     protected SolrTemplate getSolrTemplate() {
         return this.solrTemplate;
     }

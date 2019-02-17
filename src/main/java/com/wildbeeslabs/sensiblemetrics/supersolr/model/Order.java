@@ -43,9 +43,9 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableOrder.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "order", catalog = "market_data")
+@Table(name = "order", catalog = "public")
 @AttributeOverrides({
-        @AttributeOverride(name = PersistableOrder.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME))
+        @AttributeOverride(name = BaseModel.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Order extends BaseModel<Long> implements PersistableOrder {
@@ -70,7 +70,7 @@ public class Order extends BaseModel<Long> implements PersistableOrder {
     @Column(name = CLIENT_MOBILE_FIELD_NAME)
     private String clientMobile;
 
-    @ManyToMany(mappedBy = PRODUCTS_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "orders", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final Collection<? extends Product> products) {

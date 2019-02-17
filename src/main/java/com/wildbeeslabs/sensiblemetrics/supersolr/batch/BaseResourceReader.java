@@ -21,52 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.processing;
+package com.wildbeeslabs.sensiblemetrics.supersolr.batch;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import com.wildbeeslabs.sensiblemetrics.supersolr.config.BatchConfigProperties;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.commonmark.Extension;
-import org.commonmark.ext.gfm.tables.TablesExtension;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.file.MultiResourceItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.List;
 
 /**
- * Custom base resource processor implementation {@link ItemProcessor}
+ * Custom base resource reader {@link MultiResourceItemReader}
  */
 @Slf4j
-@Data
-@EqualsAndHashCode
-@ToString
 @Component
-public class BaseResourceProcessor implements ItemProcessor<Resource, BaseResource> {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class BaseResourceReader extends MultiResourceItemReader<Resource> {
 
-    private Parser parser;
-    private HtmlRenderer renderer;
+    /**
+     * Default batch configuration properties
+     */
+    @Autowired
+    private BatchConfigProperties configurationProperties;
 
     @PostConstruct
-    public void initialize() {
-        final List<Extension> extensions = Collections.singletonList(TablesExtension.create());
-        this.parser = Parser.builder().extensions(extensions).build();
-        this.renderer = HtmlRenderer.builder().extensions(extensions).build();
-    }
-
-    @Override
-    public BaseResource process(final Resource resource) throws IOException {
-        try (final InputStreamReader reader = new InputStreamReader(resource.getInputStream())) {
-            Node document = getParser().parseReader(reader);
-            return new BaseResource(resource, getRenderer().render(document));
-        }
+    public void initialize() throws IOException {
+        final ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+        final Resource[] resources = patternResolver.getResources(getConfigurationProperties().getPathPattern());
+        setResources(resources);
+        setDelegate(new BaseResourceAwareReader());
     }
 }

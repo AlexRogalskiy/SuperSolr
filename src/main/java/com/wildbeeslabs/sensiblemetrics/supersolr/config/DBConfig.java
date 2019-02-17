@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -33,6 +34,7 @@ import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -40,7 +42,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.naming.ObjectNamingStrategy;
-import org.springframework.orm.jpa.*;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.DefaultJpaDialect;
+import org.springframework.orm.jpa.JpaDialect;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
@@ -95,6 +102,7 @@ public class DBConfig {
      * @return local container entity manager factory {@link LocalContainerEntityManagerFactoryBean}
      */
     @Bean
+    @Primary
     @ConditionalOnMissingBean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(final DataSource defaultDataSource,
                                                                        final JpaVendorAdapter jpaVendorAdapter,
@@ -184,11 +192,18 @@ public class DBConfig {
         return jpaVendorAdapter;
     }
 
+//    @Bean
+//    public JpaTransactionManager jpaTransactionManager(final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
+//        final JpaTransactionManager transactionManager = new JpaTransactionManager();
+//        transactionManager.setEntityManagerFactory(entityManagerFactoryBean.getObject());
+//        return transactionManager;
+//    }
+
     @Bean
-    public JpaTransactionManager jpaTransactionManager(final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean) {
-        final JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactoryBean.getObject());
-        return transactionManager;
+    public HibernateTransactionManager hibernateTransactionManager(final SessionFactory sessionFactory) {
+        final HibernateTransactionManager txManager = new HibernateTransactionManager();
+        txManager.setSessionFactory(sessionFactory);
+        return txManager;
     }
 
     /**
@@ -255,17 +270,17 @@ public class DBConfig {
         // Hibernate search properties
         jpaProperties.put("hibernate.search.exclusive_index_use", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.exclusiveIndexUse"));
         jpaProperties.put("hibernate.search.lucene_version", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.luceneVersion"));
-        jpaProperties.put("hibernate.search.default.worker.execution", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.worker.execution"));
-        jpaProperties.put("hibernate.search.default.directory_provider", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.directoryProvider"));
-        jpaProperties.put("hibernate.search.default.indexBase", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexBase"));
-        jpaProperties.put("hibernate.search.default.indexPath", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexPath"));
-        jpaProperties.put("hibernate.search.default.chunk_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.chunkSize"));
-        jpaProperties.put("hibernate.search.default.indexmanager", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexmanager"));
-        jpaProperties.put("hibernate.search.default.metadata_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.metadataCachename"));
-        jpaProperties.put("hibernate.search.default.data_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.dataCachename"));
-        jpaProperties.put("hibernate.search.default.locking_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.lockingCachename"));
-        jpaProperties.put("hibernate.search.default.batch.merge_factor", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.batch.mergeFactor"));
-        jpaProperties.put("hibernate.search.default.batch.max_buffered_docs", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.batch.maxBufferedDocs"));
+        //jpaProperties.put("hibernate.search.default.worker.execution", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.worker.execution"));
+        //jpaProperties.put("hibernate.search.default.directory_provider", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.directoryProvider"));
+        //jpaProperties.put("hibernate.search.default.indexBase", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexBase"));
+        //jpaProperties.put("hibernate.search.default.indexPath", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexPath"));
+        //jpaProperties.put("hibernate.search.default.chunk_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.chunkSize"));
+        //jpaProperties.put("hibernate.search.default.indexmanager", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexmanager"));
+        //jpaProperties.put("hibernate.search.default.metadata_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.metadataCachename"));
+        //jpaProperties.put("hibernate.search.default.data_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.dataCachename"));
+        //jpaProperties.put("hibernate.search.default.locking_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.lockingCachename"));
+        //jpaProperties.put("hibernate.search.default.batch.merge_factor", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.batch.mergeFactor"));
+        //jpaProperties.put("hibernate.search.default.batch.max_buffered_docs", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.batch.maxBufferedDocs"));
 
         // Hibernate fetch / batch properties
         jpaProperties.put("hibernate.jdbc.fetch_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.jdbc.fetchSize"));
@@ -330,5 +345,14 @@ public class DBConfig {
         final PersistenceAnnotationBeanPostProcessor postProcessor = new PersistenceAnnotationBeanPostProcessor();
         postProcessor.setDefaultPersistenceUnitName(DEFAULT_PERSISTENCE_UNIT_NAME);
         return postProcessor;
+    }
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        final LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(defaultDataSource());
+        sessionFactory.setPackagesToScan(DEFAULT_REPOSITORY_PACKAGE, DEFAULT_MODEL_PACKAGE);
+        sessionFactory.setHibernateProperties(jpaProperties());
+        return sessionFactory;
     }
 }

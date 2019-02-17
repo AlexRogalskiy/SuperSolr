@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Custom audit document search repository declaration
+ * Custom audit document search repository declaration {@link BaseSearchRepository}
  *
  * @param <E>  type of audit document
  * @param <ID> type of audit document identifier
@@ -47,6 +47,4 @@ public interface AuditDocumentSearchRepository<E extends AuditDocument, ID exten
     CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
     CompletableFuture<List<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
-
-    long count(final String searchTerm);
 }
