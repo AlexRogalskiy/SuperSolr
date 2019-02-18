@@ -54,7 +54,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @RestController(OrderSearchController.CONTROLLER_ID)
 @RequestMapping("/api")
-public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<Order, OrderView, Long> implements OrderSearchController {
+public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<Order, OrderView, String> implements OrderSearchController {
 
     @Autowired
     private HttpServletRequest request;
@@ -88,7 +88,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     @GetMapping("/order/{id}")
     @ResponseBody
     @Override
-    public ResponseEntity<?> getById(final @PathVariable Long id) {
+    public ResponseEntity<?> getById(final @PathVariable String id) {
         log.info("Fetching order by ID: {}", id);
         return new ResponseEntity<>(MapperUtils.map(this.getItem(id), OrderView.class), HttpStatus.OK);
     }
@@ -103,7 +103,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
 
     @DeleteMapping("/order/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteOrder(final @PathVariable Long id) {
+    public ResponseEntity<?> deleteOrder(final @PathVariable String id) {
         log.info("Updating order by ID: {}", id);
         final OrderView orderDtoDeleted = MapperUtils.map(this.deleteItem(id), OrderView.class);
         return new ResponseEntity<>(orderDtoDeleted, HttpStatus.OK);

@@ -34,7 +34,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.util.*;
 
 /**
- * Custom full-text search category document
+ * Custom full-text search category document {@link BaseDocument}
  */
 @Data
 @NoArgsConstructor
@@ -47,6 +47,9 @@ public class Category extends BaseDocument<String> implements SearchableCategory
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -107452074862198456L;
+
+    @Indexed(name = ID_FIELD_NAME)
+    private String id;
 
     @Indexed(name = INDEX_FIELD_NAME)
     private Integer index;

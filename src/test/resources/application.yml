@@ -19,7 +19,8 @@ spring:
           method.type: #methodName, namedQuery, queryAnnotation
   flyway:
     locations: filesystem:db/migrations
-  check-location: false
+    check-location: false
+    baselineOnMigrate: true
 
 logging:
   file: logs/application.log

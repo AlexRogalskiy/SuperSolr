@@ -821,15 +821,15 @@
                 <plugin>
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-maven-plugin</artifactId>
-                    <version>4.0.3</version>
+                    <version>5.2.4</version>
                     <configuration>
-                        <user>root</user>
-                        <password></password>
+                        <user>postgres</user>
+                        <password>postgres</password>
                         <schemas>
                             <schema>public</schema>
                         </schemas>
-                        <driver>com.mysql.jdbc.Driver</driver>
-                        <url>jdbc:mysql://localhost:3306/cpt</url>
+                        <driver>org.postgresql.Driver</driver>
+                        <url>jdbc:postgresql://localhost:5432/solr_db</url>
                     </configuration>
                 </plugin>
 

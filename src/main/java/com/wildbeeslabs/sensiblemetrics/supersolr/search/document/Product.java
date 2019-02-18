@@ -35,7 +35,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.util.*;
 
 /**
- * Custom full-text search product document
+ * Custom full-text search product document {@link BaseDocument}
  */
 @Data
 @NoArgsConstructor
@@ -48,6 +48,9 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = 6034172782528641104L;
+
+    @Indexed(name = ID_FIELD_NAME)
+    private String id;
 
     @Indexed(name = NAME_FIELD_NAME, type = "text_general")
     private String name;

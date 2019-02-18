@@ -30,7 +30,7 @@ import org.springframework.data.domain.PageRequest;
 /**
  * Custom order document search service declaration
  */
-public interface OrderSearchService extends BaseDocumentSearchService<Order, Long> {
+public interface OrderSearchService extends BaseDocumentSearchService<Order, String> {
 
     /**
      * Default service ID

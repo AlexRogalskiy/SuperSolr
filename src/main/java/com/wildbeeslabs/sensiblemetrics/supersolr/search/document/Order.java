@@ -35,19 +35,22 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.util.*;
 
 /**
- * Custom full-text search order document
+ * Custom full-text search order document {@link BaseDocument}
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SolrDocument(solrCoreName = SearchableOrder.DOCUMENT_ID)
-public class Order extends BaseDocument<Long> implements SearchableOrder {
+public class Order extends BaseDocument<String> implements SearchableOrder {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -5055264765286046442L;
+
+    @Indexed(name = ID_FIELD_NAME)
+    private String id;
 
     @Indexed(name = TITLE_FIELD_NAME, type = "string")
     private String title;

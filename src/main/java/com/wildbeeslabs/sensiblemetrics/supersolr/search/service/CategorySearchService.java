@@ -45,6 +45,8 @@ public interface CategorySearchService extends BaseDocumentSearchService<Categor
      */
     String COLLECTION_ID = "category";
 
+    Page<? extends Category> findByTitleLike(final String title, final Pageable pageable);
+
     Page<? extends Category> findByTitle(final String title, final Pageable pageable);
 
     Page<? extends Category> findByTitles(final String titles, final Pageable pageable);

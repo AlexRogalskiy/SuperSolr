@@ -38,7 +38,7 @@ import java.util.List;
  * Custom order search repository declaration {@link BaseDocumentSearchRepository}
  */
 @Repository
-public interface OrderSearchRepository extends BaseDocumentSearchRepository<Order, Long> {
+public interface OrderSearchRepository extends BaseDocumentSearchRepository<Order, String> {
 
     @Query(name = "Order.findByDescription")
     Page<? extends Order> findByDescription(final String description, final Pageable pageable);

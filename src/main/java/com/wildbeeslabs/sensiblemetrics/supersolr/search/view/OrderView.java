@@ -44,7 +44,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = ExposableOrderView.VIEW_ID)
 @ApiModel(value = ExposableOrderView.VIEW_ID, description = "All details about order document")
-public class OrderView extends BaseDocumentView<Long> implements ExposableOrderView {
+public class OrderView extends BaseDocumentView<String> implements ExposableOrderView {
 
     /**
      * Default explicit serialVersionUID for interoperability

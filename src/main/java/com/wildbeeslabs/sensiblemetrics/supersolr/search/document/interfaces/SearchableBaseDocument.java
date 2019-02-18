@@ -36,6 +36,7 @@ public interface SearchableBaseDocument {
     /**
      * Default field names
      */
-    String ID_FIELD_NAME = "id";
+    //String ID_FIELD_NAME = "id";
     String SCORE_FIELD_NAME = "score";
+    String DOCTYPE_FIELD_NAME = "doctype";
 }

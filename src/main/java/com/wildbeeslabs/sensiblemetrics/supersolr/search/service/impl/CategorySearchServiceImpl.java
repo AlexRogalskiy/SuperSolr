@@ -63,6 +63,12 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
+    public Page<? extends Category> findByTitleLike(final String title, final Pageable pageable) {
+        return getRepository().findByTitleLike(title, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<? extends Category> findByTitle(final String title, final Pageable pageable) {
         return getRepository().findByTitle(title, pageable);
     }
@@ -97,7 +103,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         if (StringUtils.isEmpty(fragment)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
-        return getRepository().findByTitleStartingWith(tokenize(fragment), pageable);
+        return getRepository().findByTitleStartingWith(fragment, pageable);
     }
 
     @Override

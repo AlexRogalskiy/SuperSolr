@@ -51,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ToString(callSuper = true)
 @Service(OrderSearchService.SERVICE_ID)
 @Transactional
-public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order, Long> implements OrderSearchService {
+public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order, String> implements OrderSearchService {
 
     @Autowired
     private OrderSearchRepository orderSearchRepository;

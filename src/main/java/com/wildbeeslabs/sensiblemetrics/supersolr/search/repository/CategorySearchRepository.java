@@ -36,6 +36,7 @@ import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Custom category search repository declaration {@link BaseDocumentSearchRepository}
@@ -49,17 +50,25 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
             SearchableCategory.TITLE_FIELD_NAME,
             SearchableCategory.DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Category> findByTitleIn(final Collection<String> terms, final Pageable pageable);
+    HighlightPage<? extends Category> findByTitleIn(final Collection<String> titles, final Pageable pageable);
 
-    Page<? extends Category> findByTitle(final String title, final Pageable pageable);
+    @Query(name = "Category.findByTitleLike")
+    Page<? extends Category> findByTitleLike(@Boost(1.5f) final String title, final Pageable pageable);
+
+    Page<? extends Category> findByTitle(@Boost(2) final String title, final Pageable pageable);
 
     @Query(name = "Category.findAll")
+    Page<? extends Category> findAllCategories(final Pageable pageable);
+
+    @Query(name = "Category.findByTitleStartingWith")
     @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
-    FacetPage<? extends Category> findByTitleStartingWith(final Collection<String> fragments, final Pageable pageable);
+    FacetPage<? extends Category> findByTitleStartingWith(final String searchTerm, final Pageable pageable);
 
     @Query(name = "Category.findByDescription")
     Page<? extends Category> findByDescription(final String description, final Pageable pageable);
 
     @Query(name = "Category.findByNamedQuery")
     Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+
+    List<? extends Category> findByTitleLike(final String title);
 }

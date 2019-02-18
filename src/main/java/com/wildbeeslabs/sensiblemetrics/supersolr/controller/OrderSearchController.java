@@ -29,7 +29,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
 /**
  * Custom order search controller declaration
  */
-public interface OrderSearchController extends BaseDocumentSearchController<Order, OrderView, Long> {
+public interface OrderSearchController extends BaseDocumentSearchController<Order, OrderView, String> {
 
     /**
      * Default service ID

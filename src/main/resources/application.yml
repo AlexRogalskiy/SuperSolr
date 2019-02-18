@@ -29,7 +29,8 @@ spring:
     ddl-auto: create-drop
   flyway:
     locations: filesystem:db/migrations
-  check-location: false
+    check-location: false
+    baselineOnMigrate: true
 
 hibernate:
   connection:

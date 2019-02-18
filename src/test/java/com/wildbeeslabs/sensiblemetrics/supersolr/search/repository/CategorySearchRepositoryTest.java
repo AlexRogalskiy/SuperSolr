@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -83,8 +84,8 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     @Test
     public void testFindByTitle() {
         // given
-        final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        final Category category = createCategory("01", 1, "Cardigans", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
 
         getSolrTemplate().saveBean("category", category);
         getSolrTemplate().commit("category");
@@ -101,12 +102,12 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
     @Test
     public void testFindByDescription() {
-        // initial search terms
+        // terms
         final String searchTerm = "best seller";
 
         // given
-        final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.", null);
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
 
         getSolrTemplate().saveBean("category", category);
         getSolrTemplate().commit("category");
@@ -122,56 +123,82 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
-    public void testFindByTitleStartsWith() {
-        // initial search terms
-        final List<String> titles = Arrays.asList("Title 01", "Title 02");
+    public void testFindByTitleStartingWith() {
+        // terms
+        final String searchExistingTitle = "Solr";
+        final String searchNonExistingTitle = "Trait";
 
         //given
-        final Category categoryFirst = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
-        categoryFirst.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        getSolrTemplate().saveBean("category", categoryFirst);
+        Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        getSolrTemplate().saveBean("category", category);
 
-        final Category categorySecond = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null);
-        categorySecond.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        getSolrTemplate().saveBean("category", categorySecond);
+        category = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller");
+        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        getSolrTemplate().saveBean("category", category);
 
-        final Category categoryThird = createCategory("03", 3, "Solr for dummies", "Get started with solr", null);
-        categoryThird.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        getSolrTemplate().saveBean("category", categoryThird);
+        category = createCategory("03", 3, "Solr for dummies", "Get started with solr");
+        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        getSolrTemplate().saveBean("category", category);
         getSolrTemplate().commit("category");
 
         // when
-        final FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(titles, PageRequest.of(0, 10));
-        final List<? extends Category> categories = categoryFacetPage.getContent();
+        FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(searchExistingTitle, PageRequest.of(0, 10));
+        List<? extends Category> categories = categoryFacetPage.getContent();
 
         // then
         assertThat(categories, not(empty()));
-        assertEquals(2, categories.size());
-        assertEquals(categoryFirst.getDescription(), categories.get(0).getDescription());
-        assertEquals(categorySecond.getDescription(), categories.get(1).getDescription());
-        assertEquals(categoryThird.getDescription(), categories.get(2).getDescription());
+        assertEquals(1, categories.size());
+        assertTrue(categories.get(0).getTitle().startsWith(searchExistingTitle));
+
+        // when
+        categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(searchNonExistingTitle, PageRequest.of(0, 10));
+        categories = categoryFacetPage.getContent();
+
+        // then
+        assertThat(categories, empty());
     }
 
     @Test
-    public void testFindByTitleIn() {
-        // initial search terms
-        final List<String> titles = Arrays.asList("Title 01", "Title 02");
+    public void testFindByTitleLike() {
+        // terms
+        final String title = "Treasure";
 
         // given
-        final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        final Category category = createCategory("11", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
 
         getSolrTemplate().saveBean("category", category);
         getSolrTemplate().commit("category");
 
         // when
-        final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByTitleIn(titles, PageRequest.of(0, 10));
+        final List<? extends Category> categories = getCategorySearchRepository().findByTitleLike(title);
+
+        // then
+        assertThat(categories, not(empty()));
+        assertEquals(3, categories.size());
+    }
+
+    @Test
+    public void testFindByTitleIn() {
+        // terms
+        final List<String> titles = Arrays.asList("Treasure", "Island");
+
+        // given
+        final Category category = createCategory("11", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+
+        getSolrTemplate().saveBean("category", category);
+        getSolrTemplate().commit("category");
+
+        // when
+        final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByTitleIn(titles, PageRequest.of(0, 15));
         final List<? extends Category> categories = categoryHighlightPage.getContent();
 
         // then
         assertThat(categories, not(empty()));
-        assertEquals(2, categories.size());
-        assertEquals(category.getDescription(), categories.get(0).getDescription());
+        assertEquals(3, categories.size());
+        assertTrue(titles.stream().allMatch(title -> categories.get(0).getTitle().contains(title)));
     }
 
     @SuppressWarnings("unchecked")
@@ -181,44 +208,44 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
             return Collections.emptyList();
         }
         final List<Category> categories = new ArrayList<>();
-        Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null);
-        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller");
+        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("03", 3, "Solr for dummies", "Get started with solr", null);
-        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("03", 3, "Solr for dummies", "Get started with solr");
+        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null);
-        category.addProduct(createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller");
+        category.addProduct(createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("05", 5, "Spring Island", "The perfect island romance..", null);
-        category.addProduct(createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("05", 5, "Spring Island", "The perfect island romance..");
+        category.addProduct(createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("06", 6, "Refactoring", "It's about improving the design of existing code.", null);
-        category.addProduct(createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("06", 6, "Refactoring", "It's about improving the design of existing code.");
+        category.addProduct(createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("07", 7, "Baking for dummies", "Bake your own cookies, on a secret island!", null);
-        category.addProduct(createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("07", 7, "Baking for dummies", "Bake your own cookies, on a secret island!");
+        category.addProduct(createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!", null);
-        category.addProduct(createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!");
+        category.addProduct(createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("09", 9, "Blackbeard", "It's the pirate Edward Teach!", null);
-        category.addProduct(createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("09", 9, "Blackbeard", "It's the pirate Edward Teach!");
+        category.addProduct(createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
 
-        category = createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications", null);
-        category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
+        category = createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications");
+        category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
         return categories;
     }

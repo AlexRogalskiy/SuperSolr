@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.Score;
 
@@ -35,7 +36,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom full-text search document
+ * Custom full-text search base document {@link AuditDocument}
  *
  * @param <ID> type of document identifier
  */
@@ -43,15 +44,15 @@ import java.util.Objects;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public abstract class BaseDocument<ID extends Serializable> extends AuditDocument implements SearchableBaseDocument {
+public abstract class BaseDocument<ID extends Serializable> extends AuditDocument implements Persistable<ID>, SearchableBaseDocument {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = 6444143028591284804L;
 
-    @Indexed(name = ID_FIELD_NAME)
-    private ID id;
+    @Indexed(name = DOCTYPE_FIELD_NAME)
+    private String doctype;
 
     @Score
     private float score;

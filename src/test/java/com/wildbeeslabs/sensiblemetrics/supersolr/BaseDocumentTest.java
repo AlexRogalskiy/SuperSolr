@@ -52,7 +52,7 @@ public abstract class BaseDocumentTest {
         final Category category = new Category();
         category.setId(id);
         category.setIndex(index);
-        category.setTitle(description);
+        category.setTitle(title);
         category.setDescription(description);
         category.setProducts(Arrays.asList(Optional.ofNullable(products).orElse(new Product[0])));
         return category;

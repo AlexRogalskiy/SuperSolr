@@ -80,9 +80,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
     Page<? extends Product> findByShortDescription(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    @Query(name = "Product.findByNameStartsWith")
-    Page<? extends Product> findByNameStartingWith(@Boost(1.5f) final String name, final Pageable pageable);
-
+    @Query(name = "Product.findByNameLike")
     List<? extends Product> findByNameLike(final String name);
 
     @Query(name = "Product.findById")
@@ -96,8 +94,9 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     @Query(name = "Product.findByDescription")
     Page<? extends Product> findByDescription(final String description, final Pageable pageable);
 
+    @Query(name = "Product.findByTitleStartingWith")
     @Facet(fields = {SearchableProduct.NAME_FIELD_NAME})
-    FacetPage<? extends Product> findByNameStartingWith(final Collection<String> fragments, final Pageable pageable);
+    FacetPage<? extends Product> findByNameStartingWith(@Boost(1.5f) final String name, final Pageable pageable);
 
     @Query(name = "Product.findByNameOrDescription")
     Page<? extends Product> findByNameOrDescription(@Boost(2) final String searchTerm, final Pageable pageable);
@@ -108,7 +107,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     @Query(name = "Product.findAvailable")
     Page<? extends Product> findAvailableProducts(final Pageable pageable);
 
-    @Query(name = "Product.findByAvailable")
+    @Query(name = "Product.findByAvailability")
     Page<? extends Product> findByAvailableUsingAnnotatedQuery(boolean inStock, final Pageable page);
 
     @Query(name = "Product.findByNameOrCategory")
