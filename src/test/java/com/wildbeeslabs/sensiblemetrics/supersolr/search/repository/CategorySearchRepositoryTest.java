@@ -70,6 +70,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
     @Before
     public void before() {
+        //this.solrTemplate.getSchemaCreationFeatures();
         getCategorySearchRepository().saveAll(getSampleData());
     }
 
@@ -98,10 +99,10 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     @Test
     public void testFindByDescription() {
         // initial search terms
-        final String searchTerm = "Test";
+        final String searchTerm = "best seller";
 
         // given
-        final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
+        final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
         this.solrTemplate.saveBean("category", category);

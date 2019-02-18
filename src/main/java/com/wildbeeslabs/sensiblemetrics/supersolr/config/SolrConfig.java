@@ -42,7 +42,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.repository.config.EnableSolrRepositories;
 import org.springframework.data.solr.server.SolrClientFactory;
-import org.springframework.data.solr.server.support.EmbeddedSolrServerFactoryBean;
 import org.springframework.data.solr.server.support.HttpSolrClientFactory;
 import org.springframework.data.solr.server.support.HttpSolrClientFactoryBean;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -68,12 +67,16 @@ public class SolrConfig {
     public SolrClient solrClient(final @Value("${supersolr.solr.server.url}") String baseUrl,
                                  final @Value("${supersolr.solr.timeout}") Integer timeout,
                                  final @Value("${supersolr.solr.socketTimeout}") Integer socketTimeout) {
-        return new HttpSolrClient.Builder()
+        final HttpSolrClient solrClient = new HttpSolrClient.Builder()
                 .withBaseSolrUrl(baseUrl)
                 .withConnectionTimeout(timeout)
                 .withSocketTimeout(socketTimeout)
                 .allowCompression(true)
                 .build();
+        solrClient.getInvariantParams().add("commit", "true");
+        solrClient.setFollowRedirects(false);
+        solrClient.setUseMultiPartPost(true);
+        return solrClient;
     }
 
 //    @Bean(name = "embeddedSolrServer")
