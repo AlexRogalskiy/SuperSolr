@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom base model
+ * Custom base model {@link AuditModel}
  *
  * @param <ID> type of model identifier
  */
@@ -53,12 +53,12 @@ public abstract class BaseModel<ID extends Serializable> extends AuditModel impl
 
     @Id
     @Basic(optional = false)
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(generator = "base_generator")
-    @SequenceGenerator(
-            name = "base_generator",
-            sequenceName = "base_generator"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(generator = "base_generator")
+//    @SequenceGenerator(
+//            name = "base_generator",
+//            sequenceName = "base_generator"
+//    )
     @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
     private ID id;
 

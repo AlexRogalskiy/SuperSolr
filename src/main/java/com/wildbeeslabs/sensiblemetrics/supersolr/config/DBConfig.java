@@ -200,7 +200,7 @@ public class DBConfig {
 //    }
 
     @Bean
-    public HibernateTransactionManager hibernateTransactionManager(final SessionFactory sessionFactory) {
+    public HibernateTransactionManager transactionManager(final SessionFactory sessionFactory) {
         final HibernateTransactionManager txManager = new HibernateTransactionManager();
         txManager.setSessionFactory(sessionFactory);
         return txManager;

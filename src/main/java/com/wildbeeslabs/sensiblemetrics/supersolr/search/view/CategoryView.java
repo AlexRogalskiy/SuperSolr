@@ -38,7 +38,7 @@ import lombok.ToString;
 import java.util.*;
 
 /**
- * Custom category document view
+ * Custom category document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor
@@ -46,7 +46,7 @@ import java.util.*;
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = ExposableCategoryView.VIEW_ID)
-@ApiModel(description = "All details about the category document.")
+@ApiModel(value = ExposableCategoryView.VIEW_ID, description = "All details about category document")
 public class CategoryView extends BaseDocumentView<String> implements ExposableCategoryView {
 
     /**

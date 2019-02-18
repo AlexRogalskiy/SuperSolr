@@ -32,6 +32,10 @@ public interface PersistableOrder {
      * Default document ID
      */
     String MODEL_ID = "Order";
+    /**
+     * Default table name
+     */
+    String TABlE_NAME = "orders";
 
     /**
      * Default field names
@@ -43,4 +47,8 @@ public interface PersistableOrder {
     String CLIENT_NAME_FIELD_NAME = "clientName";
     String CLIENT_MOBILE_FIELD_NAME = "clientMobile";
     String PRODUCTS_FIELD_NAME = "products";
+    /**
+     * Default reference field names
+     */
+    String ORDERS_REF_FIELD_NAME = "orders";
 }

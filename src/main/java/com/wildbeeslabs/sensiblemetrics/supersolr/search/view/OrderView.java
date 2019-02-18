@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Custom order document view
+ * Custom order document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor
@@ -43,7 +43,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = ExposableOrderView.VIEW_ID)
-@ApiModel(description = "All details about an order document.")
+@ApiModel(value = ExposableOrderView.VIEW_ID, description = "All details about order document")
 public class OrderView extends BaseDocumentView<Long> implements ExposableOrderView {
 
     /**

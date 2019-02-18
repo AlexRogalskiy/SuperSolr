@@ -50,7 +50,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = ExposableExceptionView.VIEW_ID)
-@ApiModel(description = "All details about the exception document.")
+@ApiModel(value = ExposableExceptionView.VIEW_ID, description = "All details about exception document")
 public class ExceptionView implements ExposableExceptionView, Serializable {
 
     /**

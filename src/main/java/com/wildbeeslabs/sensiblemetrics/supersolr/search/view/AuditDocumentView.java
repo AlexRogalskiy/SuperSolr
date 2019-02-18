@@ -29,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableAuditDocumentView;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -55,7 +54,6 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
         value = {CREATED_FIELD_NAME, CHANGED_FIELD_NAME},
         allowGetters = true
 )
-@ApiModel(description = "All details about the audit document.")
 public abstract class AuditDocumentView implements ExposableAuditDocumentView, Serializable {
 
     /**

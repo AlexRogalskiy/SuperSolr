@@ -52,7 +52,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Product repository implementation unit test
+ * Product search repository implementation unit test
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -84,8 +84,8 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         final Product product = createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null));
 
-        this.solrTemplate.saveBean("product", product);
-        this.solrTemplate.commit("product");
+        getSolrTemplate().saveBean("product", product);
+        getSolrTemplate().commit("product");
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByName(product.getName(), PageRequest.of(0, 2));
@@ -104,8 +104,8 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         final Product product = createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null));
 
-        this.solrTemplate.saveBean("product", product);
-        this.solrTemplate.commit("product");
+        getSolrTemplate().saveBean("product", product);
+        getSolrTemplate().commit("product");
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
@@ -123,16 +123,16 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         //given
         final Product productFirst = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         productFirst.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
-        this.solrTemplate.saveBean("product", productFirst);
+        getSolrTemplate().saveBean("product", productFirst);
 
         final Product productSecond = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         productSecond.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
-        this.solrTemplate.saveBean("product", productSecond);
+        getSolrTemplate().saveBean("product", productSecond);
 
         final Product productThird = createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         productThird.addCategory(createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!", null));
-        this.solrTemplate.saveBean("product", productThird);
-        this.solrTemplate.commit("product");
+        getSolrTemplate().saveBean("product", productThird);
+        getSolrTemplate().commit("product");
 
         // when
         final FacetPage<? extends Product> productFacetPage = getProductSearchRepository().findByNameStartingWith(titles, PageRequest.of(0, 10));
@@ -153,8 +153,8 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         final Product product = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null);
         product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller", null));
 
-        this.solrTemplate.saveBean("product", product);
-        this.solrTemplate.commit("product");
+        getSolrTemplate().saveBean("product", product);
+        getSolrTemplate().commit("product");
 
         // when
         final HighlightPage<? extends Product> productHighlightPage = getProductSearchRepository().findByNameIn(titles, PageRequest.of(0, 10));
@@ -164,6 +164,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         assertTrue(products.contains(product));
     }
 
+    @SuppressWarnings("unchecked")
     private List<Product> getSampleData() {
         if (getProductSearchRepository().findById("01").isPresent()) {
             log.debug("Data already exists");
@@ -210,6 +211,10 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         product.addCategory(createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications", null));
         products.add(product);
         return products;
+    }
+
+    protected SolrTemplate getSolrTemplate() {
+        return this.solrTemplate;
     }
 
     protected ProductSearchRepository getProductSearchRepository() {

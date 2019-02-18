@@ -32,6 +32,10 @@ public interface PersistableProduct {
      * Default document ID
      */
     String MODEL_ID = "Product";
+    /**
+     * Default table name
+     */
+    String TABlE_NAME = "products";
 
     /**
      * Default field names
@@ -55,4 +59,11 @@ public interface PersistableProduct {
     String AGE_RESTRICTION_FIELD_NAME = "ageRestriction";
     String LOCK_TYPE_FIELD_NAME = "lockType";
     String ORDERS_FIELD_NAME = "orders";
+    /**
+     * Default coupled table names
+     */
+    String PRODUCT_CATEGORY_TABLE_NAME = "Product_Category";
+    String PRODUCT_MAIN_CATEGORY_TABLE_NAME = "Product_Main_Category";
+    String PRODUCT_ATTRIBUTE_TABLE_NAME = "Product_Attribute";
+    String PRODUCT_ORDER_TABLE_NAME = "Product_Order";
 }

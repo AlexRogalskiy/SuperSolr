@@ -38,7 +38,7 @@ import lombok.ToString;
 import java.util.*;
 
 /**
- * Custom product document view
+ * Custom product document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor
@@ -46,7 +46,7 @@ import java.util.*;
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = ExposableAttributetView.VIEW_ID)
-@ApiModel(description = "All details about the attribute document.")
+@ApiModel(value = ExposableAttributetView.VIEW_ID, description = "All details about attribute document")
 public class AttributeView extends BaseDocumentView<String> implements ExposableAttributetView {
 
     /**

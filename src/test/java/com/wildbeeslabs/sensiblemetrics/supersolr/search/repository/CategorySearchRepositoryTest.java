@@ -48,11 +48,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 
 /**
- * Category repository implementation unit test
+ * Category search repository implementation unit test
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -70,7 +72,6 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
     @Before
     public void before() {
-        //this.solrTemplate.getSchemaCreationFeatures();
         getCategorySearchRepository().saveAll(getSampleData());
     }
 
@@ -85,15 +86,17 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-        this.solrTemplate.saveBean("category", category);
-        this.solrTemplate.commit("category");
+        getSolrTemplate().saveBean("category", category);
+        getSolrTemplate().commit("category");
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByTitle(category.getTitle(), PageRequest.of(0, 2));
         final List<? extends Category> categories = categoryPage.getContent();
 
         // then
-        assertTrue(categories.contains(category));
+        assertThat(categories, not(empty()));
+        assertEquals(1, categories.size());
+        assertEquals(category.getTitle(), categories.get(0).getTitle());
     }
 
     @Test
@@ -105,15 +108,17 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-        this.solrTemplate.saveBean("category", category);
-        this.solrTemplate.commit("category");
+        getSolrTemplate().saveBean("category", category);
+        getSolrTemplate().commit("category");
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
         final List<? extends Category> categories = categoryPage.getContent();
 
         // then
-        assertTrue(categories.contains(category));
+        assertThat(categories, not(empty()));
+        assertEquals(2, categories.size());
+        assertEquals(category.getDescription(), categories.get(0).getDescription());
     }
 
     @Test
@@ -124,25 +129,27 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         //given
         final Category categoryFirst = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         categoryFirst.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        this.solrTemplate.saveBean("category", categoryFirst);
+        getSolrTemplate().saveBean("category", categoryFirst);
 
         final Category categorySecond = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller", null);
         categorySecond.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        this.solrTemplate.saveBean("category", categorySecond);
+        getSolrTemplate().saveBean("category", categorySecond);
 
         final Category categoryThird = createCategory("03", 3, "Solr for dummies", "Get started with solr", null);
         categoryThird.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
-        this.solrTemplate.saveBean("category", categoryThird);
-        this.solrTemplate.commit("category");
+        getSolrTemplate().saveBean("category", categoryThird);
+        getSolrTemplate().commit("category");
 
         // when
         final FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(titles, PageRequest.of(0, 10));
         final List<? extends Category> categories = categoryFacetPage.getContent();
 
         // then
-        assertTrue(categories.contains(categoryFirst));
-        assertTrue(categories.contains(categorySecond));
-        assertFalse(categories.contains(categoryThird));
+        assertThat(categories, not(empty()));
+        assertEquals(2, categories.size());
+        assertEquals(categoryFirst.getDescription(), categories.get(0).getDescription());
+        assertEquals(categorySecond.getDescription(), categories.get(1).getDescription());
+        assertEquals(categoryThird.getDescription(), categories.get(2).getDescription());
     }
 
     @Test
@@ -154,17 +161,20 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         final Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.", null);
         category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
 
-        this.solrTemplate.saveBean("category", category);
-        this.solrTemplate.commit("category");
+        getSolrTemplate().saveBean("category", category);
+        getSolrTemplate().commit("category");
 
         // when
         final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByTitleIn(titles, PageRequest.of(0, 10));
         final List<? extends Category> categories = categoryHighlightPage.getContent();
 
         // then
-        assertTrue(categories.contains(category));
+        assertThat(categories, not(empty()));
+        assertEquals(2, categories.size());
+        assertEquals(category.getDescription(), categories.get(0).getDescription());
     }
 
+    @SuppressWarnings("unchecked")
     private List<Category> getSampleData() {
         if (getCategorySearchRepository().findById("01").isPresent()) {
             log.debug("Data already exists");
@@ -211,6 +221,10 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true, null));
         categories.add(category);
         return categories;
+    }
+
+    protected SolrTemplate getSolrTemplate() {
+        return this.solrTemplate;
     }
 
     protected CategorySearchRepository getCategorySearchRepository() {

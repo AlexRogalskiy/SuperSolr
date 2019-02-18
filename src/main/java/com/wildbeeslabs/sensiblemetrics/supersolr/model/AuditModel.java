@@ -25,10 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;

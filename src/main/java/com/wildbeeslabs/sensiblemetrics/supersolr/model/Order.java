@@ -23,19 +23,21 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.*;
 
 /**
- * Custom order model
+ * Custom order model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
@@ -43,9 +45,9 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableOrder.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "order", catalog = "public")
+@Table(name = PersistableOrder.TABlE_NAME, catalog = "public")
 @AttributeOverrides({
-        @AttributeOverride(name = BaseModel.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME, unique = true, nullable = false))
+        @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Order extends BaseModel<Long> implements PersistableOrder {
@@ -59,6 +61,7 @@ public class Order extends BaseModel<Long> implements PersistableOrder {
     private String title;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     private String description;
 
@@ -70,7 +73,7 @@ public class Order extends BaseModel<Long> implements PersistableOrder {
     @Column(name = CLIENT_MOBILE_FIELD_NAME)
     private String clientMobile;
 
-    @ManyToMany(mappedBy = "orders", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = ORDERS_REF_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final Set<Product> products = new HashSet<>();
 
     public void setProducts(final Collection<? extends Product> products) {

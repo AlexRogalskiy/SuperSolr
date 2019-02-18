@@ -32,6 +32,10 @@ public interface PersistableAttribute {
      * Default document ID
      */
     String MODEL_ID = "Attribute";
+    /**
+     * Default table name
+     */
+    String TABlE_NAME = "attributes";
 
     /**
      * Default field names
@@ -43,4 +47,8 @@ public interface PersistableAttribute {
     String DESCRIPTION_TEXT_FIELD_NAME = "descriptionText";
     String KEYWORDS_FIELD_NAME = "keywords";
     String PRODUCTS_FIELD_NAME = "products";
+    /**
+     * Default reference field names
+     */
+    String ATTRIBUTES_REF_FIELD_NAME = "attributes";
 }

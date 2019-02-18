@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAttribute;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,7 @@ import javax.persistence.*;
 import java.util.*;
 
 /**
- * Custom attribute model
+ * Custom attribute model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
@@ -42,9 +43,9 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableAttribute.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "attributes", catalog = "public")
+@Table(name = PersistableAttribute.TABlE_NAME, catalog = "public")
 @AttributeOverrides({
-        @AttributeOverride(name = PersistableAttribute.ID_FIELD_NAME, column = @Column(name = PersistableAttribute.ID_FIELD_NAME))
+        @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableAttribute.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Attribute extends BaseModel<Long> implements PersistableAttribute {
@@ -66,7 +67,7 @@ public class Attribute extends BaseModel<Long> implements PersistableAttribute {
     @Column(name = KEYWORDS_FIELD_NAME)
     private String keywords;
 
-    @ManyToMany(mappedBy = "attributes", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = ATTRIBUTES_REF_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<Product> products = new ArrayList<>();
 
     public void setProducts(final Collection<? extends Product> products) {

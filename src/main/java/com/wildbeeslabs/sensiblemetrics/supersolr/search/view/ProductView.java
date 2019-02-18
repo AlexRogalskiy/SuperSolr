@@ -39,7 +39,7 @@ import org.springframework.data.solr.core.geo.Point;
 import java.util.*;
 
 /**
- * Custom product document view
+ * Custom product document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor
@@ -47,7 +47,7 @@ import java.util.*;
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = ExposableProductView.VIEW_ID)
-@ApiModel(description = "All details about the product document.")
+@ApiModel(value = ExposableProductView.VIEW_ID, description = "All details about product document")
 public class ProductView extends BaseDocumentView<String> implements ExposableProductView {
 
     /**

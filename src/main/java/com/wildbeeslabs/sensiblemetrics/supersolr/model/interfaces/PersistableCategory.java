@@ -32,6 +32,10 @@ public interface PersistableCategory {
      * Default document ID
      */
     String MODEL_ID = "Category";
+    /**
+     * Default table name
+     */
+    String TABlE_NAME = "categories";
 
     /**
      * Default field names
@@ -43,5 +47,9 @@ public interface PersistableCategory {
     String DESCRIPTION_FIELD_NAME = "description";
     String CATEGORY_FIELD_NAME = "category";
     String PRODUCTS_FIELD_NAME = "products";
-    String MAIN_PRODUCTS_FIELD_NAME = "mainProducts";
+    /**
+     * Default reference field names
+     */
+    String CATEGORIES_REF_FIELD_NAME = "categories";
+    String MAIN_CATEGORIES_REF_FIELD_NAME = "mainCategories";
 }

@@ -23,10 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAttribute;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableCategory;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableOrder;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableProduct;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,7 +40,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.*;
 
 /**
- * Custom product model
+ * Custom product model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
@@ -51,11 +48,11 @@ import java.util.*;
 @ToString(callSuper = true)
 @Entity(name = PersistableProduct.MODEL_ID)
 @BatchSize(size = 10)
-@Table(name = "products", catalog = "public",
+@Table(name = PersistableProduct.TABlE_NAME, catalog = "public",
         indexes = {@Index(name = "product_catalog_number_idx", columnList = PersistableProduct.ID_FIELD_NAME + ", " + PersistableProduct.CATALOG_NUMBER_FIELD_NAME)}
 )
 @AttributeOverrides({
-        @AttributeOverride(name = BaseModel.ID_FIELD_NAME, column = @Column(name = PersistableProduct.ID_FIELD_NAME, unique = true, nullable = false))
+        @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableProduct.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Product extends BaseModel<Long> implements PersistableProduct {
@@ -65,13 +62,14 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
      */
     private static final long serialVersionUID = 6034172782528641104L;
 
-    @Column(name = NAME_FIELD_NAME)
+    @Column(name = NAME_FIELD_NAME, columnDefinition = "text")
     private String name;
 
     @Column(name = SHORT_DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     private String shortDescription;
 
     @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = LONG_DESCRIPTION_FIELD_NAME, columnDefinition = "text")
     private String longDescription;
 
@@ -95,13 +93,13 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
     @PositiveOrZero(message = "{order.recommendedPrice.PositiveOrZero}")
     private double recommendedPrice;
 
-    @Column(name = RATING_FIELD_NAME)
+    @Column(name = RATING_FIELD_NAME, columnDefinition = "int")
     private Integer rating;
 
-    @Column(name = AGE_RESTRICTION_FIELD_NAME)
+    @Column(name = AGE_RESTRICTION_FIELD_NAME, columnDefinition = "int")
     private Integer ageRestriction;
 
-    @Column(name = LOCK_TYPE_FIELD_NAME)
+    @Column(name = LOCK_TYPE_FIELD_NAME, columnDefinition = "int")
     private Integer lockType;
 
     @Column(name = LOCATION_FIELD_NAME)
@@ -115,7 +113,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "Product_Category",
+            name = PRODUCT_CATEGORY_TABLE_NAME,
             joinColumns = {
                     @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
             },
@@ -129,12 +127,12 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "Product_Main_Category",
+            name = PRODUCT_MAIN_CATEGORY_TABLE_NAME,
             joinColumns = {
                     @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = PersistableCategory.CATEGORY_FIELD_NAME, referencedColumnName = PersistableCategory.ID_FIELD_NAME)
+                    @JoinColumn(name = PersistableCategory.CATEGORY_ID_FIELD_NAME, referencedColumnName = PersistableCategory.ID_FIELD_NAME)
             }
     )
     @Fetch(FetchMode.SELECT)
@@ -143,7 +141,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "Product_Attribute",
+            name = PRODUCT_ATTRIBUTE_TABLE_NAME,
             joinColumns = {
                     @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
             },
@@ -157,7 +155,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "Product_Order",
+            name = PRODUCT_ORDER_TABLE_NAME,
             joinColumns = {
                     @JoinColumn(name = PersistableProduct.PRODUCT_ID_FIELD_NAME, referencedColumnName = PersistableProduct.ID_FIELD_NAME)
             },

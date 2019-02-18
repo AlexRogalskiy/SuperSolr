@@ -4,7 +4,7 @@ spring:
 ---
 spring:
   main:
-  #allow-bean-definition-overriding: true
+    allow-bean-definition-overriding: true
   batch:
     job:
       enabled: false
@@ -20,6 +20,7 @@ spring:
   jpa:
     show-sql: true
     open-in-view: false
+    database: POSTGRESQL
     properties:
       hibernate:
         temp:

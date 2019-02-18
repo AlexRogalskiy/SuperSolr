@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -37,7 +36,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Custom base document view
+ * Custom base document view {@link AuditDocumentView}
  *
  * @param <ID> type of document identifier
  */
@@ -46,7 +45,6 @@ import java.util.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(description = "All details about the base document.")
 public abstract class BaseDocumentView<ID extends Serializable> extends AuditDocumentView implements ExposableBaseDocumentView {
 
     /**
