@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.exception.handler;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.*;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ExceptionView;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -41,10 +42,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import org.hibernate.exception.ConstraintViolationException;
 
 /**
  * Custom default exception handler implementation
@@ -62,7 +61,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.CONFLICT.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.CONFLICT);
     }
 
@@ -75,7 +74,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
@@ -88,7 +87,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.NOT_FOUND.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.NOT_FOUND);
     }
 
@@ -101,7 +100,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.NO_CONTENT.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.NO_CONTENT);
     }
 
@@ -114,7 +113,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
@@ -127,7 +126,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
@@ -140,7 +139,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
@@ -153,7 +152,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
@@ -166,7 +165,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.METHOD_NOT_ALLOWED.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -179,7 +178,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
@@ -192,7 +191,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
@@ -205,7 +204,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -218,7 +217,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.FORBIDDEN.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.FORBIDDEN);
     }
 
@@ -231,7 +230,7 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
                 .builder()
                 .path(req.getRequestURI().substring(req.getContextPath().length()))
                 .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
-                .message(ex.getMessage())
+                .message(ex.getLocalizedMessage())
                 .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 }
