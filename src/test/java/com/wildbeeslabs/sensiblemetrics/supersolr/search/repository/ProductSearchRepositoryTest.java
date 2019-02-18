@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,9 +63,6 @@ import static org.hamcrest.Matchers.empty;
 @AutoConfigurationPackage
 @Transactional
 public class ProductSearchRepositoryTest extends BaseDocumentTest {
-
-    @Autowired
-    private SolrTemplate solrTemplate;
 
     @Autowired
     private ProductSearchRepository productSearchRepository;
@@ -220,6 +216,50 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         assertEquals(1, products.size());
     }
 
+    @Test
+    public void testFindByPriceInRange() {
+        // terms
+        double lowerBound = 10.0;
+        double upperBound = 100.0;
+
+        // given
+        final Product product = createProduct("14", "Product 01", "TestCase 01", "TestCase 01 for product 01", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller"));
+
+        getSolrTemplate().saveBean("product", product);
+        getSolrTemplate().commit("product");
+
+        // when
+        final Page<? extends Product> productsPage = getProductSearchRepository().findByPriceInRange(lowerBound, upperBound, PageRequest.of(0, 10));
+        final List<? extends Product> products = productsPage.getContent();
+
+        // then
+        assertThat(products, not(empty()));
+        assertEquals(3, products.size());
+    }
+
+    @Test
+    public void findByPriceInRangeExclusive() {
+        // terms
+        double lowerBound = 10.0;
+        double upperBound = 100.0;
+
+        // given
+        final Product product = createProduct("14", "Product 01", "TestCase 01", "TestCase 01 for product 01", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller"));
+
+        getSolrTemplate().saveBean("product", product);
+        getSolrTemplate().commit("product");
+
+        // when
+        final Page<? extends Product> productsPage = getProductSearchRepository().findByPriceInRangeExclusive(lowerBound, upperBound, PageRequest.of(0, 10));
+        final List<? extends Product> products = productsPage.getContent();
+
+        // then
+        assertThat(products, not(empty()));
+        assertEquals(2, products.size());
+    }
+
     @SuppressWarnings("unchecked")
     private List<Product> getSampleData() {
         if (getProductSearchRepository().findById("01").isPresent()) {
@@ -227,7 +267,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
             return Collections.emptyList();
         }
         final List<Product> products = new ArrayList<>();
-        Product product = createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        Product product = createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 10.0, 2.0, true);
         product.addCategory(createCategory("01", 1, "Treasure Island", "Best seller by R.L.S."));
         products.add(product);
 
@@ -235,11 +275,11 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         product.addCategory(createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller"));
         products.add(product);
 
-        product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 11.0, 2.0, true);
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr"));
         products.add(product);
 
-        product = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 18.0, 2.0, true);
         product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller"));
         products.add(product);
 
@@ -247,30 +287,26 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
         product.addCategory(createCategory("05", 5, "Spring Island", "The perfect island romance.."));
         products.add(product);
 
-        product = createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 8.0, 2.0, true);
         product.addCategory(createCategory("06", 6, "Refactoring", "It's about improving the design of existing code."));
         products.add(product);
 
-        product = createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 5.0, 2.0, true);
         product.addCategory(createCategory("07", 7, "Baking for dummies", "Bake your own cookies, on a secret island!"));
         products.add(product);
 
-        product = createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 3.0, 2.0, true);
         product.addCategory(createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!"));
         products.add(product);
 
-        product = createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 100.0, 2.0, true);
         product.addCategory(createCategory("09", 9, "Blackbeard", "It's the pirate Edward Teach!"));
         products.add(product);
 
-        product = createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true);
+        product = createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 120.0, 2.0, true);
         product.addCategory(createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications"));
         products.add(product);
         return products;
-    }
-
-    protected SolrTemplate getSolrTemplate() {
-        return this.solrTemplate;
     }
 
     protected ProductSearchRepository getProductSearchRepository() {

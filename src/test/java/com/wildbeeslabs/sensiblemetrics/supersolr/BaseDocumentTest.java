@@ -28,7 +28,11 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.query.Query;
+import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.core.query.result.FacetEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightEntry;
@@ -42,6 +46,9 @@ import java.util.*;
  */
 @Slf4j
 public abstract class BaseDocumentTest {
+
+    @Autowired
+    private SolrTemplate solrTemplate;
 
     protected Category createCategory(
             final String id,
@@ -113,5 +120,14 @@ public abstract class BaseDocumentTest {
             }
         }
         return false;
+    }
+
+    protected void clearSolrData(final String collection) throws Exception {
+        final Query query = new SimpleQuery("*:*");
+        getSolrTemplate().delete(collection, query);
+    }
+
+    protected SolrTemplate getSolrTemplate() {
+        return this.solrTemplate;
     }
 }

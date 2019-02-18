@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,9 +63,6 @@ import static org.hamcrest.Matchers.empty;
 @AutoConfigurationPackage
 @Transactional
 public class CategorySearchRepositoryTest extends BaseDocumentTest {
-
-    @Autowired
-    private SolrTemplate solrTemplate;
 
     @Autowired
     private CategorySearchRepository categorySearchRepository;
@@ -248,10 +244,6 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
         categories.add(category);
         return categories;
-    }
-
-    protected SolrTemplate getSolrTemplate() {
-        return this.solrTemplate;
     }
 
     protected CategorySearchRepository getCategorySearchRepository() {

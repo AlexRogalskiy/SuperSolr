@@ -137,6 +137,12 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     @Query(name = "Product.findByNamedQuery")
     Page<? extends Product> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 
+    @Query(name = "Product.findByPriceInRange")
+    Page<? extends Product> findByPriceInRange(double lowerBound, double upperBound, final Pageable pageable);
+
+    @Query(name = "Product.findByPriceInRangeExclusive")
+    Page<? extends Product> findByPriceInRangeExclusive(double lowerBound, double upperBound, final Pageable pageable);
+
     @Query(name = "Product.findByName")
     @Facet(fields = {SearchableProduct.CATEGORIES_FIELD_NAME}, limit = 20)
     FacetPage<? extends Product> findByNameAndFacetOnCategory(final String name, Pageable page);
