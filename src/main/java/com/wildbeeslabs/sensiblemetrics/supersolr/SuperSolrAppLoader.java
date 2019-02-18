@@ -28,12 +28,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * SuperSolr application loader
  */
 @SpringBootApplication(scanBasePackages = {"com.wildbeeslabs.sensiblemetrics.supersolr"}, exclude = {ErrorMvcAutoConfiguration.class})
 @EnableBatchProcessing
+@EnableSwagger2
 public class SuperSolrAppLoader extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
