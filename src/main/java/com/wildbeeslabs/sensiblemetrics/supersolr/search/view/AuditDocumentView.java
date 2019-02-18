@@ -56,7 +56,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
         allowGetters = true
 )
 @ApiModel(description = "All details about the audit document.")
-public class AuditDocumentView implements ExposableAuditDocumentView, Serializable {
+public abstract class AuditDocumentView implements ExposableAuditDocumentView, Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
