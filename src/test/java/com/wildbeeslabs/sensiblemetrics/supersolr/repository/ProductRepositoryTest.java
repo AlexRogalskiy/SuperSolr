@@ -61,8 +61,11 @@ public class ProductRepositoryTest {
     public void testFindById() {
         // given
         final Long productId = Long.valueOf(1);
+
+        // when
         final Optional<Product> productOptional = getProductRepository().findById(productId);
-        // assert
+
+        // then
         assertTrue(productOptional.isPresent());
         assertEquals(productId, productOptional.get().getId());
     }
@@ -71,8 +74,11 @@ public class ProductRepositoryTest {
     public void testFindByEmptyName() {
         // given
         final String name = "Test";
+
+        // when
         final List<? extends Product> products = getProductRepository().findByName(name);
-        // assert
+
+        // then
         assertThat(products, is(empty()));
     }
 
@@ -80,8 +86,11 @@ public class ProductRepositoryTest {
     public void testFindByName() {
         // given
         final String name = "Product 01";
+
+        // when
         final List<? extends Product> products = getProductRepository().findByName(name);
-        // assert
+
+        // then
         assertThat(products, not(empty()));
         assertEquals(1, products.size());
         assertEquals(name, products.get(0).getName());
@@ -91,8 +100,11 @@ public class ProductRepositoryTest {
     public void testFindByRating() {
         // given
         final Integer rating = 10;
+
+        // when
         final List<? extends Product> products = getProductRepository().findByRating(rating);
-        // assert
+
+        // then
         assertThat(products, not(empty()));
         assertEquals(1, products.size());
         assertEquals(rating, products.get(0).getRating());

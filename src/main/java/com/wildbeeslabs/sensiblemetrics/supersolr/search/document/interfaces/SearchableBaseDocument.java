@@ -29,9 +29,9 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 public interface SearchableBaseDocument {
 
     /**
-     * Default document ID
+     * Default core ID
      */
-    String DOCUMENT_ID = "baseDocument";
+    String CORE_ID = "baseDocument";
 
     /**
      * Default field names

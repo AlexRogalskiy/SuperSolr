@@ -33,18 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.HighlightOptions;
-import org.springframework.data.solr.core.query.Query;
-import org.springframework.data.solr.core.query.SimpleHighlightQuery;
+import org.springframework.data.solr.core.query.*;
+import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Custom order search service implementation {@link Order}
+ * Custom order search service implementation {@link OrderSearchService}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -58,14 +55,14 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Order> findByDescription(final String description, final PageRequest request) {
-        return getRepository().findByDescription(description, request);
+    public Page<? extends Order> findByDescription(final String searchTerm, final Pageable page) {
+        return getRepository().findByDescription(searchTerm, page);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request) {
-        return getRepository().findByTitle(searchTerm, request);
+    public Page<? extends Order> findByTitle(final String searchTerm, final Pageable page) {
+        return getRepository().findByTitle(searchTerm, page);
     }
 
     @Override
@@ -75,15 +72,34 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
         final Criteria descriptionCriteria = new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(descriptionCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
-                .setSimplePrefix("<highlight>")
-                .setSimplePostfix("</highlight>")
-                .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
+            .setSimplePrefix("<highlight>")
+            .setSimplePostfix("</highlight>")
+            .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Order.class);
     }
 
     @Override
-    public Page<? extends Order> findByQuery(final Query query) {
-        return findByQuery(COLLECTION_ID, query, Order.class);
+    @Transactional(readOnly = true)
+    public Page<? extends Order> findByQuery(final String collection, final Query query) {
+        return this.findByQuery(collection, query, Order.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Order> findByFacetQuery(final String collection, final FacetQuery facetQuery) {
+        return this.findByFacetQuery(collection, facetQuery, Order.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Order> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
+        return this.findByQueryAndCriteria(collection, criteria, pageable, Order.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Order> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable) {
+        return this.findByQueryAndCriteria(collection, queryString, criteria, pageable, Order.class);
     }
 
     protected Criteria titleOrDescriptionCriteria(final String searchTerm) {
@@ -91,10 +107,10 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {
             criteria = criteria
-                    .and(new Criteria(SearchableOrder.TITLE_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
+                .and(new Criteria(SearchableOrder.TITLE_FIELD_NAME).contains(term))
+                .or(new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).contains(term));
         }
-        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableOrder.DOCUMENT_ID));
+        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableOrder.CORE_ID));
     }
 
     @Override

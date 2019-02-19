@@ -24,9 +24,10 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
-import com.wildbeeslabs.sensiblemetrics.supersolr.constraint.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -54,7 +55,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 
 /**
- * Category search repository implementation unit test
+ * Category search repository implementation unit test {@link BaseDocumentTest}
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -81,10 +82,10 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     public void testFindByTitle() {
         // given
         final Category category = createCategory("01", 1, "Cardigans", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 5, 1.0, 2.0, true));
 
-        getSolrTemplate().saveBean("category", category);
-        getSolrTemplate().commit("category");
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByTitle(category.getTitle(), PageRequest.of(0, 2));
@@ -103,10 +104,10 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
         // given
         final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true));
 
-        getSolrTemplate().saveBean("category", category);
-        getSolrTemplate().commit("category");
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
@@ -126,17 +127,17 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
         //given
         Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
-        getSolrTemplate().saveBean("category", category);
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 8, 1.0, 2.0, true));
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
 
         category = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller");
-        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
-        getSolrTemplate().saveBean("category", category);
+        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 4, 1.0, 2.0, true));
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
 
         category = createCategory("03", 3, "Solr for dummies", "Get started with solr");
-        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
-        getSolrTemplate().saveBean("category", category);
-        getSolrTemplate().commit("category");
+        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 2, 1.0, 2.0, true));
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
         FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(searchExistingTitle, PageRequest.of(0, 10));
@@ -158,17 +159,17 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     @Test
     public void testFindByTitleLike() {
         // terms
-        final String title = "Treasure";
+        final List<String> titles = Arrays.asList("Treasure");
 
         // given
         final Category category = createCategory("11", 1, "Treasure Island", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 10, 1.0, 2.0, true));
 
-        getSolrTemplate().saveBean("category", category);
-        getSolrTemplate().commit("category");
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
-        final List<? extends Category> categories = getCategorySearchRepository().findByTitleLike(title);
+        final List<? extends Category> categories = getCategorySearchRepository().findByTitleLike(titles);
 
         // then
         assertThat(categories, not(empty()));
@@ -182,10 +183,10 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
 
         // given
         final Category category = createCategory("11", 1, "Treasure Island", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 11, 1.0, 2.0, true));
 
-        getSolrTemplate().saveBean("category", category);
-        getSolrTemplate().commit("category");
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
         final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByTitleIn(titles, PageRequest.of(0, 15));
@@ -205,43 +206,43 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
         }
         final List<Category> categories = new ArrayList<>();
         Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 8, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller");
-        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 9, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("03", 3, "Solr for dummies", "Get started with solr");
-        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 4, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller");
-        category.addProduct(createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 5, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("05", 5, "Spring Island", "The perfect island romance..");
-        category.addProduct(createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 8, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("06", 6, "Refactoring", "It's about improving the design of existing code.");
-        category.addProduct(createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 9, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("07", 7, "Baking for dummies", "Bake your own cookies, on a secret island!");
-        category.addProduct(createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 19, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!");
-        category.addProduct(createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 11, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("09", 9, "Blackbeard", "It's the pirate Edward Teach!");
-        category.addProduct(createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 13, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications");
-        category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 0, 1.0, 2.0, true));
         categories.add(category);
         return categories;
     }

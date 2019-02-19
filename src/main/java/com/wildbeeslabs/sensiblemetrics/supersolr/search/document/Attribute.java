@@ -36,13 +36,13 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.util.*;
 
 /**
- * Custom full-text search attribute document
+ * Custom full-text search attribute document {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SolrDocument(solrCoreName = SearchableAttribute.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableAttribute.CORE_ID, collection = SearchableAttribute.COLLECTION_ID)
 public class Attribute extends BaseModel<String> implements SearchableAttribute {
 
     /**

@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Custom category search controller implementation
+ * Custom category search controller implementation {@link BaseDocumentSearchControllerImpl}
  */
 @Slf4j
 @NoArgsConstructor
@@ -86,8 +86,8 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
     @SuppressWarnings("unchecked")
     public ResponseEntity<?> find(
             final @RequestParam String searchTerm,
-            final @RequestParam(defaultValue = DEFAULT_OFFSET_VALUE) int offset,
-            final @RequestParam(defaultValue = DEFAULT_LIMIT_VALUE) int limit) {
+            final @RequestParam(defaultValue = DEFAULT_PAGE_OFFSET_VALUE) int offset,
+            final @RequestParam(defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
         log.info("Fetching categories by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
         final HighlightPage<Category> page = (HighlightPage<Category>) findBy(searchTerm, offset, limit);
         return new ResponseEntity<>(page

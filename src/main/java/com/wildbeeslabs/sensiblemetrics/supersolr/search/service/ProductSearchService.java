@@ -27,6 +27,8 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Shape;
 import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
@@ -36,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Custom product document search service declaration
+ * Custom product document search service declaration {@link BaseDocumentSearchService}
  */
 public interface ProductSearchService extends BaseDocumentSearchService<Product, String> {
 
@@ -63,21 +65,25 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     FacetPage<? extends Product> findByAutoCompleteNameFragment(final String fragment, final Pageable pageable);
 
-    Page<? extends Product> findByCustomQuery(final String searchTerm, final Pageable request);
-
     Page<? extends Product> findByCategory(final String category, final Pageable pageable);
 
     Page<? extends Product> findByRating(final Integer rating, final Pageable pageable);
 
     List<? extends Product> findByLockType(final Integer lockType, final Sort sort);
 
-    Page<? extends Product> findByLocation(final Point location, final Pageable pageable);
+    Page<? extends Product> findByLocation(final Point location, final Distance distance, final Pageable pageable);
 
-    List<? extends Product> findByLocationWithin(final String location, int distanceRange);
+    List<? extends Product> findByLocationWithin(final String location, final Distance distance);
+
+    List<? extends Product> findByLocationNear(final Point location, final Distance distance);
 
     Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);
 
     List<? extends Product> findByLocationNear(final Shape shape);
+
+    GeoResults<? extends Product> findByGeoLocationNear(final Point location, final Distance distance);
+
+    Page<? extends Product> findAvailableProductsByName(final String name, final Pageable pageable);
 
     Page<? extends Product> findAvailable(final Pageable pageable);
 

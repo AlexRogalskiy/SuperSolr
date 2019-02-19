@@ -28,7 +28,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.solr.core.geo.Point;
+import org.springframework.data.geo.Point;
+import org.springframework.data.geo.Polygon;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
@@ -41,7 +42,7 @@ import java.util.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SolrDocument(solrCoreName = SearchableProduct.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableProduct.CORE_ID, collection = SearchableProduct.COLLECTION_ID)
 public class Product extends BaseDocument<String> implements SearchableProduct {
 
     /**
@@ -79,17 +80,23 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
     @Indexed(name = RECOMMENDED_PRICE_FIELD_NAME)
     private double recommendedPrice;
 
-    @Indexed(name = RATING_FIELD_NAME, type = "int")
+    @Indexed(name = RATING_FIELD_NAME, type = "pint")
     private Integer rating;
 
-    @Indexed(name = AGE_RESTRICTION_FIELD_NAME, type = "int")
+    @Indexed(name = AGE_RESTRICTION_FIELD_NAME, type = "pint")
     private Integer ageRestriction;
 
-    @Indexed(name = LOCK_TYPE_FIELD_NAME, type = "int")
+    @Indexed(name = LOCK_TYPE_FIELD_NAME, type = "pint")
     private Integer lockType;
 
-    @Indexed(name = LOCATION_FIELD_NAME)
+    @Indexed(name = LOCATION_FIELD_NAME, type = "point")
     private Point location;
+
+    @Indexed(name = GEO_LOCATION_FIELD_NAME, type = "location")
+    private Polygon geoLocation;
+
+    @Indexed(name = TAGS_FIELD_NAME)
+    private Set<String> tags;
 
     @Indexed(name = CATEGORIES_FIELD_NAME)
     private Set<Category> categories = new HashSet<>();
@@ -103,12 +110,24 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
     @Indexed(name = ORDERS_FIELD_NAME)
     private Set<Order> orders = new HashSet<>();
 
+    public void setTags(final Collection<? extends String> tags) {
+        this.getTags().clear();
+        Optional.ofNullable(tags)
+            .orElseGet(Collections::emptyList)
+            .forEach(tag -> this.addTag(tag));
+    }
+
+    public void addTag(final String tag) {
+        if (Objects.nonNull(tag)) {
+            this.getTags().add(tag);
+        }
+    }
 
     public void setCategories(final Collection<? extends Category> categories) {
         this.getCategories().clear();
         Optional.ofNullable(categories)
-                .orElseGet(Collections::emptyList)
-                .forEach(category -> this.addCategory(category));
+            .orElseGet(Collections::emptyList)
+            .forEach(category -> this.addCategory(category));
     }
 
     public void addCategory(final Category category) {
@@ -120,8 +139,8 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
     public void setMainCategories(final Collection<? extends Category> mainCategories) {
         this.getMainCategories().clear();
         Optional.ofNullable(mainCategories)
-                .orElseGet(Collections::emptyList)
-                .forEach(mainCategory -> this.addMainCategory(mainCategory));
+            .orElseGet(Collections::emptyList)
+            .forEach(mainCategory -> this.addMainCategory(mainCategory));
     }
 
     public void addMainCategory(final Category mainCategory) {
@@ -133,8 +152,8 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
     public void setAttributes(final Collection<? extends Attribute> attributes) {
         this.getAttributes().clear();
         Optional.ofNullable(attributes)
-                .orElseGet(Collections::emptyList)
-                .forEach(attribute -> this.addAttribute(attribute));
+            .orElseGet(Collections::emptyList)
+            .forEach(attribute -> this.addAttribute(attribute));
     }
 
     public void addAttribute(final Attribute attribute) {
@@ -146,8 +165,8 @@ public class Product extends BaseDocument<String> implements SearchableProduct {
     public void setOrders(final Collection<? extends Order> orders) {
         this.getOrders().clear();
         Optional.ofNullable(orders)
-                .orElseGet(Collections::emptyList)
-                .forEach(order -> this.addOrder(order));
+            .orElseGet(Collections::emptyList)
+            .forEach(order -> this.addOrder(order));
     }
 
     public void addOrder(final Order order) {

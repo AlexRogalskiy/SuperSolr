@@ -50,7 +50,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
  *
  * @param <E>  type of document
  * @param <T>  type of document view
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 @Slf4j
 @NoArgsConstructor

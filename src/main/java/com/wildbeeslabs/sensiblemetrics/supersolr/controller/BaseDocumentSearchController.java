@@ -31,16 +31,20 @@ import java.io.Serializable;
 /**
  * Base document search controller declaration
  *
- * @param <E>  type of base document
- * @param <T>  type of base document view
- * @param <ID> type of base document identifier
+ * @param <E>  type of base document {@link BaseDocument}
+ * @param <T>  type of base document view {@link BaseDocumentView}
+ * @param <ID> type of base document identifier {@link Serializable}
  * @author Alex
  * @version 1.0.0
  */
 public interface BaseDocumentSearchController<E extends BaseDocument<ID>, T extends BaseDocumentView<ID>, ID extends Serializable> extends BaseSearchController<E, T, ID> {
 
     /**
-     * Default page size
+     * Default page offset value
      */
-    int DEFAULT_PAGE_SIZE = 20;
+    String DEFAULT_PAGE_OFFSET_VALUE = "0";
+    /**
+     * Default page limit value
+     */
+    String DEFAULT_PAGE_LIMIT_VALUE = "10";
 }

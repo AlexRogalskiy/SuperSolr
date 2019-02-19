@@ -39,10 +39,10 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base simple search service implementation
+ * Custom base simple search service implementation {@link BaseSimpleSearchService}
  *
  * @param <E>  type of document model
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

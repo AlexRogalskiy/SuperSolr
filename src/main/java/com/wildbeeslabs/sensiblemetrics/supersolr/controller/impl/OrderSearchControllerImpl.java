@@ -46,7 +46,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * Custom order search controller implementation
+ * Custom order search controller implementation {@link BaseDocumentSearchControllerImpl}
  */
 @Slf4j
 @NoArgsConstructor
@@ -134,7 +134,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
             final @PathVariable String searchTerm,
             final @PathVariable int page) {
         log.info("Fetching order by term: {}, page: {}", searchTerm, page);
-        final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getSearchService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
+        final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getSearchService().find(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }
 

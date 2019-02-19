@@ -37,7 +37,7 @@ import javax.servlet.ServletRegistration;
 import java.util.EnumSet;
 
 /**
- * Custom web application configuration
+ * Custom web application configuration {@link WebApplicationInitializer}
  */
 @Configuration
 public class WebApplicationConfig implements WebApplicationInitializer {

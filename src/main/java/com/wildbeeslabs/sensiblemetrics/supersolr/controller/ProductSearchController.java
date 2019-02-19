@@ -35,12 +35,4 @@ public interface ProductSearchController extends BaseDocumentSearchController<Pr
      * Default service ID
      */
     String CONTROLLER_ID = "ProductSearchController";
-    /**
-     * Default page offset value
-     */
-    String DEFAULT_OFFSET_VALUE = "0";
-    /**
-     * Default page limit value
-     */
-    String DEFAULT_LIMIT_VALUE = "10";
 }

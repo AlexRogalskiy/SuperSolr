@@ -21,20 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.constraint;
+package com.wildbeeslabs.sensiblemetrics.supersolr.annotation;
 
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import io.swagger.annotations.*;
+import org.springframework.http.MediaType;
 
 import java.lang.annotation.*;
 
+/**
+ * Swagger API annotation
+ */
 @Documented
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@AutoConfigureEmbeddedDatabase
-@DataJpaTest
-public @interface PostgresDataJpaTest {
+@SwaggerDefinition(
+    info = @Info(
+        description = "SuperSolr",
+        version = "V01012",
+        title = "SuperSolr Resource API",
+        contact = @Contact(
+            name = "ARogalskiy",
+            email = "alexander.rogalskiy@supersolr.com",
+            url = "http://www.supersolr.oi"
+        ),
+        license = @License(
+            name = "MIT",
+            url = "http://www.opensource.org/licenses/mit-license.php"
+        )
+    ),
+    basePath = "/api/*",
+    consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+    produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+    schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
+    externalDocs = @ExternalDocs(value = "Read This For Sure", url = "http://supersolr.com")
+)
+public @interface SwaggerAPI {
 }

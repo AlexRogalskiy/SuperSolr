@@ -120,7 +120,7 @@
         <profileWebApp>src/main/webapp</profileWebApp>
         <location>dev</location>
         <solr.deps>solr/libs</solr.deps>
-        <rest-locations>${groupId}.${artifactId}.web</rest-locations>
+        <rest-locations>${project.groupId}.${project.artifactId}.web</rest-locations>
 
         <unit-tests.skip>true</unit-tests.skip>
         <integration-tests.skip>true</integration-tests.skip>
@@ -582,7 +582,7 @@
                 <plugin>
                     <groupId>com.github.kongchen</groupId>
                     <artifactId>swagger-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.7</version>
                     <configuration>
                         <apiSources>
                             <apiSource>
@@ -595,25 +595,6 @@
                                 </schemes>
                                 <host>www.localhost.com:8080</host>
                                 <basePath>/api</basePath>
-                                <info>
-                                    <title>Swagger manager application</title>
-                                    <version>v1</version>
-                                     <description>
-                                        Swagger manager plugin
-                                    </description>
-                                    <termsOfService>
-                                        http://www.github.com/kongchen/swagger-maven-plugin
-                                    </termsOfService>
-                                    <contact>
-                                        <email>alexander.rogalsky@yandex.ru</email>
-                                        <name>Alexander Rogalskiy</name>
-                                        <url>http://wildbeeslabs.com</url>
-                                    </contact>
-                                    <license>
-                                        <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-                                        <name>Apache 2.0</name>
-                                    </license>
-                                </info>
                                 <securityDefinitions>
                                     <securityDefinition>
                                         <name>basicAuth</name>
@@ -627,24 +608,27 @@
                                 <outputPath>${basedir}/generated/document.html</outputPath>
                                 <swaggerDirectory>${project.build.directory}/generated/swagger-ui</swaggerDirectory>
                                 <attachSwaggerArtifact>true</attachSwaggerArtifact>
-                                <swaggerApiReader>com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader</swaggerApiReader>
+                                <swaggerApiReader>
+                                    com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
+                                </swaggerApiReader>
                                 <attachSwaggerArtifact>true</attachSwaggerArtifact>
-                                <modelConverters>io.swagger.validator.BeanValidator</modelConverters>
-                                <swaggerExtensions>
-                                    <swaggerExtension>com.example.VendorExtension</swaggerExtension>
-                                </swaggerExtensions>
+                                <modelConverters>
+                                    io.swagger.validator.BeanValidator
+                                </modelConverters>
                                 <enabledObjectMapperFeatures>
-                                    <feature>com.fasterxml.jackson.databind.SerializationFeature.WRITE_ENUMS_USING_TO_STRING</feature>
-                                    <feature>com.fasterxml.jackson.core.JsonParser$Feature.ALLOW_NUMERIC_LEADING_ZEROS</feature>
+                                    <feature>
+                                        com.fasterxml.jackson.databind.SerializationFeature.WRITE_ENUMS_USING_TO_STRING
+                                    </feature>
+                                    <feature>
+                                        com.fasterxml.jackson.core.JsonParser$Feature.ALLOW_NUMERIC_LEADING_ZEROS
+                                    </feature>
                                 </enabledObjectMapperFeatures>
                                 <disabledObjectMapperFeatures>
-                                    <feature>com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS</feature>
+                                    <feature>
+                                        com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS
+                                    </feature>
                                 </disabledObjectMapperFeatures>
                                 <operationIdFormat>{{className}}_{{methodName}}_{{httpMethod}}</operationIdFormat>
-                                <externalDocs>
-                                    <description>Example external docs</description>
-                                    <url>https://example.com/docs</url>
-                                </externalDocs>
                             </apiSource>
                         </apiSources>
                     </configuration>
@@ -660,7 +644,7 @@
                         <dependency>
                             <groupId>io.swagger</groupId>
                             <artifactId>swagger-hibernate-validations</artifactId>
-                            <version>1.5.6</version>
+                            <version>1.5.21</version>
                         </dependency>
                     </dependencies>
                 </plugin>

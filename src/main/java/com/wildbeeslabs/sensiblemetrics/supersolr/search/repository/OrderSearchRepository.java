@@ -32,6 +32,7 @@ import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -44,17 +45,17 @@ public interface OrderSearchRepository extends BaseDocumentSearchRepository<Orde
     Page<? extends Order> findByDescription(final String description, final Pageable pageable);
 
     @Query(fields = {
-            SearchableOrder.ID_FIELD_NAME,
-            SearchableOrder.DESCRIPTION_FIELD_NAME,
-            SearchableOrder.TITLE_FIELD_NAME
+        SearchableOrder.ID_FIELD_NAME,
+        SearchableOrder.DESCRIPTION_FIELD_NAME,
+        SearchableOrder.TITLE_FIELD_NAME
     }, defaultOperator = Operator.OR)
     Page<? extends Order> findByTitle(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    List<? extends Order> findByTitleLike(final String title);
+    List<? extends Order> findByTitleLike(final Collection<String> titles);
 
-    @Query(name = "Order.findByTitleStartsWith")
+    @Query(name = "Order.findByTitleStartingWith")
     Page<? extends Order> findByTitleStartingWith(final String title, final Pageable pageable);
 
-    @Query(name = "Order.findByNamedQuery")
+    @Query(name = "Order.findByText")
     Page<? extends Order> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 }

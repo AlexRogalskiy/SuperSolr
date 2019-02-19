@@ -21,22 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.validator;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.ChronologicalDates;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 /**
- * Chronological dates constraint validation implementation
+ * Chronological dates constraint validation implementation {@link ConstraintValidator}
  *
  * @version 1.0.0
  * @since 2017-08-08
  */
-public class ChronologicalDatesValidator implements ConstraintValidator<ChronologicalDates, BaseModel<?>> {
+public class ChronologicalDatesConstraint implements ConstraintValidator<ChronologicalDates, BaseModel<?>> {
 
     @Override
     public void initialize(final ChronologicalDates constraintAnnotation) {

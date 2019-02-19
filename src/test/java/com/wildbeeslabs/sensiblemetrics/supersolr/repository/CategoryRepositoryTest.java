@@ -61,8 +61,11 @@ public class CategoryRepositoryTest {
     public void testFindById() {
         // given
         final Long categoryId = Long.valueOf(1);
+
+        // when
         final Optional<Category> categoryOptional = getCategoryRepository().findById(categoryId);
-        // assert
+
+        // then
         assertTrue(categoryOptional.isPresent());
         assertEquals(categoryId, categoryOptional.get().getId());
     }
@@ -71,8 +74,11 @@ public class CategoryRepositoryTest {
     public void testFindByEmptyTitle() {
         // given
         final String title = "Test";
+
+        // when
         final List<? extends Category> categories = getCategoryRepository().findByTitle(title);
-        // assert
+
+        // then
         assertThat(categories, is(empty()));
     }
 
@@ -80,8 +86,11 @@ public class CategoryRepositoryTest {
     public void testFindByTitle() {
         // given
         final String title = "Category 01";
+
+        // when
         final List<? extends Category> categories = getCategoryRepository().findByTitle(title);
-        // assert
+
+        // then
         assertThat(categories, not(empty()));
         assertEquals(1, categories.size());
         assertEquals(title, categories.get(0).getTitle());

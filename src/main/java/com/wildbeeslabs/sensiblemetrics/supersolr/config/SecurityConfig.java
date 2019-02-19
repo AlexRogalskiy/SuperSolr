@@ -43,7 +43,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 /**
- * Custom web security configuration
+ * Custom web security configuration {@link WebSecurityConfigurerAdapter}
  */
 @Configuration
 @EnableAutoConfiguration
@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        final InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("user").password("user123").roles("USER").build());
         manager.createUser(User.withUsername("admin").password("admin123").roles("ADMIN").build());
         manager.createUser(User.withUsername("dba").password("dba123").roles("ADMIN", "DBA").build());

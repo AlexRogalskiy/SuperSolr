@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.constraint.ChronologicalDates;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.ChronologicalDates;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel;
 import lombok.*;
 import org.hibernate.annotations.*;

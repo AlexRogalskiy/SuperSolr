@@ -39,7 +39,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.convert.MappingSolrConverter;
+import org.springframework.data.solr.core.convert.SolrConverter;
+import org.springframework.data.solr.core.mapping.SimpleSolrMappingContext;
 import org.springframework.data.solr.repository.config.EnableSolrRepositories;
 import org.springframework.data.solr.server.SolrClientFactory;
 import org.springframework.data.solr.server.support.HttpSolrClientFactory;
@@ -55,24 +59,31 @@ import java.util.Optional;
 @Configuration
 @EnableAsync
 @EnableSolrRepositories(
-        basePackages = {
-                "com.wildbeeslabs.sensiblemetrics.supersolr"
-        },
-        namedQueriesLocation = "classpath:solr-named-queries.properties",
-        schemaCreationSupport = true)
+    basePackages = {
+        "com.wildbeeslabs.sensiblemetrics.supersolr"
+    },
+    namedQueriesLocation = "classpath:solr-named-queries.properties",
+    schemaCreationSupport = true)
 @PropertySource("classpath:application.properties")
 public class SolrConfig {
+
+    @Bean
+    public SolrConverter solrConverter() {
+        final MappingSolrConverter solrConverter = new MappingSolrConverter(new SimpleSolrMappingContext());
+        //solrConverter.setCustomConversions(new CustomConversions(null, null));
+        return solrConverter;
+    }
 
     @Bean
     public SolrClient solrClient(final @Value("${supersolr.solr.server.url}") String baseUrl,
                                  final @Value("${supersolr.solr.timeout}") Integer timeout,
                                  final @Value("${supersolr.solr.socketTimeout}") Integer socketTimeout) {
         final HttpSolrClient solrClient = new HttpSolrClient.Builder()
-                .withBaseSolrUrl(baseUrl)
-                .withConnectionTimeout(timeout)
-                .withSocketTimeout(socketTimeout)
-                .allowCompression(true)
-                .build();
+            .withBaseSolrUrl(baseUrl)
+            .withConnectionTimeout(timeout)
+            .withSocketTimeout(socketTimeout)
+            .allowCompression(true)
+            .build();
         solrClient.getInvariantParams().add("commit", "true");
         solrClient.setFollowRedirects(false);
         solrClient.setUseMultiPartPost(true);
@@ -102,6 +113,7 @@ public class SolrConfig {
     @Bean
     public SolrClientFactory solrClientFactory(final SolrClient solrClient, final Credentials credentials) {
         return new HttpSolrClientFactory(solrClient, credentials, "BASIC");
+        //return new MulticoreSolrClientFactory(solrClient());
     }
 
     @Bean
@@ -141,6 +153,8 @@ public class SolrConfig {
 
     @Bean
     public SolrTemplate solrTemplate(final SolrClient solrClient) {
-        return new SolrTemplate(solrClient);
+        final SolrTemplate solrTemplate = new SolrTemplate(solrClient);
+        solrTemplate.setSolrConverter(solrConverter());
+        return solrTemplate;
     }
 }

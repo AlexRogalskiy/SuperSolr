@@ -48,9 +48,9 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 /**
  * Base document search controller implementation
  *
- * @param <E>  type of base document
- * @param <T>  type of base document view
- * @param <ID> type of base document identifier
+ * @param <E>  type of base document {@link BaseDocument}
+ * @param <T>  type of base document view {@link BaseDocumentView}
+ * @param <ID> type of base document identifier {@link Serializable}
  */
 @Slf4j
 @NoArgsConstructor

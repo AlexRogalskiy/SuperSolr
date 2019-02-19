@@ -25,10 +25,10 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
- * Custom order document search service declaration
+ * Custom order document search service declaration {@link BaseDocumentSearchService}
  */
 public interface OrderSearchService extends BaseDocumentSearchService<Order, String> {
 
@@ -41,7 +41,7 @@ public interface OrderSearchService extends BaseDocumentSearchService<Order, Str
      */
     String COLLECTION_ID = "order";
 
-    Page<? extends Order> findByDescription(final String description, final PageRequest request);
+    Page<? extends Order> findByDescription(final String searchTerm, final Pageable page);
 
-    Page<? extends Order> findByCustomQuery(final String searchTerm, final PageRequest request);
+    Page<? extends Order> findByTitle(final String searchTerm, final Pageable page);
 }

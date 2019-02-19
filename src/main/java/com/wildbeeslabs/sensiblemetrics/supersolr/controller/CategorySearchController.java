@@ -35,12 +35,4 @@ public interface CategorySearchController extends BaseDocumentSearchController<C
      * Default service ID
      */
     String CONTROLLER_ID = "CategorySearchController";
-    /**
-     * Default offset value
-     */
-    String DEFAULT_OFFSET_VALUE = "0";
-    /**
-     * Default limit value
-     */
-    String DEFAULT_LIMIT_VALUE = "10";
 }

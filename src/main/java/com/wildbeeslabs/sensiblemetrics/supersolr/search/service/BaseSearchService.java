@@ -30,7 +30,7 @@ import java.util.Optional;
  * Custom base search service declaration
  *
  * @param <E>  type of document
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 public interface BaseSearchService<E, ID extends Serializable> {
 

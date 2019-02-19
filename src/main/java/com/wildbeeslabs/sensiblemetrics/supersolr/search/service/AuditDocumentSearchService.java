@@ -30,8 +30,8 @@ import java.io.Serializable;
 /**
  * Custom audit document search service declaration
  *
- * @param <E>  type of audit document
- * @param <ID> type of audit document identifier
+ * @param <E>  type of audit document {@link AuditDocument}
+ * @param <ID> type of audit document identifier {@link Serializable}
  */
 public interface AuditDocumentSearchService<E extends AuditDocument, ID extends Serializable> extends BaseSearchService<E, ID> {
 

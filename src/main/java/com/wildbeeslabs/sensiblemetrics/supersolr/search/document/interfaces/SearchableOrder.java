@@ -29,9 +29,13 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 public interface SearchableOrder {
 
     /**
-     * Default document ID
+     * Default core ID
      */
-    String DOCUMENT_ID = "order";
+    String CORE_ID = "order";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "order";
 
     /**
      * Default field names

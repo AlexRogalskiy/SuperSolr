@@ -31,7 +31,11 @@ public interface SearchableCategory {
     /**
      * Default document ID
      */
-    String DOCUMENT_ID = "category";
+    String CORE_ID = "category";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "category";
 
     /**
      * Default field names

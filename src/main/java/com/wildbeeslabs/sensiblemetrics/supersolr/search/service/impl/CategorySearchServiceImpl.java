@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.CategorySearchRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.HighlightOptions;
-import org.springframework.data.solr.core.query.Query;
-import org.springframework.data.solr.core.query.SimpleHighlightQuery;
+import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
@@ -49,7 +47,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Custom category search service implementation {@link Category}
+ * Custom category search service implementation {@link CategorySearchService}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -90,7 +88,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
-    public HighlightPage<? extends Category> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable) {
+    public HighlightPage<? extends Category> findByTitleIn(final Collection<String> values, final Pageable pageable) {
         if (CollectionUtils.isEmpty(values)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
@@ -108,20 +106,40 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
+    @ApiModelProperty(name = "internal", access = "limited")
     public HighlightPage<? extends Category> find(final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableCategory.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria titleCriteria = new Criteria(SearchableCategory.TITLE_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
-                .setSimplePrefix("<highlight>")
-                .setSimplePostfix("</highlight>")
-                .addField(SearchableCategory.ID_FIELD_NAME, SearchableCategory.TITLE_FIELD_NAME));
+            .setSimplePrefix("<highlight>")
+            .setSimplePostfix("</highlight>")
+            .addField(SearchableCategory.ID_FIELD_NAME, SearchableCategory.TITLE_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Category.class);
     }
 
     @Override
-    public Page<? extends Category> findByQuery(final Query query) {
-        return findByQuery(COLLECTION_ID, query, Category.class);
+    @Transactional(readOnly = true)
+    public Page<? extends Category> findByQuery(final String collection, final Query query) {
+        return this.findByQuery(collection, query, Category.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Category> findByFacetQuery(final String collection, final FacetQuery facetQuery) {
+        return this.findByFacetQuery(collection, facetQuery, Category.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Category> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
+        return this.findByQueryAndCriteria(collection, criteria, pageable, Category.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Category> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable) {
+        return this.findByQueryAndCriteria(collection, queryString, criteria, pageable, Category.class);
     }
 
     protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
@@ -129,10 +147,10 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {
             criteria = criteria
-                    .and(new Criteria(SearchableCategory.TITLE_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableCategory.DESCRIPTION_FIELD_NAME).contains(term));
+                .and(new Criteria(SearchableCategory.TITLE_FIELD_NAME).contains(term))
+                .or(new Criteria(SearchableCategory.DESCRIPTION_FIELD_NAME).contains(term));
         }
-        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableCategory.DOCUMENT_ID));
+        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableCategory.CORE_ID));
     }
 
     @Override

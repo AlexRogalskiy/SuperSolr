@@ -36,10 +36,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 
 /**
- * Custom audit document search service implementation
+ * Custom audit document search service implementation {@link AuditDocumentSearchService}
  *
- * @param <E>  type of audit document
- * @param <ID> type of audit document identifier
+ * @param <E>  type of audit document {@link AuditDocument}
+ * @param <ID> type of audit document identifier {@link Serializable}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Custom base search repository declaration {@link SolrCrudRepository}
  *
  * @param <E>  type of document
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 @NoRepositoryBean
 public interface BaseSearchRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {

@@ -17,12 +17,30 @@ spring:
       repository:
         query:
           method.type: #methodName, namedQuery, queryAnnotation
+  jpa:
+    show-sql: true
+    open-in-view: false
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  hibernate:
+    ddl-auto: create-drop
   flyway:
     locations: filesystem:db/migrations
     check-location: false
     baselineOnMigrate: true
 
+hibernate:
+  connection:
+    charSet:UTF-8
+    characterEncoding:UTF-8
+  hbm2ddl:
+    auto: create-drop
+
 logging:
+  config: classpath:logback.xml
   file: logs/application.log
   level:
     ROOT: DEBUG

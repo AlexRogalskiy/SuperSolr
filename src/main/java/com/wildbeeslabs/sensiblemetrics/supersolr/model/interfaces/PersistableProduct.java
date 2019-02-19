@@ -49,7 +49,7 @@ public interface PersistableProduct {
     String CATALOG_NUMBER_FIELD_NAME = "catalogNumber";
     String PAGE_TITLE_FIELD_NAME = "pageTitle";
     String AVAILABLE_FIELD_NAME = "inStock";
-    String LOCATION_FIELD_NAME = "store";
+    String LOCATION_FIELD_NAME = "location";
     String CATEGORIES_FIELD_NAME = "categories";
     String MAIN_CATEGORIES_FIELD_NAME = "mainCategories";
     String PRICE_FIELD_NAME = "price";

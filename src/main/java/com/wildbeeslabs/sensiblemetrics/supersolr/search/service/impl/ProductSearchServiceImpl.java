@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.ProductSearchRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Shape;
 import org.springframework.data.solr.UncategorizedSolrException;
 import org.springframework.data.solr.core.geo.GeoConverters;
@@ -53,7 +55,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Custom product search service implementation {@link Product}
+ * Custom product search service implementation {@link ProductSearchService}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -87,6 +89,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends Product> findByNameOrDescription(final String searchTerm, final Pageable pageable) {
         return getRepository().findByNameOrDescription(searchTerm, pageable);
     }
@@ -101,11 +104,6 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
-    public Page<? extends Product> findByShortDescription(final String description, Pageable pageable) {
-        return getRepository().findByShortDescription(description, pageable);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public FacetPage<? extends Product> findByAutoCompleteNameFragment(final String fragment, final Pageable pageable) {
         if (StringUtils.isEmpty(fragment)) {
@@ -116,7 +114,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByCustomQuery(final String searchTerm, final Pageable pageable) {
+    public Page<? extends Product> findByShortDescription(final String searchTerm, final Pageable pageable) {
         return getRepository().findByShortDescription(searchTerm, pageable);
     }
 
@@ -140,15 +138,21 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByLocation(final Point location, final Pageable pageable) {
-        return getRepository().findByLocation(location, pageable);
+    public Page<? extends Product> findByLocation(final Point location, final Distance distance, final Pageable pageable) {
+        return getRepository().findByLocation(location, distance, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByLocationWithin(final String location, int distanceRange) {
+    public List<? extends Product> findByLocationNear(final Point location, final Distance distance) {
+        return getRepository().findByLocationNear(location, distance);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<? extends Product> findByLocationWithin(final String location, final Distance distance) {
         final org.springframework.data.geo.Point point = GeoConverters.StringToPointConverter.INSTANCE.convert(location);
-        return getRepository().findByLocationWithin(new Point(point.getX(), point.getY()), new Distance(distanceRange));
+        return getRepository().findByLocationWithin(new Point(point.getX(), point.getY()), distance);
     }
 
     @Override
@@ -161,6 +165,12 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     @Transactional(readOnly = true)
     public List<? extends Product> findByLocationNear(final Shape shape) {
         return getRepository().findByLocationNear(shape);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GeoResults<? extends Product> findByGeoLocationNear(final Point location, final Distance distance) {
+        return getRepository().findByGeoLocationNear(location, distance);
     }
 
     @Override
@@ -179,6 +189,12 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     @Transactional(readOnly = true)
     public Page<? extends Product> findAllProducts(final Pageable pageable) {
         return getRepository().findAllProducts(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findAvailableProductsByName(final String name, final Pageable pageable) {
+        return getRepository().findByAvailableTrueAndNameStartingWith(name, pageable);
     }
 
     @Override
@@ -204,22 +220,41 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
+    @ApiModelProperty(name = "internal", access = "limited")
     public HighlightPage<? extends Product> find(final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableProduct.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria pageTitleCriteria = new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria nameCriteria = new Criteria(SearchableProduct.NAME_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(pageTitleCriteria).or(nameCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
-                .setSimplePrefix("<highlight>")
-                .setSimplePostfix("</highlight>")
-                .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
+            .setSimplePrefix("<highlight>")
+            .setSimplePostfix("</highlight>")
+            .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
         return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Product.class);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByQuery(final Query query) {
-        return findByQuery(COLLECTION_ID, query, Product.class);
+    public Page<? extends Product> findByQuery(final String collection, final Query query) {
+        return this.findByQuery(collection, query, Product.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FacetPage<? extends Product> findByFacetQuery(final String collection, final FacetQuery facetQuery) {
+        return this.findByFacetQuery(collection, facetQuery, Product.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
+        return this.findByQueryAndCriteria(collection, criteria, pageable, Product.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable) {
+        return this.findByQueryAndCriteria(collection, queryString, criteria, pageable, Product.class);
     }
 
     protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
@@ -227,13 +262,13 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {
             criteria = criteria
-                    .and(new Criteria(SearchableProduct.NAME_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(term))
-                    .or(new Criteria(SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME).contains(term));
+                .and(new Criteria(SearchableProduct.NAME_FIELD_NAME).contains(term))
+                .or(new Criteria(SearchableProduct.SHORT_DESCRIPTION_FIELD_NAME).contains(term))
+                .or(new Criteria(SearchableProduct.LONG_DESCRIPTION_FIELD_NAME).contains(term))
+                .or(new Criteria(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(term))
+                .or(new Criteria(SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME).contains(term));
         }
-        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.DOCUMENT_ID));
+        return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.CORE_ID));
     }
 
     protected ProductSearchRepository getRepository() {

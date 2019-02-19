@@ -38,7 +38,7 @@ import java.util.Objects;
 /**
  * Custom full-text search base document {@link AuditDocument}
  *
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 @Data
 @NoArgsConstructor

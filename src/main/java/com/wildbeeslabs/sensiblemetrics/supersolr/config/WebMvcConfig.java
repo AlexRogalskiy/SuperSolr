@@ -37,7 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * Custom web mvc configuration
+ * Custom web mvc configuration {@link WebMvcConfigurer}
  */
 @EnableWebMvc
 @Configuration

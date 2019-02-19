@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Custom product search controller implementation
+ * Custom product search controller implementation {@link BaseDocumentSearchControllerImpl}
  */
 @Slf4j
 @NoArgsConstructor
@@ -85,15 +85,15 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
     @ResponseBody
     @SuppressWarnings("unchecked")
     public ResponseEntity<?> find(
-            final @RequestParam String searchTerm,
-            final @RequestParam(defaultValue = DEFAULT_OFFSET_VALUE) int offset,
-            final @RequestParam(defaultValue = DEFAULT_LIMIT_VALUE) int limit) {
+        final @RequestParam String searchTerm,
+        final @RequestParam(defaultValue = DEFAULT_PAGE_OFFSET_VALUE) int offset,
+        final @RequestParam(defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
         log.info("Fetching products by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
         final HighlightPage<Product> page = (HighlightPage<Product>) findBy(searchTerm, offset, limit);
         return new ResponseEntity<>(page
-                .stream()
-                .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
-                .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
+            .stream()
+            .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
+            .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
     }
 
     @GetMapping("/products")
@@ -110,8 +110,8 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
     @GetMapping("/product/desc/{description}/{page}")
     @ResponseBody
     public ResponseEntity<?> findByDescription(
-            final @PathVariable String description,
-            final @PathVariable int page) {
+        final @PathVariable String description,
+        final @PathVariable int page) {
         log.info("Fetching product by description: {}, page: {}", description, page);
         final List<? extends ProductView> productViews = MapperUtils.mapAll(getSearchService().findByDescription(description, PageRequest.of(page, 2)).getContent(), ProductView.class);
         return new ResponseEntity<>(productViews, HttpStatus.OK);
@@ -120,18 +120,18 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
     @GetMapping("/product/search/{searchTerm}/{page}")
     @ResponseBody
     public ResponseEntity<?> findBySearchTerm(
-            final @PathVariable String searchTerm,
-            final @PathVariable int page) {
+        final @PathVariable String searchTerm,
+        final @PathVariable int page) {
         log.info("Fetching product by term: {}, page: {}", searchTerm, page);
-        final List<? extends ProductView> productViews = MapperUtils.mapAll(getSearchService().findByCustomQuery(searchTerm, PageRequest.of(page, 2)).getContent(), ProductView.class);
+        final List<? extends ProductView> productViews = MapperUtils.mapAll(getSearchService().find(searchTerm, PageRequest.of(page, 2)).getContent(), ProductView.class);
         return new ResponseEntity<>(productViews, HttpStatus.OK);
     }
 
     @GetMapping("/product/{id}")
     @ResponseBody
     public ResponseEntity<?> search(
-            final @PathVariable("id") String id,
-            final HttpServletRequest request) {
+        final @PathVariable("id") String id,
+        final HttpServletRequest request) {
         log.info("Fetching product by ID: {}", id);
         return new ResponseEntity<>(MapperUtils.map(this.getItem(id), ProductView.class), HttpStatus.OK);
     }

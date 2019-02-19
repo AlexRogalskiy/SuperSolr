@@ -33,7 +33,7 @@ import java.io.Serializable;
  *
  * @param <E>  type of document
  * @param <T>  type of document view
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  * @author Alex
  * @version 1.0.0
  */

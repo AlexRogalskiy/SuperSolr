@@ -39,9 +39,9 @@ import java.io.Serializable;
 /**
  * Audit document search controller implementation
  *
- * @param <E>  type of audit document
- * @param <T>  type of audit document view
- * @param <ID> type of audit document identifier
+ * @param <E>  type of audit document {@link AuditDocument}
+ * @param <T>  type of audit document view {@link AuditDocumentView}
+ * @param <ID> type of audit document identifier {@link Serializable}
  */
 @Slf4j
 @NoArgsConstructor

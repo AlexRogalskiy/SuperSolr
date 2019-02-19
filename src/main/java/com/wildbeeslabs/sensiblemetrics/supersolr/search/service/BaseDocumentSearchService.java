@@ -28,7 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.FacetQuery;
 import org.springframework.data.solr.core.query.Query;
+import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 
 import java.io.Serializable;
@@ -37,8 +39,8 @@ import java.util.regex.Pattern;
 /**
  * Custom base document search service declaration
  *
- * @param <E>  type of base document
- * @param <ID> type of base document identifier
+ * @param <E>  type of base document {@link BaseDocument}
+ * @param <ID> type of base document identifier {@link Serializable}
  */
 public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extends Serializable> extends AuditDocumentSearchService<E, ID> {
 
@@ -67,9 +69,11 @@ public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extend
 
     HighlightPage<? extends E> find(final String searchTerm, final Pageable page);
 
-    Page<? extends E> findByQuery(final Query query);
+    Page<? extends E> findByQuery(final String collection, final Query query);
 
-    Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
+    FacetPage<? extends E> findByFacetQuery(final String collection, final FacetQuery facetQuery);
 
-    Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz);
+    Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable);
+
+    Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable);
 }

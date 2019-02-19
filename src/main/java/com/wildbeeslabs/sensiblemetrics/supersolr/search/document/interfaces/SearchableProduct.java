@@ -29,9 +29,13 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 public interface SearchableProduct {
 
     /**
-     * Default document ID
+     * Default core ID
      */
-    String DOCUMENT_ID = "product";
+    String CORE_ID = "product";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "product";
 
     /**
      * Default field names
@@ -44,7 +48,9 @@ public interface SearchableProduct {
     String CATALOG_NUMBER_FIELD_NAME = "catalogNumber";
     String PAGE_TITLE_FIELD_NAME = "pageTitle";
     String AVAILABLE_FIELD_NAME = "inStock";
-    String LOCATION_FIELD_NAME = "store";
+    String LOCATION_FIELD_NAME = "location";
+    String GEO_LOCATION_FIELD_NAME = "geoLocation";
+    String TAGS_FIELD_NAME = "tags";
     String CATEGORIES_FIELD_NAME = "categories";
     String MAIN_CATEGORIES_FIELD_NAME = "mainCategories";
     String PRICE_FIELD_NAME = "price";

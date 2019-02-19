@@ -32,7 +32,7 @@ import org.springframework.data.solr.core.query.result.HighlightPage;
 import java.util.Collection;
 
 /**
- * Custom category document search service declaration
+ * Custom category document search service declaration {@link BaseDocumentSearchService}
  */
 public interface CategorySearchService extends BaseDocumentSearchService<Category, String> {
 
@@ -53,7 +53,7 @@ public interface CategorySearchService extends BaseDocumentSearchService<Categor
 
     Page<? extends Category> findByDescription(final String description, final Pageable pageable);
 
-    HighlightPage<? extends Category> findByHighlightedMultiQuery(final Collection<String> values, final Pageable pageable);
+    HighlightPage<? extends Category> findByTitleIn(final Collection<String> values, final Pageable pageable);
 
     FacetPage<? extends Category> findByAutoCompleteTitleFragment(final String fragment, final Pageable pageable);
 }

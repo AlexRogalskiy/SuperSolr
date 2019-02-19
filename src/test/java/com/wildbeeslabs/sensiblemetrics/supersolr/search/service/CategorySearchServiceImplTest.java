@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.utils.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
@@ -37,9 +38,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEnti
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.SimpleQuery;
-import org.springframework.data.solr.core.query.SimpleStringCriteria;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,19 +48,17 @@ import java.util.*;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 /**
- * Category service implementation unit test
+ * Category service implementation unit test {@link BaseDocumentTest}
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureTestEntityManager
-public class CategoryServiceImplTest extends BaseDocumentTest {
+public class CategorySearchServiceImplTest extends BaseDocumentTest {
 
     @Autowired
     private CategorySearchService categoryService;
@@ -86,7 +84,7 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
 
         // assert
         assertThat(categories, not(empty()));
-        assertEquals(totalElements, categories.size());
+        assertThat(categories, hasSize(totalElements));
     }
 
     @Test
@@ -100,7 +98,7 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
 
         // assert
         assertThat(categories, not(empty()));
-        assertEquals(categoryIds.size(), categories.size());
+        assertThat(categories, hasSize(categoryIds.size()));
     }
 
     @Test
@@ -113,14 +111,14 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         // when
         final Page<? extends Category> categoryPage = getCategoryService().findByTitle(titleTerm, OffsetPageRequest.builder().offset(0).limit(10).build());
 
-        // assert
+        // then
         assertEquals(totalElements, categoryPage.getTotalElements());
         assertEquals(totalElements, categoryPage.getTotalPages());
 
         // when
         final List<? extends Category> categories = categoryPage.getContent();
 
-        // assert
+        // then
         assertTrue(containsIds(categories, idsToCheck));
     }
 
@@ -135,8 +133,8 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         final Page<? extends Category> categoryPage = getCategoryService().findByDescription(descriptionTerm, PageRequest.of(0, 10));
         final List<? extends Category> categories = categoryPage.getContent();
 
-        // assert
-        assertEquals(totalElements, categories.size());
+        // then
+        assertThat(categories, hasSize(totalElements));
         assertTrue(containsIds(categories, idsToCheck));
     }
 
@@ -158,14 +156,14 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         // when
         categoryPage = getCategoryService().findByTitles(titleTerms, PageRequest.of(0, 10));
 
-        // assert
+        // then
         assertEquals(totalElements, categoryPage.getTotalElements());
         assertEquals(totalElements, categoryPage.getTotalPages());
 
         // when
         final List<? extends Category> categories = categoryPage.getContent();
 
-        // assert
+        // then
         assertTrue(containsIds(categories, idsToCheck));
     }
 
@@ -178,28 +176,28 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         final FacetPage<? extends Category> categoryFacetPage = getCategoryService().findByAutoCompleteTitleFragment(titleTerms, PageRequest.of(0, 5));
 
         // assert
-        assertEquals(2, categoryFacetPage.getNumberOfElements());
+        assertEquals(4, categoryFacetPage.getNumberOfElements());
 
         // when
         final Map<String, Long> categoryFacetCounts = getFacetCounts(categoryFacetPage);
 
-        // assert
-        assertEquals(new Long(3), categoryFacetCounts.get("Test01"));
-        assertEquals(new Long(2), categoryFacetCounts.get("Test02"));
-        assertEquals(new Long(1), categoryFacetCounts.get("Test03"));
+        // then
+        assertNull(categoryFacetCounts.get("Test"));
+        assertEquals(Long.valueOf(4), categoryFacetCounts.get("island"));
+        assertEquals(Long.valueOf(2), categoryFacetCounts.get("treasure"));
     }
 
     @Test
     public void testFindByQuery() {
-        //given
-        final Criteria criteria = new SimpleStringCriteria("doctype:category");
+        // given
+        final String queryString = "index:[1 TO 3] OR title:*land*";
 
         //assert
-        final Page<? extends Category> productPage = getCategoryService().findByQuery(new SimpleQuery(criteria));
+        final Page<? extends Category> productPage = getCategoryService().findByQuery(SearchableCategory.COLLECTION_ID, getQuery(queryString));
         productPage.getContent();
 
-        // assert
-        assertEquals(11, productPage.getTotalElements());
+        // then
+        assertEquals(6, productPage.getTotalElements());
     }
 
     @Test
@@ -211,9 +209,13 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         final HighlightPage<? extends Category> categoryHighlightPage = getCategoryService().find(searchTerm, PageRequest.of(0, 10));
         categoryHighlightPage.getContent();
 
-        // assert
-        assertTrue(containsSnipplet(categoryHighlightPage, "How to handle <highlight>cookies</highlight> in web applications"));
-        assertTrue(containsSnipplet(categoryHighlightPage, "Bake your own <highlight>cookies</highlight>, on a secret island!"));
+        // then
+        assertTrue(containsSnipplet(categoryHighlightPage, "Handling <highlight>Cookies</highlight>"));
+        assertFalse(containsSnipplet(categoryHighlightPage, "Bake your own <highlight>cookies</highlight>, on a secret island!"));
+    }
+
+    protected Cursor<? extends Category> findAllCategories() {
+        return getSolrTemplate().queryForCursor(SearchableCategory.COLLECTION_ID, getQuery("*:*").addSort(Sort.by("id")), Category.class);
     }
 
     private List<Category> getSampleData() {
@@ -223,43 +225,43 @@ public class CategoryServiceImplTest extends BaseDocumentTest {
         }
         final List<Category> categories = new ArrayList<>();
         Category category = createCategory("01", 1, "Treasure Island", "Best seller by R.L.S.");
-        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 3, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("02", 2, "Treasure Island 2.0", "Humorous remake of the famous best seller");
-        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("02", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 5, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("03", 3, "Solr for dummies", "Get started with solr");
-        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller");
-        category.addProduct(createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 8, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("05", 5, "Spring Island", "The perfect island romance..");
-        category.addProduct(createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 9, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("06", 6, "Refactoring", "It's about improving the design of existing code.");
-        category.addProduct(createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 10, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("07", 7, "Baking for dummies", "Bake your own cookies, on a secret island!");
-        category.addProduct(createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("07", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("08", 8, "The Pirate Island", "Oh noes, the pirates are coming!");
-        category.addProduct(createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("08", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 0, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("09", 9, "Blackbeard", "It's the pirate Edward Teach!");
-        category.addProduct(createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 20, 1.0, 2.0, true));
         categories.add(category);
 
         category = createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications");
-        category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 1.0, 2.0, true));
+        category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 10, 1.0, 2.0, true));
         categories.add(category);
         return categories;
     }

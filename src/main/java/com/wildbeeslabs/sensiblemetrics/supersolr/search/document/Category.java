@@ -40,7 +40,7 @@ import java.util.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SolrDocument(solrCoreName = SearchableCategory.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableCategory.CORE_ID, collection = SearchableCategory.COLLECTION_ID)
 public class Category extends BaseDocument<String> implements SearchableCategory {
 
     /**

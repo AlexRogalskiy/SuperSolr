@@ -46,9 +46,9 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
 
     @Highlight(prefix = "<highlight>", postfix = "</highlight>")
     @Query(fields = {
-            SearchableCategory.ID_FIELD_NAME,
-            SearchableCategory.TITLE_FIELD_NAME,
-            SearchableCategory.DESCRIPTION_FIELD_NAME
+        SearchableCategory.ID_FIELD_NAME,
+        SearchableCategory.TITLE_FIELD_NAME,
+        SearchableCategory.DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
     HighlightPage<? extends Category> findByTitleIn(final Collection<String> titles, final Pageable pageable);
 
@@ -67,8 +67,10 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
     @Query(name = "Category.findByDescription")
     Page<? extends Category> findByDescription(final String description, final Pageable pageable);
 
-    @Query(name = "Category.findByNamedQuery")
+    @Query(name = "Category.findByText")
     Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 
-    List<? extends Category> findByTitleLike(final String title);
+    List<? extends Category> findByTitleLike(final Collection<String> titles);
+
+    Page<? extends Category> findTop10ByTitleOrDescription(final @Boost(2) String title, final String description, final Pageable pageable);
 }

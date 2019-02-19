@@ -37,10 +37,10 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base search service implementation
+ * Custom base search service implementation {@link BaseSearchService}
  *
  * @param <E>  type of document
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 @Slf4j
 @EqualsAndHashCode

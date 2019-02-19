@@ -31,7 +31,7 @@ import java.io.Serializable;
  * Custom base simple search service declaration
  *
  * @param <E>  type of document
- * @param <ID> type of document identifier
+ * @param <ID> type of document identifier {@link Serializable}
  */
 public interface BaseSimpleSearchService<E, ID extends Serializable> extends BaseSearchService<E, ID> {
 

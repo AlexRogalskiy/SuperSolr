@@ -41,7 +41,7 @@ import java.util.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SolrDocument(solrCoreName = SearchableOrder.DOCUMENT_ID)
+@SolrDocument(solrCoreName = SearchableOrder.CORE_ID, collection = SearchableOrder.COLLECTION_ID)
 public class Order extends BaseDocument<String> implements SearchableOrder {
 
     /**

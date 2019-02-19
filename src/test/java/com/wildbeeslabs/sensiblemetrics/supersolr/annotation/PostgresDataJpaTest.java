@@ -21,30 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
+package com.wildbeeslabs.sensiblemetrics.supersolr.annotation;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
-import org.springframework.data.repository.NoRepositoryBean;
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.lang.annotation.*;
 
 /**
- * Custom audit document search repository declaration {@link BaseSearchRepository}
- *
- * @param <E>  type of audit document {@link AuditDocument}
- * @param <ID> type of audit document identifier {@link Serializable}
+ * PostgreSQL data jpa test annotation
  */
-@NoRepositoryBean
-public interface AuditDocumentSearchRepository<E extends AuditDocument, ID extends Serializable> extends BaseSearchRepository<E, ID> {
-
-    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date date);
-
-    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date date);
-
-    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
-
-    CompletableFuture<List<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
+@Documented
+@Inherited
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureEmbeddedDatabase
+@DataJpaTest
+public @interface PostgresDataJpaTest {
 }

@@ -30,9 +30,11 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Query;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.SimpleStringCriteria;
 import org.springframework.data.solr.core.query.result.FacetEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightEntry;
@@ -51,11 +53,11 @@ public abstract class BaseDocumentTest {
     private SolrTemplate solrTemplate;
 
     protected Category createCategory(
-            final String id,
-            final Integer index,
-            final String title,
-            final String description,
-            final Product... products) {
+        final String id,
+        final Integer index,
+        final String title,
+        final String description,
+        final Product... products) {
         final Category category = new Category();
         category.setId(id);
         category.setIndex(index);
@@ -66,17 +68,18 @@ public abstract class BaseDocumentTest {
     }
 
     protected Product createProduct(
-            final String id,
-            final String name,
-            final String shortDescription,
-            final String longDescription,
-            final String priceDescription,
-            final String catalogNumber,
-            final String pageTitle,
-            double price,
-            double recommendedPrice,
-            boolean available,
-            final Attribute... attributes) {
+        final String id,
+        final String name,
+        final String shortDescription,
+        final String longDescription,
+        final String priceDescription,
+        final String catalogNumber,
+        final String pageTitle,
+        final Integer rating,
+        double price,
+        double recommendedPrice,
+        boolean available,
+        final Attribute... attributes) {
         final Product product = new Product();
         product.setId(id);
         product.setName(name);
@@ -85,6 +88,7 @@ public abstract class BaseDocumentTest {
         product.setPriceDescription(priceDescription);
         product.setCatalogNumber(catalogNumber);
         product.setPageTitle(pageTitle);
+        product.setRating(rating);
         product.setPrice(price);
         product.setRecommendedPrice(recommendedPrice);
         product.setAvailable(available);
@@ -122,9 +126,17 @@ public abstract class BaseDocumentTest {
         return false;
     }
 
-    protected void clearSolrData(final String collection) throws Exception {
-        final Query query = new SimpleQuery("*:*");
-        getSolrTemplate().delete(collection, query);
+    protected void clear(final String collection) {
+        getSolrTemplate().delete(collection, getQuery("*:*"));
+    }
+
+    protected Query getQuery(final String queryString) {
+        return new SimpleQuery(new SimpleStringCriteria(queryString));
+    }
+
+    protected Query getQuery(final String queryString, final Pageable page) {
+        return new SimpleQuery(new SimpleStringCriteria(queryString))
+            .setPageRequest(page);
     }
 
     protected SolrTemplate getSolrTemplate() {

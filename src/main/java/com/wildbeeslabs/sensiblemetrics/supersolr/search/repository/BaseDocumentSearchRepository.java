@@ -34,8 +34,8 @@ import java.util.Optional;
 /**
  * Custom base document search repository declaration {@link AuditDocumentSearchRepository}
  *
- * @param <E>  type of base document
- * @param <ID> type of base document identifier
+ * @param <E>  type of base document {@link BaseDocument}
+ * @param <ID> type of base document identifier {@link Serializable}
  */
 @NoRepositoryBean
 public interface BaseDocumentSearchRepository<E extends BaseDocument<ID>, ID extends Serializable> extends AuditDocumentSearchRepository<E, ID> {

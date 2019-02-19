@@ -29,9 +29,13 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 public interface SearchableAttribute {
 
     /**
-     * Default document ID
+     * Default core ID
      */
-    String DOCUMENT_ID = "attribute";
+    String CORE_ID = "attribute";
+    /**
+     * Default collection ID
+     */
+    String COLLECTION_ID = "attribute";
 
     /**
      * Default field names

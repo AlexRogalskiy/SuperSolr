@@ -33,8 +33,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.FacetQuery;
 import org.springframework.data.solr.core.query.Query;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -45,10 +47,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Custom base document search service implementation
+ * Custom base document search service implementation {@link BaseDocumentSearchService}
  *
- * @param <E>  type of base document
- * @param <ID> type of base document identifier
+ * @param <E>  type of base document {@link BaseDocument}
+ * @param <ID> type of base document identifier {@link Serializable}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -76,17 +78,13 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
         return getRepository().count();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+    protected Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(criteria, pageable);
         query.setRows(DEFAULT_QUERY_ROWS_SIZE);
         return getSolrTemplate().queryForPage(collection, query, clazz);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
+    protected Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable, final Class<? extends E> clazz) {
         final Query query = new SimpleQuery(queryString);
         query.addFilterQuery(new SimpleQuery(criteria));
         query.setPageRequest(pageable);
@@ -97,9 +95,9 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
     protected Collection<String> tokenize(final String searchTerm) {
         final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
         return Arrays.stream(searchTerms)
-                .filter(StringUtils::isNotEmpty)
-                .map(term -> DEFAULT_IGNORED_CHARS_PATTERN.matcher(term).replaceAll(DEFAULT_SEARСH_TERM_REPLACEMENT))
-                .collect(Collectors.toList());
+            .filter(StringUtils::isNotEmpty)
+            .map(term -> DEFAULT_IGNORED_CHARS_PATTERN.matcher(term).replaceAll(DEFAULT_SEARСH_TERM_REPLACEMENT))
+            .collect(Collectors.toList());
     }
 
     protected List<? extends E> search(final String collection, final Query query, final Class<? extends E> clazz) {
@@ -108,6 +106,11 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
 
     protected Page<? extends E> findByQuery(final String collection, final Query query, final Class<? extends E> clazz) {
         return getSolrTemplate().queryForPage(collection, query, clazz);
+    }
+
+    protected FacetPage<? extends E> findByFacetQuery(final String collection, final FacetQuery facetQuery, final Class<? extends E> clazz) {
+        //final FacetQuery facetQuery = new SimpleFacetQuery(new Criteria(Criteria.WILDCARD).expression(Criteria.WILDCARD)).setFacetOptions(new FacetOptions().addFacetOnField("name").setFacetLimit(5));
+        return getSolrTemplate().queryForFacetPage(collection, facetQuery, clazz);
     }
 
     protected abstract BaseDocumentSearchRepository<E, ID> getRepository();
