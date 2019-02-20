@@ -488,7 +488,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
         final String searchTerm = "cookies";
 
         // when
-        final HighlightPage<? extends Product> productHighlightPage = getProductService().find(searchTerm, PageRequest.of(0, 10));
+        final HighlightPage<? extends Product> productHighlightPage = getProductService().find(SearchableProduct.COLLECTION_ID, searchTerm, PageRequest.of(0, 10));
 
         // then
         assertThat(productHighlightPage.getContent(), is(empty()));
@@ -501,7 +501,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
         final String searchTerm = "New";
 
         // when
-        final HighlightPage<? extends Product> productHighlightPage = getProductService().find(searchTerm, PageRequest.of(0, 10));
+        final HighlightPage<? extends Product> productHighlightPage = getProductService().find(SearchableProduct.COLLECTION_ID, searchTerm, PageRequest.of(0, 10));
         productHighlightPage.getContent();
 
         // then

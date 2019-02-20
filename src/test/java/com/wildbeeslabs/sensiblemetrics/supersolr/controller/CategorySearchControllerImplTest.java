@@ -27,8 +27,6 @@ import com.google.common.net.HttpHeaders;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -39,9 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpSession;
@@ -56,8 +54,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,17 +85,17 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @MockBean
-    private CategorySearchService categorySearchService;
+    @Autowired
+    private CategorySearchService categoryService;
 
     @Before
     public void before() {
-        getCategorySearchService().save(getSampleData());
+        getCategoryService().save(getSampleData());
     }
 
     @After
     public void after() {
-        getCategorySearchService().deleteAll();
+        getCategoryService().deleteAll();
     }
 
     @Test
@@ -103,21 +103,29 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @SuppressWarnings("unchecked")
     public void testSearch() {
         // given
-        final List<? extends CategoryView> list = new ArrayList<>();
+        final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
+        final Map<String, String> params = new HashMap<>();
+        params.put("page", "0");
+        params.put("size", "5");
 
         // when
-        final ResponseEntity<? extends List<ProductView>> entity = (ResponseEntity<? extends List<ProductView>>) this.restTemplate.getForEntity(this.url, list.getClass());
+        final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, "/api/category/all"), HttpMethod.GET, requestEntity, List.class, params);
 
         // then
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals("Test", entity.getBody());
+        assertThat(response.getBody(), is(nullValue()));
+        //assertEquals(HttpStatus.OK, response.getStatusCode());
+        //assertEquals("Test", response.getBody());
     }
 
     @Test
     @DisplayName("Test search categories by non-existing url")
     @SuppressWarnings("unchecked")
     public void testNotFound() throws Exception {
-        this.mockMvc.perform(get("/api/categories")
+        //given
+        final String urlTemplate = "/api/categories";
+
+        // then
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
             .header(HttpHeaders.ORIGIN, this.url)
             .contentType(MediaType.APPLICATION_JSON))
@@ -129,55 +137,48 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
         // given
-        final Category category = new Category();
-        final String responseText = "<ArrayList><item><score>0.0</score></item></ArrayList>";
-
-        // when
-        final Iterable<Category> categories = (Iterable<Category>) getCategorySearchService().findAll();
+        final String responseText = "[{\"id\":\"01\",\"score\":1.0,\"index\":1,\"title\":\"Treasure Island\",\"description\":\"Best seller by R.L.S.\"},{\"id\":\"02\",\"score\":1.0,\"index\":2,\"title\":\"Treasure Island 2.0\",\"description\":\"Humorous remake of the famous best seller\"},{\"id\":\"03\",\"score\":1.0,\"index\":3,\"title\":\"Solr for dummies\",\"description\":\"Get started with solr\"},{\"id\":\"04\",\"score\":1.0,\"index\":4,\"title\":\"Moon landing\",\"description\":\"All facts about Apollo 11, a best seller\"},{\"id\":\"05\",\"score\":1.0,\"index\":5,\"title\":\"Spring Island\",\"description\":\"The perfect island romance..\"},{\"id\":\"06\",\"score\":1.0,\"index\":6,\"title\":\"Refactoring\",\"description\":\"It's about improving the design of existing code.\"},{\"id\":\"07\",\"score\":1.0,\"index\":7,\"title\":\"Baking for dummies\",\"description\":\"Bake your own cookies, on a secret island!\"},{\"id\":\"08\",\"score\":1.0,\"index\":8,\"title\":\"The Pirate Island\",\"description\":\"Oh noes, the pirates are coming!\"},{\"id\":\"09\",\"score\":1.0,\"index\":9,\"title\":\"Blackbeard\",\"description\":\"It's the pirate Edward Teach!\"},{\"id\":\"10\",\"score\":1.0,\"index\":10,\"title\":\"Handling Cookies\",\"description\":\"How to handle cookies in web applications\"}]";
 
         // then
-        given(categories).willReturn(Arrays.asList(category));
-
         this.mockMvc.perform(get("/api/category/all")
             .session(getSession("USER"))
             .header(HttpHeaders.ORIGIN, this.url)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(APPLICATION_XML_UTF8_VALUE))
-            .andExpect(content().xml(responseText));
-        //.andExpect(jsonPath("$", hasSize(1)))
-        //.andExpect(jsonPath("$[0].name", is(category.getTitle())));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().json(responseText));
     }
 
     @Test
     @DisplayName("Test search category by non-existing term")
     public void testSearchByNonExistingTerm() throws Exception {
-        // when
-        given(getCategorySearchService().find("01"))
-            .willReturn(Optional.of(new Category()));
+        // given
+        final String responseText = "[]";
 
         // then
-        this.mockMvc.perform(get("/api/category/search")
+        this.mockMvc.perform(get("/api/category/search/test/1")
             .session(getSession("USER"))
             .header(HttpHeaders.ORIGIN, this.url)
             .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(responseText));
     }
 
     @Test
     @DisplayName("Test search category by term")
     public void testSearchByTerm() throws Exception {
-        // when
-        given(getCategorySearchService().find("01"))
-            .willReturn(Optional.of(new Category()));
+        // given
+        final String responseText = "[]";
 
         // then
-        this.mockMvc.perform(get("/api/category/search/name/1")
+        this.mockMvc.perform(get("/api/category/search/Blackbeard/1")
             .session(getSession("USER"))
             .header(HttpHeaders.ORIGIN, this.url)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string("Hello World"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().json(responseText));
     }
 
     protected UsernamePasswordAuthenticationToken getPrincipal(final String username) {
@@ -201,7 +202,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
     @SuppressWarnings("unchecked")
     private List<Category> getSampleData() {
-        if (getCategorySearchService().find("01").isPresent()) {
+        if (getCategoryService().find("01").isPresent()) {
             log.debug("Data already exists");
             return Collections.emptyList();
         }
@@ -248,7 +249,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         return categories;
     }
 
-    protected CategorySearchService getCategorySearchService() {
-        return this.categorySearchService;
+    protected CategorySearchService getCategoryService() {
+        return this.categoryService;
     }
 }

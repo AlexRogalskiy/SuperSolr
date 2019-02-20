@@ -37,7 +37,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.solr.core.geo.Point;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Custom product document view {@link BaseDocumentView}
@@ -130,43 +133,4 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     @JacksonXmlProperty(localName = MAIN_CATEGORIES_FIELD_NAME)
     @JsonProperty(MAIN_CATEGORIES_FIELD_NAME)
     private final Set<CategoryView> mainCategories = new HashSet<>();
-
-    public void setAttributes(final Collection<? extends AttributeView> attributes) {
-        this.getAttributes().clear();
-        Optional.ofNullable(attributes)
-            .orElseGet(Collections::emptyList)
-            .forEach(attribute -> this.addAttribute(attribute));
-    }
-
-    public void addAttribute(final AttributeView attribute) {
-        if (Objects.nonNull(attribute)) {
-            this.getAttributes().add(attribute);
-        }
-    }
-
-    public void setCategories(final Collection<? extends CategoryView> categories) {
-        this.getCategories().clear();
-        Optional.ofNullable(categories)
-            .orElseGet(Collections::emptyList)
-            .forEach(category -> this.addCategory(category));
-    }
-
-    public void addCategory(final CategoryView category) {
-        if (Objects.nonNull(category)) {
-            this.getCategories().add(category);
-        }
-    }
-
-    public void setMainCategories(final Collection<? extends CategoryView> mainCategories) {
-        this.getMainCategories().clear();
-        Optional.ofNullable(mainCategories)
-            .orElseGet(Collections::emptyList)
-            .forEach(mainCategory -> this.addMainCategory(mainCategory));
-    }
-
-    public void addMainCategory(final CategoryView mainCategory) {
-        if (Objects.nonNull(mainCategory)) {
-            this.getMainCategories().add(mainCategory);
-        }
-    }
 }

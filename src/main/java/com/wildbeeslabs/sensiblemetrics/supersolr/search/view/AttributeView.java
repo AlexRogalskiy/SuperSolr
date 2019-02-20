@@ -36,7 +36,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Custom product document view {@link BaseDocumentView}
@@ -78,17 +79,4 @@ public class AttributeView extends BaseDocumentView<String> implements Exposable
     @JacksonXmlProperty(localName = PRODUCTS_FIELD_NAME)
     @JsonProperty(PRODUCTS_FIELD_NAME)
     private final List<ProductView> products = new ArrayList<>();
-
-    public void setProducts(final Collection<? extends ProductView> products) {
-        this.getProducts().clear();
-        Optional.ofNullable(products)
-            .orElseGet(Collections::emptyList)
-            .forEach(product -> this.addProduct(product));
-    }
-
-    public void addProduct(final ProductView product) {
-        if (Objects.nonNull(product)) {
-            this.getProducts().add(product);
-        }
-    }
 }

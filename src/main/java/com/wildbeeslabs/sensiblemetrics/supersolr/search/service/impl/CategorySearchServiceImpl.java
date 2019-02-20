@@ -106,8 +106,8 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
-    @ApiModelProperty(name = "internal", access = "limited")
-    public HighlightPage<? extends Category> find(final String searchTerm, final Pageable page) {
+    //@ApiModelProperty(name = "internal", access = "limited")
+    public HighlightPage<? extends Category> find(final String collection, final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableCategory.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria titleCriteria = new Criteria(SearchableCategory.TITLE_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(titleCriteria), page);
@@ -115,7 +115,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
             .setSimplePrefix("<highlight>")
             .setSimplePostfix("</highlight>")
             .addField(SearchableCategory.ID_FIELD_NAME, SearchableCategory.TITLE_FIELD_NAME));
-        return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Category.class);
+        return getSolrTemplate().queryForHighlightPage(collection, query, Category.class);
     }
 
     @Override

@@ -154,6 +154,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<? extends Product> findByLocationNear(final Point location, final Distance distance, final Pageable pageable) {
         return getRepository().findByLocation(location, distance, pageable);
     }
@@ -225,7 +226,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     @Override
     @Transactional(readOnly = true)
     @ApiModelProperty(name = "internal", access = "limited")
-    public HighlightPage<? extends Product> find(final String searchTerm, final Pageable page) {
+    public HighlightPage<? extends Product> find(final String collection, final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableProduct.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria pageTitleCriteria = new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria nameCriteria = new Criteria(SearchableProduct.NAME_FIELD_NAME).fuzzy(searchTerm);
@@ -234,7 +235,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
             .setSimplePrefix("<highlight>")
             .setSimplePostfix("</highlight>")
             .addField(SearchableProduct.ID_FIELD_NAME, SearchableProduct.PAGE_TITLE_FIELD_NAME, SearchableProduct.NAME_FIELD_NAME));
-        return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Product.class);
+        return getSolrTemplate().queryForHighlightPage(collection, query, Product.class);
     }
 
     @Override

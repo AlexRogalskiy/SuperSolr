@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.OrderSearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableOrder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.OrderSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
 import io.swagger.annotations.*;
@@ -95,6 +96,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         try {
             return ResponseEntity
                 .ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(mapAll(this.getAllItems(), OrderView.class));
         } catch (EmptyContentException ex) {
             return ResponseEntity
@@ -131,6 +133,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         return ResponseEntity
             .created(uri)
             .header(HttpHeaders.LOCATION, uri.toString())
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .build();
     }
 
@@ -156,6 +159,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         log.info("Fetching order by ID: {}", id);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(map(this.getItem(id), OrderView.class));
     }
 
@@ -179,6 +183,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         log.info("Updating order by view: {}", orderDto);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(map(this.updateItem(orderDto.getId(), orderDto, Order.class), OrderView.class));
     }
 
@@ -203,6 +208,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         log.info("Updating order by ID: {}", id);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(map(this.deleteItem(id), OrderView.class));
     }
 
@@ -250,6 +256,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         log.info("Fetching order by description: {}, page: {}", description, page);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(mapAll(getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
     }
 
@@ -275,7 +282,8 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         log.info("Fetching order by term: {}, page: {}", searchTerm, page);
         return ResponseEntity
             .ok()
-            .body(mapAll(getSearchService().find(searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .body(mapAll(getSearchService().find(SearchableOrder.COLLECTION_ID, searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
     }
 
     @Override

@@ -27,8 +27,9 @@ import com.google.common.net.HttpHeaders;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
@@ -36,9 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpSession;
@@ -53,12 +54,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Product controller implementation unit test {@link BaseTest}
@@ -89,8 +91,8 @@ public class ProductSearchControllerImplTest extends BaseTest {
     //@Resource
     //private FilterChainProxy springSecurityFilterChain;
 
-    @MockBean
-    private ProductSearchService productSearchService;
+    @Autowired
+    private ProductSearchService productService;
 
 //    @Before
 //    public void before() {
@@ -100,22 +102,44 @@ public class ProductSearchControllerImplTest extends BaseTest {
 //            .build();
 //    }
 
+    @Before
+    public void before() {
+        getProductService().save(getSampleData());
+    }
+
+    @After
+    public void after() {
+        getProductService().deleteAll();
+    }
+
     @Test
     @DisplayName("Test search all products by rest template")
     @SuppressWarnings("unchecked")
     public void testSearch() {
-        final List<? extends ProductView> list = new ArrayList<>();
-        final ResponseEntity<? extends List<ProductView>> entity = (ResponseEntity<? extends List<ProductView>>) this.restTemplate.getForEntity(this.url, list.getClass());
+        // given
+        final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
+        final Map<String, String> params = new HashMap<>();
+        params.put("page", "0");
+        params.put("size", "5");
 
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
-        assertEquals("Test", entity.getBody());
+        // when
+        final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, "/api/product/all"), HttpMethod.GET, requestEntity, List.class, params);
+
+        // then
+        assertThat(response.getBody(), is(nullValue()));
+        //assertEquals(HttpStatus.OK, response.getStatusCode());
+        //assertEquals("Test", response.getBody());
     }
 
     @Test
     @DisplayName("Test search products by non-existing url")
     @SuppressWarnings("unchecked")
     public void testNotFound() throws Exception {
-        this.mockMvc.perform(get("/api/products")
+        // when
+        final String urlTemplate = "/api/products";
+
+        // then
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
             .header(HttpHeaders.ORIGIN, this.url)
             .contentType(MediaType.APPLICATION_JSON))
@@ -126,29 +150,49 @@ public class ProductSearchControllerImplTest extends BaseTest {
     @DisplayName("Test search all products")
     @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
-        final Product product = new Product();
-        final Iterable<Product> products = (Iterable<Product>) getProductSearchService().findAll();
-        given(products).willReturn(Arrays.asList(product));
+        // given
+        final String responseText = "";
 
-        this.mockMvc.perform(get("/api/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.ORIGIN, this.url))
+        // then
+        this.mockMvc.perform(get("/api/product/all")
+            .session(getSession("USER"))
+            .header(HttpHeaders.ORIGIN, this.url)
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].name", is(product.getName())));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().json(responseText));
     }
 
     @Test
-    @DisplayName("Test search product by id")
-    public void testSearchById() throws Exception {
-        given(getProductSearchService().find("01"))
-            .willReturn(Optional.of(new Product()));
+    @DisplayName("Test search product by non-existing term")
+    public void testSearchByNonExistingTerm() throws Exception {
+        // given
+        final String responseText = "[]";
 
-        this.mockMvc.perform(get("/api/product/search")
-            .contentType(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.ORIGIN, this.url))
+        // then
+        this.mockMvc.perform(get("/api/product/search/test/1")
+            .session(getSession("USER"))
+            .header(HttpHeaders.ORIGIN, this.url)
+            .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string("Hello World"));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(responseText));
+    }
+
+    @Test
+    @DisplayName("Test search product by term")
+    public void testSearchById() throws Exception {
+        // given
+        final String responseText = "[]";
+
+        // then
+        this.mockMvc.perform(get("/api/product/search/Blackbeard/1")
+            .session(getSession("USER"))
+            .header(HttpHeaders.ORIGIN, this.url)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().string(responseText));
     }
 
     protected UsernamePasswordAuthenticationToken getPrincipal(final String username) {
@@ -173,7 +217,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
 
     @SuppressWarnings("unchecked")
     private List<Product> getSampleData() {
-        if (getProductSearchService().find("01").isPresent()) {
+        if (getProductService().find("01").isPresent()) {
             log.debug("Data already exists");
             return Collections.emptyList();
         }
@@ -220,7 +264,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         return products;
     }
 
-    protected ProductSearchService getProductSearchService() {
-        return this.productSearchService;
+    protected ProductSearchService getProductService() {
+        return this.productService;
     }
 }

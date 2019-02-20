@@ -27,9 +27,9 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.CategorySearchContr
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.BadRequestException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -42,6 +42,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,6 +108,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         return ResponseEntity
             .ok()
             .headers(getHeaders(categoryPage))
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(mapAll(categoryPage.getContent(), CategoryView.class));
     }
 
@@ -135,6 +137,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         final FacetPage<? extends Category> categoryPage = getSearchService().findByAutoCompleteTitleFragment(searchTerm, pageable);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .headers(getHeaders(categoryPage))
             .body(mapAll(getResultSetByTerm(categoryPage, searchTerm), CategoryView.class));
     }
@@ -164,9 +167,10 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         final @RequestParam(defaultValue = DEFAULT_PAGE_OFFSET_VALUE) int offset,
         final @RequestParam(defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
         log.info("Fetching categories by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
-        final HighlightPage<Category> page = (HighlightPage<Category>) findBy(searchTerm, offset, limit);
+        final HighlightPage<Category> page = (HighlightPage<Category>) findBy(SearchableCategory.COLLECTION_ID, searchTerm, offset, limit);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .headers(getHeaders(page))
             .body(page
                 .stream()
@@ -194,6 +198,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         try {
             return ResponseEntity
                 .ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(mapAll(this.getAllItems(), CategoryView.class));
         } catch (EmptyContentException ex) {
             return ResponseEntity
@@ -225,10 +230,11 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         log.info("Fetching category by ID: {}", id);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(map(this.getItem(id), CategoryView.class));
     }
 
-    @GetMapping("/search/{searchTerm}/{page}")
+    @GetMapping("/search/{term}/{page}")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -244,15 +250,20 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         @ApiResponse(code = 400, message = "Invalid search term value")
     })
     public ResponseEntity<?> findBySearchTerm(
-        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable String searchTerm,
+        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable("term") String searchTerm,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching product by search term: {}, page: {}", searchTerm, page);
+        final HighlightPage<? extends Category> categoryPage = getSearchService().find(SearchableCategory.COLLECTION_ID, searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE));
+        if (Objects.isNull(categoryPage)) {
+            throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
+        }
         return ResponseEntity
             .ok()
-            .body(mapAll(getSearchService().find(searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), ProductView.class));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .body(mapAll(categoryPage.getContent(), CategoryView.class));
     }
 
-    @GetMapping("/desc/{description}/{page}")
+    @GetMapping("/desc/{desc}/{page}")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -268,12 +279,17 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         @ApiResponse(code = 400, message = "Invalid description value")
     })
     public ResponseEntity<?> findByDescription(
-        final @ApiParam(value = "Description to filter by", required = true) @PathVariable String description,
+        final @ApiParam(value = "Description to filter by", required = true) @PathVariable("desc") String description,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching category by description: {}, page: {}", description, page);
+        final Page<? extends Category> categoryPage = getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE));
+        if (Objects.isNull(categoryPage)) {
+            throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
+        }
         return ResponseEntity
             .ok()
-            .body(mapAll(getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), CategoryView.class));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .body(mapAll(categoryPage.getContent(), CategoryView.class));
     }
 
     protected CategorySearchService getSearchService() {

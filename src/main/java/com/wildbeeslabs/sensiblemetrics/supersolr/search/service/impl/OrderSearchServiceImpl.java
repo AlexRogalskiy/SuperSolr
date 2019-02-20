@@ -67,7 +67,7 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
 
     @Override
     @Transactional(readOnly = true)
-    public HighlightPage<? extends Order> find(final String searchTerm, final Pageable page) {
+    public HighlightPage<? extends Order> find(final String collection, final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableOrder.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria descriptionCriteria = new Criteria(SearchableOrder.DESCRIPTION_FIELD_NAME).fuzzy(searchTerm);
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(descriptionCriteria), page);
@@ -75,7 +75,7 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
             .setSimplePrefix("<highlight>")
             .setSimplePostfix("</highlight>")
             .addField(SearchableOrder.ID_FIELD_NAME, SearchableOrder.DESCRIPTION_FIELD_NAME));
-        return getSolrTemplate().queryForHighlightPage(COLLECTION_ID, query, Order.class);
+        return getSolrTemplate().queryForHighlightPage(collection, query, Order.class);
     }
 
     @Override

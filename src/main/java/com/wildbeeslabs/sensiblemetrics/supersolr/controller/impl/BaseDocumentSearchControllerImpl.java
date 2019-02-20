@@ -125,10 +125,11 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
     }
 
     protected HighlightPage<? extends E> findBy(
+        final String collection,
         final String searchTerm,
         int offset,
         int limit) {
-        return getSearchService().find(searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
+        return getSearchService().find(collection, searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
     }
 
     protected abstract BaseDocumentSearchService<E, ID> getSearchService();

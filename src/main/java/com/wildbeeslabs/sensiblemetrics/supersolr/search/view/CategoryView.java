@@ -35,7 +35,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Custom category document view {@link BaseDocumentView}
@@ -75,30 +76,4 @@ public class CategoryView extends BaseDocumentView<String> implements ExposableC
     @JacksonXmlProperty(localName = MAIN_PRODUCTS_FIELD_NAME)
     @JsonProperty(MAIN_PRODUCTS_FIELD_NAME)
     private final Set<ProductView> mainProducts = new HashSet<>();
-
-    public void setProducts(final Collection<? extends ProductView> products) {
-        this.getProducts().clear();
-        Optional.ofNullable(products)
-                .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
-    }
-
-    public void addProduct(final ProductView product) {
-        if (Objects.nonNull(product)) {
-            this.getProducts().add(product);
-        }
-    }
-
-    public void setMainProducts(final Collection<? extends ProductView> mainProducts) {
-        this.getMainProducts().clear();
-        Optional.ofNullable(mainProducts)
-                .orElseGet(Collections::emptyList)
-                .forEach(mainProduct -> this.addMainProduct(mainProduct));
-    }
-
-    public void addMainProduct(final ProductView mainProduct) {
-        if (Objects.nonNull(mainProduct)) {
-            this.getMainProducts().add(mainProduct);
-        }
-    }
 }

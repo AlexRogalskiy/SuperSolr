@@ -67,7 +67,7 @@ public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extend
 
     void saveOrUpdate(final E target, final Class<? extends E> clazz);
 
-    HighlightPage<? extends E> find(final String searchTerm, final Pageable page);
+    HighlightPage<? extends E> find(final String collection, final String searchTerm, final Pageable page);
 
     Page<? extends E> findByQuery(final String collection, final Query query);
 

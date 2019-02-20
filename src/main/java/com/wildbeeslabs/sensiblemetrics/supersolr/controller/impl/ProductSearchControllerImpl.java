@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.ProductSearchContro
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.BadRequestException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import io.swagger.annotations.*;
@@ -43,6 +44,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +67,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(ProductSearchController.CONTROLLER_ID)
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 @ApiModel(value = "ProductSearchController", description = "Product search controller documentation")
 @Api(value = "/api/product", description = "Operations on product documents", authorizations = {
     @Authorization(value = "order_store_auth",
@@ -109,6 +111,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         return ResponseEntity
             .ok()
             .headers(getHeaders(productPage))
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(mapAll(productPage.getContent(), ProductView.class));
     }
 
@@ -138,6 +141,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         return ResponseEntity
             .ok()
             .headers(getHeaders(productPage))
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(mapAll(getResultSetByTerm(productPage, searchTerm), ProductView.class));
     }
 
@@ -166,10 +170,11 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         final @RequestParam(defaultValue = DEFAULT_PAGE_OFFSET_VALUE) int offset,
         final @RequestParam(defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
         log.info("Fetching products by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
-        final HighlightPage<Product> page = (HighlightPage<Product>) findBy(searchTerm, offset, limit);
+        final HighlightPage<Product> page = (HighlightPage<Product>) findBy(SearchableProduct.COLLECTION_ID, searchTerm, offset, limit);
         return ResponseEntity
             .ok()
             .headers(getHeaders(page))
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(page
                 .stream()
                 .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
@@ -196,6 +201,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         try {
             return ResponseEntity
                 .ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(mapAll(this.getAllItems(), ProductView.class));
         } catch (EmptyContentException ex) {
             return ResponseEntity
@@ -204,7 +210,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         }
     }
 
-    @GetMapping("/desc/{description}/{page}")
+    @GetMapping("/desc/{desc}/{page}")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -220,15 +226,20 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         @ApiResponse(code = 400, message = "Invalid description value")
     })
     public ResponseEntity<?> findByDescription(
-        final @ApiParam(value = "Description to filter by", required = true) @PathVariable String description,
+        final @ApiParam(value = "Description to filter by", required = true) @PathVariable("desc") String description,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching product by description: {}, page: {}", description, page);
+        final Page<? extends Product> productPage = getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE));
+        if (Objects.isNull(productPage)) {
+            throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
+        }
         return ResponseEntity
             .ok()
-            .body(mapAll(getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), ProductView.class));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .body(mapAll(productPage.getContent(), ProductView.class));
     }
 
-    @GetMapping("/search/{searchTerm}/{page}")
+    @GetMapping("/search/{term}/{page}")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -244,15 +255,20 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         @ApiResponse(code = 400, message = "Invalid search term value")
     })
     public ResponseEntity<?> findBySearchTerm(
-        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable String searchTerm,
+        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable("term") String searchTerm,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching product by term: {}, page: {}", searchTerm, page);
+        final HighlightPage<? extends Product> productPage = getSearchService().find(SearchableProduct.COLLECTION_ID, searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE));
+        if (Objects.isNull(productPage)) {
+            throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
+        }
         return ResponseEntity
             .ok()
-            .body(mapAll(getSearchService().find(searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), ProductView.class));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .body(mapAll(productPage.getContent(), ProductView.class));
     }
 
-    @GetMapping(value = "/location")
+    @GetMapping("/location")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -276,6 +292,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         log.info("Fetching products by location: {}, distance: {}, page: {}", location, distance, page);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(getSearchService().findByLocationNear(location, distance.orElse(DEFAULT_LOCATION_DISTANCE), PageRequest.of(page, DEFAULT_PAGE_SIZE)));
     }
 
@@ -302,6 +319,7 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         log.info("Fetching product by ID: {}", id);
         return ResponseEntity
             .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(map(this.getItem(id), ProductView.class));
     }
 

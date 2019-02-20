@@ -244,7 +244,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
         final String searchTerm = "cookies";
 
         // when
-        final HighlightPage<? extends Category> categoryHighlightPage = getCategoryService().find(searchTerm, PageRequest.of(0, 10));
+        final HighlightPage<? extends Category> categoryHighlightPage = getCategoryService().find(Category.COLLECTION_ID, searchTerm, PageRequest.of(0, 10));
         categoryHighlightPage.getContent();
 
         // then
