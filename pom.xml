@@ -144,8 +144,11 @@
 
         <rest-assured.version>2.9.0</rest-assured.version>
         <junit.version>4.12</junit.version>
+        <junit-jupiter.version>5.3.2</junit-jupiter.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>2.23.4</mockito.version>
+        <zonky-test.version>1.3.4</zonky-test.version>
+
         <c3p0.version>0.9.1.2</c3p0.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.4</lombok.version>
@@ -405,7 +408,13 @@
         <dependency>
             <groupId>io.zonky.test</groupId>
             <artifactId>embedded-database-spring-test</artifactId>
-            <version>1.3.4</version>
+            <version>${zonky-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 

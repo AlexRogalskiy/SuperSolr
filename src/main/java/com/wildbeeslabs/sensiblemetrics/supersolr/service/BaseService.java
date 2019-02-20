@@ -21,24 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service;
+
+import java.io.Serializable;
+import java.util.Optional;
 
 /**
- * Persistable audit model definition
+ * Custom base service declaration
+ *
+ * @param <E>  type of document
+ * @param <ID> type of document identifier {@link Serializable}
  */
-public interface PersistableAuditModel {
+public interface BaseService<E, ID extends Serializable> {
 
-    /**
-     * Default document ID
-     */
-    String MODEL_ID = "AuditModel";
+    Iterable<? extends E> findAll();
 
-    /**
-     * Default field names
-     */
-    String CREATED_FIELD_NAME = "created";
-    String CHANGED_FIELD_NAME = "changed";
-    String CREATED_BY_FIELD_NAME = "createdBy";
-    String CHANGED_BY_FIELD_NAME = "changedBy";
-    String VERSION_BY_FIELD_NAME = "version";
+    Iterable<? extends E> findAll(final Iterable<ID> ids);
+
+    Optional<E> find(final ID id);
+
+    <S extends E> S save(final S entity);
+
+    //void saveAll(final Iterable<? extends E> target);
+
+    boolean exists(final ID id);
+
+    <S extends E> Iterable<S> save(final Iterable<S> entities);
+
+    void delete(final E target);
+
+    void deleteAll(final Iterable<? extends E> target);
+
+    void deleteAll();
 }

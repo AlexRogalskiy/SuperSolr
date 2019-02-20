@@ -28,7 +28,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentExceptio
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.OrderSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -37,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +43,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
+
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.mapAll;
 
 /**
  * Custom order search controller implementation {@link BaseDocumentSearchControllerImpl}
@@ -91,9 +93,13 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     public ResponseEntity<?> getAll() {
         log.info("Fetching all orders");
         try {
-            return new ResponseEntity<>(MapperUtils.mapAll(this.getAllItems(), OrderView.class), HttpStatus.OK);
+            return ResponseEntity
+                .ok()
+                .body(mapAll(this.getAllItems(), OrderView.class));
         } catch (EmptyContentException ex) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity
+                .noContent()
+                .build();
         }
     }
 
@@ -119,11 +125,13 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     })
     public ResponseEntity<?> createOrder(final @ApiParam(value = "Order document that needs to be added to the store", required = true) @Valid @RequestBody OrderView orderDto) {
         log.info("Creating new order by view: {}", orderDto);
-        final OrderView orderDtoCreated = MapperUtils.map(this.createItem(orderDto, Order.class), OrderView.class);
+        final OrderView orderDtoCreated = map(this.createItem(orderDto, Order.class), OrderView.class);
         final UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path(this.request.getRequestURI() + "/{id}").buildAndExpand(orderDtoCreated.getId()).toUri());
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        final URI uri = ucBuilder.path(this.request.getRequestURI() + "/{id}").buildAndExpand(orderDtoCreated.getId()).toUri();
+        return ResponseEntity
+            .created(uri)
+            .header(HttpHeaders.LOCATION, uri.toString())
+            .build();
     }
 
     @GetMapping("/{id}")
@@ -146,7 +154,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     })
     public ResponseEntity<?> getById(final @ApiParam(value = "ID of order document that needs to be fetched", allowableValues = "range[1,infinity]", required = true) @PathVariable String id) {
         log.info("Fetching order by ID: {}", id);
-        return new ResponseEntity<>(MapperUtils.map(this.getItem(id), OrderView.class), HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(map(this.getItem(id), OrderView.class));
     }
 
     @PutMapping("/")
@@ -167,8 +177,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     })
     public ResponseEntity<?> updateOrder(final @ApiParam(value = "Order document that needs to be updated", required = true) @Valid @RequestBody OrderView orderDto) {
         log.info("Updating order by view: {}", orderDto);
-        final OrderView orderDtoUpdated = MapperUtils.map(this.updateItem(orderDto.getId(), orderDto, Order.class), OrderView.class);
-        return new ResponseEntity<>(orderDtoUpdated, HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(map(this.updateItem(orderDto.getId(), orderDto, Order.class), OrderView.class));
     }
 
     @DeleteMapping("/{id}")
@@ -190,8 +201,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         final @ApiParam() String apiKey,
         final @ApiParam(value = "ID of the order that needs to be deleted", allowableValues = "range[1,infinity]", required = true) @PathVariable String id) {
         log.info("Updating order by ID: {}", id);
-        final OrderView orderDtoDeleted = MapperUtils.map(this.deleteItem(id), OrderView.class);
-        return new ResponseEntity<>(orderDtoDeleted, HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(map(this.deleteItem(id), OrderView.class));
     }
 
     @DeleteMapping("/delete-all")
@@ -211,7 +223,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     public ResponseEntity<?> deleteAll(final @ApiParam() String apiKey) {
         log.info("Deleting all orders");
         this.deleteAllItems();
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .build();
     }
 
     @GetMapping("/desc/{description}/{page}")
@@ -234,8 +248,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         final @ApiParam(value = "Description search query to filter by", required = true) @PathVariable String description,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching order by description: {}, page: {}", description, page);
-        final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getSearchService().findByDescription(description, PageRequest.of(page, 2)).getContent(), OrderView.class);
-        return new ResponseEntity<>(orderDtos, HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(mapAll(getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
     }
 
     @GetMapping("/search/{searchTerm}/{page}")
@@ -258,8 +273,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         final @ApiParam(value = "Search term to filter by", required = true) @PathVariable String searchTerm,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching order by term: {}, page: {}", searchTerm, page);
-        final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getSearchService().find(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
-        return new ResponseEntity<>(orderDtos, HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(mapAll(getSearchService().find(searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
     }
 
     @Override

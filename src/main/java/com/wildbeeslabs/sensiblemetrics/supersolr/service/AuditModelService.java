@@ -21,43 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.AuditDocumentView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
- * Audit document search controller declaration
+ * Custom audit document service declaration
  *
- * @param <E>  type of audit document {@link AuditDocument}
- * @param <T>  type of audit document view {@link AuditDocumentView}
+ * @param <E>  type of audit document {@link AuditModel}
  * @param <ID> type of audit document identifier {@link Serializable}
- * @author Alex
- * @version 1.0.0
  */
-public interface AuditDocumentSearchController<E extends AuditDocument, T extends AuditDocumentView, ID extends Serializable> extends BaseSearchController<E, T, ID> {
+public interface AuditModelService<E extends AuditModel, ID extends Serializable> extends BaseService<E, ID> {
 
-    /**
-     * Default token expire period
-     */
-    int DEFAULT_TOKEN_EXPIRE_PERIOD = 5;
-    /**
-     * Default rate limit
-     */
-    int DEFAULT_RATE_LIMIT = 5000;
+    List<? extends E> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
-    /**
-     * The HTTP {@code X-Total-Elements} header field name
-     */
-    String DEFAULT_TOTAL_ELEMENTS_HEADER = "X-Total-Elements";
-    /**
-     * The HTTP {@code X-Expires-After} header field name
-     */
-    String DEFAULT_EXPIRES_AFTER_HEADER = "X-Expires-After";
-    /**
-     * The HTTP {@code X-Rate-Limit} header field name
-     */
-    String DEFAULT_RATE_LIMIT_HEADER = "X-Rate-Limit";
+    List<? extends E> findByChangedBetween(final Date dateFrom, final Date dateTo);
 }

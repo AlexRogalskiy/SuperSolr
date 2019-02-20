@@ -21,43 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
-
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.AuditDocumentView;
-
-import java.io.Serializable;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Audit document search controller declaration
- *
- * @param <E>  type of audit document {@link AuditDocument}
- * @param <T>  type of audit document view {@link AuditDocumentView}
- * @param <ID> type of audit document identifier {@link Serializable}
- * @author Alex
- * @version 1.0.0
+ * Persistable role model definition
  */
-public interface AuditDocumentSearchController<E extends AuditDocument, T extends AuditDocumentView, ID extends Serializable> extends BaseSearchController<E, T, ID> {
+public interface PersistableRole {
 
     /**
-     * Default token expire period
+     * Default document ID
      */
-    int DEFAULT_TOKEN_EXPIRE_PERIOD = 5;
+    String MODEL_ID = "Role";
     /**
-     * Default rate limit
+     * Default table name
      */
-    int DEFAULT_RATE_LIMIT = 5000;
+    String TABlE_NAME = "roles";
 
     /**
-     * The HTTP {@code X-Total-Elements} header field name
+     * Default field names
      */
-    String DEFAULT_TOTAL_ELEMENTS_HEADER = "X-Total-Elements";
+    String ID_FIELD_NAME = "id";
+    String ROLE_ID_FIELD_NAME = "roleId";
+    String ENABLED_FIELD_NAME = "enabled";
+    String CODE_FIELD_NAME = "code";
     /**
-     * The HTTP {@code X-Expires-After} header field name
+     * Default coupled table names
      */
-    String DEFAULT_EXPIRES_AFTER_HEADER = "X-Expires-After";
-    /**
-     * The HTTP {@code X-Rate-Limit} header field name
-     */
-    String DEFAULT_RATE_LIMIT_HEADER = "X-Rate-Limit";
+    String ROLE_ACCOUNT_TABLE_NAME = "Role_Account";
 }

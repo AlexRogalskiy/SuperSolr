@@ -28,7 +28,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseSearchControlle
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseSearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,6 +42,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.mapAll;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
@@ -82,7 +83,7 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
     protected E createItem(final T itemDto,
                            final Class<? extends E> entityClass) {
         log.debug("Creating new item: {}", itemDto);
-        final E itemEntity = MapperUtils.map(itemDto, entityClass);
+        final E itemEntity = map(itemDto, entityClass);
 //        if (getSearchService().exists(itemEntity)) {
 //            throw new ResourceAlreadyExistException(formatMessage(getMessageSource(), "error.already.exist.item"));
 //        }
@@ -94,13 +95,10 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
                            final T itemDto,
                            final Class<? extends E> entityClass) {
         log.info("Updating item by ID: {}, itemDto: {}", id, itemDto);
-        final Optional<? extends E> currentItem = getSearchService().find(id);
-        if (!currentItem.isPresent()) {
-            throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
-        }
-        final E itemEntity = MapperUtils.map(itemDto, entityClass);
+        final E currentItem = getSearchService().find(id).orElseThrow(() -> new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id)));
+        final E itemEntity = map(itemDto, entityClass);
         getSearchService().save(itemEntity);
-        return currentItem.get();
+        return currentItem;
     }
 
     protected E deleteItem(final ID id) {
@@ -116,7 +114,7 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
     protected void deleteItems(final List<? extends T> itemDtos,
                                final Class<? extends E> entityClass) {
         log.debug("Deleting items: {}", StringUtils.join(itemDtos, ", "));
-        final List<? extends E> items = MapperUtils.mapAll(itemDtos, entityClass);
+        final List<? extends E> items = mapAll(itemDtos, entityClass);
         getSearchService().deleteAll(items);
     }
 

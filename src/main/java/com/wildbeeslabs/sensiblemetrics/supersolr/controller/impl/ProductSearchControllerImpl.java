@@ -24,11 +24,11 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.ProductSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.BadRequestException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,15 +43,19 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.mapAll;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
  * Custom product search controller implementation {@link BaseDocumentSearchControllerImpl}
@@ -99,7 +103,13 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
                                     final HttpServletRequest request) {
         log.info("Fetching products by query: {}", query);
         final Page<? extends Product> productPage = getSearchService().findByName(query, pageable);
-        return new ResponseEntity<>(MapperUtils.mapAll(productPage.getContent(), ProductView.class), getHeaders(productPage), HttpStatus.OK);
+        if (Objects.isNull(productPage)) {
+            throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
+        }
+        return ResponseEntity
+            .ok()
+            .headers(getHeaders(productPage))
+            .body(mapAll(productPage.getContent(), ProductView.class));
     }
 
     @GetMapping("/autocomplete")
@@ -125,7 +135,10 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
                                           final @PageableDefault(size = 1) Pageable pageable) {
         log.info("Fetching products by autocomplete search term: {}", searchTerm);
         final FacetPage<? extends Product> productPage = getSearchService().findByAutoCompleteNameFragment(searchTerm, pageable);
-        return new ResponseEntity<>(MapperUtils.mapAll(getResultSetByTerm(productPage, searchTerm), ProductView.class), getHeaders(productPage), HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .headers(getHeaders(productPage))
+            .body(mapAll(getResultSetByTerm(productPage, searchTerm), ProductView.class));
     }
 
     @GetMapping("/page")
@@ -154,10 +167,13 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         final @RequestParam(defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
         log.info("Fetching products by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
         final HighlightPage<Product> page = (HighlightPage<Product>) findBy(searchTerm, offset, limit);
-        return new ResponseEntity<>(page
-            .stream()
-            .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
-            .collect(Collectors.toList()), getHeaders(page), HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .headers(getHeaders(page))
+            .body(page
+                .stream()
+                .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/all")
@@ -178,9 +194,13 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
     public ResponseEntity<?> findAll() {
         log.info("Fetching all products");
         try {
-            return new ResponseEntity<>(MapperUtils.mapAll(this.getAllItems(), ProductView.class), HttpStatus.OK);
+            return ResponseEntity
+                .ok()
+                .body(mapAll(this.getAllItems(), ProductView.class));
         } catch (EmptyContentException ex) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity
+                .noContent()
+                .build();
         }
     }
 
@@ -203,8 +223,9 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         final @ApiParam(value = "Description to filter by", required = true) @PathVariable String description,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching product by description: {}, page: {}", description, page);
-        final List<? extends ProductView> productViews = MapperUtils.mapAll(getSearchService().findByDescription(description, PageRequest.of(page, 2)).getContent(), ProductView.class);
-        return new ResponseEntity<>(productViews, HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(mapAll(getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), ProductView.class));
     }
 
     @GetMapping("/search/{searchTerm}/{page}")
@@ -226,8 +247,9 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         final @ApiParam(value = "Search term to filter by", required = true) @PathVariable String searchTerm,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching product by term: {}, page: {}", searchTerm, page);
-        final List<? extends ProductView> productViews = MapperUtils.mapAll(getSearchService().find(searchTerm, PageRequest.of(page, 2)).getContent(), ProductView.class);
-        return new ResponseEntity<>(productViews, HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(mapAll(getSearchService().find(searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), ProductView.class));
     }
 
     @GetMapping(value = "/location")
@@ -252,8 +274,9 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         final @RequestParam Optional<Distance> distance,
         final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching products by location: {}, distance: {}, page: {}", location, distance, page);
-        final Page<? extends Product> productPage = getSearchService().findByLocationNear(location, distance.orElse(DEFAULT_LOCATION_DISTANCE), PageRequest.of(page, 2));
-        return new ResponseEntity<>(MapperUtils.mapAll(productPage.getContent(), ProductView.class), getHeaders(productPage), HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(getSearchService().findByLocationNear(location, distance.orElse(DEFAULT_LOCATION_DISTANCE), PageRequest.of(page, DEFAULT_PAGE_SIZE)));
     }
 
     @GetMapping("/{id}")
@@ -277,7 +300,9 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         final @ApiParam(value = "ID of the order that needs to be fetched", allowableValues = "range[1,infinity]", required = true) @PathVariable("id") String id,
         final HttpServletRequest request) {
         log.info("Fetching product by ID: {}", id);
-        return new ResponseEntity<>(MapperUtils.map(this.getItem(id), ProductView.class), HttpStatus.OK);
+        return ResponseEntity
+            .ok()
+            .body(map(this.getItem(id), ProductView.class));
     }
 
     protected ProductSearchService getSearchService() {

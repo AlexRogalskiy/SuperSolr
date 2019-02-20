@@ -41,15 +41,15 @@ import java.util.concurrent.CompletableFuture;
 @NoRepositoryBean
 public interface AuditModelRepository<E extends AuditModel, ID extends Serializable> extends BaseJpaRepository<E, ID> {
 
-    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdAt <= ?1")
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.created <= ?1")
     @Async
     CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date date);
 
-    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdAt > ?1")
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.created > ?1")
     @Async
     CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date date);
 
-    //@Query("SELECT e FROM #{#entityName} e WHERE e.createdAt > ?1 AND e.createdAt <= ?2")
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.created > ?1 AND e.created <= ?2")
     @Async
     CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
@@ -60,4 +60,8 @@ public interface AuditModelRepository<E extends AuditModel, ID extends Serializa
     //@Query("SELECT e FROM #{#entityName} e WHERE e.changedBy = ?1")
     @Async
     CompletableFuture<List<? extends E>> findByChangedByIgnoreCase(final String changedBy);
+
+    //@Query("SELECT e FROM #{#entityName} e WHERE e.changed > ?1 AND e.changed <= ?2")
+    @Async
+    CompletableFuture<List<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
 }

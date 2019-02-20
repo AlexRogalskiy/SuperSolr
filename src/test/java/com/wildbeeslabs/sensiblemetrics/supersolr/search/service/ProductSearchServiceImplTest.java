@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
 import com.google.common.collect.Lists;
-import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.utils.OffsetPageRequest;
@@ -33,6 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
@@ -58,13 +59,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
- * Product service implementation unit test {@link BaseDocumentTest}
+ * Product service implementation unit test {@link BaseTest}
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureTestEntityManager
-public class ProductSearchServiceImplTest extends BaseDocumentTest {
+public class ProductSearchServiceImplTest extends BaseTest {
 
     @Autowired
     private ProductSearchService productService;
@@ -80,6 +81,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search all products")
     public void testFindAll() {
         // when
         final Iterable<? extends Product> productIterable = getProductService().findAll();
@@ -91,6 +93,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by ids")
     public void testFindAllByIds() {
         // given
         final List<String> productIds = Arrays.asList("01", "02", "03");
@@ -105,6 +108,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by non-existing name")
     public void testFindByNonExistingName() {
         // when
         final Page<? extends Product> productPage = getProductService().findByName("Test", OffsetPageRequest.builder().offset(0).limit(10).build());
@@ -114,6 +118,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by name")
     public void testFindByName() {
         // given
         final String[] idsToCheck = {"06", "10"};
@@ -133,6 +138,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by query and criteria")
     public void testFindByQueryAndCriteria() {
         // given
         final String searchTerms = "Name string";
@@ -157,6 +163,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by simple query and criteria")
     public void testFindBySimpleQueryAndCriteria() {
         // given
         final String searhTerms = "New Page title";
@@ -177,6 +184,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by description")
     public void testFindByDescription() {
         // given
         final String[] idsToCheck = {"04"};
@@ -191,6 +199,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by names")
     public void testFindByNames() {
         // given
         final String searchTerm = "Name collection";
@@ -211,6 +220,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by non-existing autocomplete name fragment")
     public void testFindByNonExistingAutoCompleteNameFragment() {
         // given
         final String searchTerms = "Is";
@@ -223,6 +233,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by autocomplete name fragment")
     public void testFindByAutoCompleteNameFragment() {
         // given
         final String searchTerms = "New";
@@ -244,6 +255,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by location query string")
     public void testFindByLocationQueryString() {
         // given
         final Point location = new Point(15.10, -76.10);
@@ -265,6 +277,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by non-distant location point")
     public void testFindByNonDistantLocationPoint() {
         // given
         final Point location = new Point(10, 20);
@@ -284,6 +297,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search products by location near")
     public void testFindByLocationNear() {
         // given
         final Box locationBox = new Box(new Point(20, -101), new Point(23, -90));
@@ -304,6 +318,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
 
     @Test
     @Ignore("GeoResults is null or not supported yet")
+    @DisplayName("Test search products by geolocation near")
     public void testFindByGeoLocationNear() {
         // given
         final Point location = new Point(52.51790, 13.41239);
@@ -322,6 +337,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by non-existing rating")
     public void testFindByNonExistingRating() {
         // given
         final Integer rating = 10;
@@ -334,6 +350,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by rating")
     public void testFindByRating() {
         // given
         final Integer rating = 7;
@@ -351,6 +368,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by lock type")
     public void testFindByLockType() {
         // given
         final Integer lockType = 1;
@@ -368,6 +386,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by non-existing name or description")
     public void testFindByNonExistingNameOrDescription() {
         // given
         final String searchTerm = "Test";
@@ -382,6 +401,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by name or description")
     public void testFindByNameOrDescription() {
         // given
         final String searchTerm = "Short";
@@ -398,6 +418,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by name or category")
     public void testFindByNameOrCategory() {
         // given
         final String searchTerm = "Name string";
@@ -415,6 +436,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by query")
     public void testFindByQuery() {
         // given
         final Point location = new Point(20.15, -92.85);
@@ -435,6 +457,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by facet query")
     public void testFindByFacetQuery() {
         // given
         final Criteria criteria = new Criteria(Criteria.WILDCARD).expression(Criteria.WILDCARD);
@@ -459,6 +482,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by non-existing search term")
     public void testFindByNonExistingSearchTerm() {
         // given
         final String searchTerm = "cookies";
@@ -471,6 +495,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by existing search term")
     public void testFindByExistingSearchTerm() {
         // given
         final String searchTerm = "New";
@@ -487,6 +512,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by highlighted name in collection")
     public void testFindByHighlightedNameIn() {
         // given
         final List<String> searchTerms = Arrays.asList("New", "09");

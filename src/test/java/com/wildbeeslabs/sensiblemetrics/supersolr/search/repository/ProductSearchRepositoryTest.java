@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
@@ -33,6 +33,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
@@ -56,7 +57,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 
 /**
- * Product search repository implementation unit test {@link BaseDocumentTest}
+ * Product search repository implementation unit test {@link BaseTest}
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,7 +65,7 @@ import static org.hamcrest.Matchers.empty;
 @PostgresDataJpaTest
 @AutoConfigurationPackage
 @Transactional
-public class ProductSearchRepositoryTest extends BaseDocumentTest {
+public class ProductSearchRepositoryTest extends BaseTest {
 
     @Autowired
     private ProductSearchRepository productSearchRepository;
@@ -80,6 +81,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by name")
     public void testFindByName() {
         // given
         final Product product = createProduct("01", "ProductTest", "Short description", "Long description", "Price description", "Catalog number", "Page title", 6, 1.0, 2.0, true);
@@ -99,6 +101,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by empty description and max page size")
     public void testFindByEmptyDescriptionAndMaxPageSize() {
         // terms
         final String searchTerm = Strings.EMPTY;
@@ -121,6 +124,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search product by description")
     public void testFindByDescription() {
         // terms
         final String searchTerm = "Very";
@@ -142,6 +146,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by name starting with")
     public void testFindByNameStartingWith() {
         // terms
         final String searchExistingName = "Solr";
@@ -179,6 +184,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by name in collection")
     public void testFindByNameIn() {
         // terms
         final List<String> names = Arrays.asList("Kitchen", "sink");
@@ -201,6 +207,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by non-existing name like")
     public void testFindByNonExistingNameLike() {
         // terms
         final List<String> names = Arrays.asList("Treasure");
@@ -220,6 +227,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by name like")
     public void testFindByNameLike() {
         // terms
         final List<String> names = Arrays.asList("Product 01", "Product 02");
@@ -240,6 +248,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by price in range")
     public void testFindByPriceInRange() {
         // terms
         double lowerBound = 10.0;
@@ -262,6 +271,7 @@ public class ProductSearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by price in range exclusive")
     public void findByPriceInRangeExclusive() {
         // terms
         double lowerBound = 10.0;

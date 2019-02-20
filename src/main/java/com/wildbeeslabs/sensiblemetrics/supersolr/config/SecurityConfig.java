@@ -26,12 +26,14 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAccessDeniedHandler;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationEntryPoint;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,6 +42,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -49,6 +53,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 @Configuration
 @EnableAutoConfiguration
 @EnableWebSecurity
+//@EnableWebMvcSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 //@ImportResource({ "classpath:spring-security.config.xml" })
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -65,8 +70,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return manager;
     }
 
+    @Autowired
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService());
+        auth.authenticationProvider(authenticationProvider());
         auth.inMemoryAuthentication()
             .withUser("user").password("user123").roles("USER")
             .and()
@@ -74,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(final WebSecurity web) throws Exception {
+    public void configure(final WebSecurity web) {
         web.ignoring().antMatchers("/resources/**");
     }
 
@@ -106,6 +114,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN").and()
             .csrf().disable();
     }
+
+//    @Autowired
+//    public void configureGlobal(final AuthenticationManagerBuilder auth) {
+//        auth.authenticationProvider(authenticationProvider());
+//    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception{
+//        http.authorizeRequests()
+//            .antMatchers("/register").permitAll()
+//            .antMatchers("/admin/**").access("hasRole('ADMIN')")
+//            .antMatchers("/coordinador/**").access("hasRole('COORD')")
+//            .antMatchers("/director/**").access("hasRole('DIR')")
+//            .and().formLogin().loginPage("/").permitAll()
+//            .successHandler(customSuccesHandler).usernameParameter("nomUsuario")
+//            .passwordParameter("password");
+//    }
 
     @Bean
     public SecurityAccessDeniedHandler authenticationAccessDeniedHandler() {

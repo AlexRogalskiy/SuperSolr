@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Searchable category model definition
+ * Persistable category model definition
  */
 public interface PersistableCategory {
 

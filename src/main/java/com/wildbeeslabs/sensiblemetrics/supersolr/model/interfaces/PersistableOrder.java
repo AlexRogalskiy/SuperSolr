@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Searchable order model definition
+ * Persistable order model definition
  */
 public interface PersistableOrder {
 

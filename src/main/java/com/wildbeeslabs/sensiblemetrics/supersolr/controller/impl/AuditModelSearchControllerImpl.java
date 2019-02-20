@@ -52,24 +52,19 @@ import java.time.ZoneOffset;
 @ToString(callSuper = true)
 public abstract class AuditModelSearchControllerImpl<E extends AuditDocument, T extends AuditDocumentView, ID extends Serializable> extends BaseSearchControllerImpl<E, T, ID> implements AuditDocumentSearchController<E, T, ID> {
 
-    /**
-     * Default token expire period
-     */
-    public static final int DEFAULT_TOKEN_EXPIRE_PERIOS = 5;
-
     protected HttpHeaders getHeaders(final Page<?> page) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Elements", Long.toString(page.getTotalElements()));
+        headers.add(DEFAULT_TOTAL_ELEMENTS_HEADER, Long.toString(page.getTotalElements()));
         return headers;
     }
 
-    protected HttpHeaders getConstraintHeaders() {
+    protected HttpHeaders getLimitHeaders() {
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Expires-After", String.valueOf(
+        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, String.valueOf(
             LocalDateTime.from(DateUtils.now().toInstant())
-                .plusDays(DEFAULT_TOKEN_EXPIRE_PERIOS)
+                .plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD)
                 .toEpochSecond(ZoneOffset.UTC)));
-        headers.add("X-Rate-Limit", String.valueOf(5000));
+        headers.add(DEFAULT_RATE_LIMIT_HEADER, String.valueOf(DEFAULT_RATE_LIMIT));
         return headers;
     }
 

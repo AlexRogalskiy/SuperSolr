@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -58,6 +59,7 @@ public class ProductRepositoryTest {
     private ProductRepository productRepository;
 
     @Test
+    @DisplayName("Test search product by id")
     public void testFindById() {
         // given
         final Long productId = Long.valueOf(1);
@@ -71,6 +73,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test search category by empty name")
     public void testFindByEmptyName() {
         // given
         final String name = "Test";
@@ -83,6 +86,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test search category by name")
     public void testFindByName() {
         // given
         final String name = "Product 01";
@@ -97,6 +101,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test search category by rating")
     public void testFindByRating() {
         // given
         final Integer rating = 10;

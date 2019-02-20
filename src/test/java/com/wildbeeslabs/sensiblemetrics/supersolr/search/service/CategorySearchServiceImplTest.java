@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
 import com.google.common.collect.Lists;
-import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.utils.OffsetPageRequest;
@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
@@ -56,13 +57,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
- * Category service implementation unit test {@link BaseDocumentTest}
+ * Category service implementation unit test {@link BaseTest}
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureTestEntityManager
-public class CategorySearchServiceImplTest extends BaseDocumentTest {
+public class CategorySearchServiceImplTest extends BaseTest {
 
     @Autowired
     private CategorySearchService categoryService;
@@ -78,6 +79,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search all categories")
     public void testFindAll() {
         // given
         final int totalElements = 10;
@@ -92,6 +94,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search categories by ids")
     public void testFindAllByIds() {
         // given
         final List<String> categoryIds = Arrays.asList("01", "02", "03");
@@ -106,6 +109,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by title")
     public void testFindByTitle() {
         // given
         final String[] idsToCheck = {"05"};
@@ -127,6 +131,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by description")
     public void testFindByDescription() {
         // given
         final String[] idsToCheck = {"05", "07"};
@@ -143,6 +148,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by titles")
     public void testFindByTitles() {
         // given
         String titleTerms = "Pirate Planet";
@@ -172,7 +178,8 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
-    public void testFindByAutoCompleteTitle() {
+    @DisplayName("Test search category by autocomplete title fragment")
+    public void testFindByAutoCompleteTitleFragment() {
         // given
         final String titleTerms = "Island Planet";
 
@@ -192,6 +199,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by query")
     public void testFindByQuery() {
         // given
         final String queryString = "index:[1 TO 3] OR title:*land*";
@@ -205,6 +213,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by facet query")
     public void testFindByFacetQuery() {
         // given
         final Criteria criteria = new Criteria(Criteria.WILDCARD).expression(Criteria.WILDCARD);
@@ -229,6 +238,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by custom query")
     public void testFindByCustomQuery() {
         // given
         final String searchTerm = "cookies";

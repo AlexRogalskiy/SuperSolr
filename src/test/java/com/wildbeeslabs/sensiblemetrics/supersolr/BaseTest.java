@@ -27,6 +27,9 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Attribute;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,18 +42,48 @@ import org.springframework.data.solr.core.query.result.FacetEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightEntry;
 import org.springframework.data.solr.core.query.result.HighlightPage;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 
 import java.io.Serializable;
 import java.util.*;
 
 /**
- * Base document test implementation
+ * Base test implementation
  */
 @Slf4j
-public abstract class BaseDocumentTest {
+public abstract class BaseTest {
+
+    /**
+     * Default xml type with utf-8 charset encoding
+     */
+    public static final String APPLICATION_XML_UTF8_VALUE = "application/xml;charset=UTF-8";
 
     @Autowired
     private SolrTemplate solrTemplate;
+
+    /**
+     * Mock security context implementation {@link SecurityContext}
+     */
+    @Data
+    @EqualsAndHashCode
+    @ToString
+    public static class MockSecurityContext implements SecurityContext {
+
+        /**
+         * Default explicit serialVersionUID for interoperability
+         */
+        private static final long serialVersionUID = 3405852283390845327L;
+
+        /**
+         * Default authentication instance {@link Authentication}
+         */
+        private Authentication authentication;
+
+        public MockSecurityContext(final Authentication authentication) {
+            this.authentication = authentication;
+        }
+    }
 
     protected Category createCategory(
         final String id,

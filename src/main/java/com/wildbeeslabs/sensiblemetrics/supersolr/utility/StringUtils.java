@@ -90,4 +90,12 @@ public class StringUtils {
     public static String format(double num) {
         return DEFAULT_DECIMAL_FORMATTER.get().format(num);
     }
+
+    public static String getString(final String... values) {
+        return getStringByDelimiter(org.apache.commons.lang3.StringUtils.EMPTY, values);
+    }
+
+    public static String getStringByDelimiter(final String delimiter, final String... values) {
+        return org.apache.commons.lang3.StringUtils.join(values, delimiter);
+    }
 }

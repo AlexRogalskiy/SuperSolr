@@ -21,24 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model;
+
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseInfoModel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.springframework.data.domain.Persistable;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * Persistable audit model definition
+ * Custom base info model
+ *
+ * @param <ID> type of model identifier {@link Serializable}
  */
-public interface PersistableAuditModel {
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
+@MappedSuperclass
+public abstract class BaseInfoModel<ID extends Serializable> implements PersistableBaseInfoModel, Persistable<ID> {
 
     /**
-     * Default document ID
+     * Default explicit serialVersionUID for interoperability
      */
-    String MODEL_ID = "AuditModel";
+    private static final long serialVersionUID = 3873347937011566010L;
 
-    /**
-     * Default field names
-     */
-    String CREATED_FIELD_NAME = "created";
-    String CHANGED_FIELD_NAME = "changed";
-    String CREATED_BY_FIELD_NAME = "createdBy";
-    String CHANGED_BY_FIELD_NAME = "changedBy";
-    String VERSION_BY_FIELD_NAME = "version";
+    @Id
+    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
+    private ID id;
+
+    @Override
+    public boolean isNew() {
+        return Objects.isNull(this.getId());
+    }
 }

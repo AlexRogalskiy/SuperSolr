@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -58,6 +59,7 @@ public class CategoryRepositoryTest {
     private CategoryRepository categoryRepository;
 
     @Test
+    @DisplayName("Test search category by id")
     public void testFindById() {
         // given
         final Long categoryId = Long.valueOf(1);
@@ -71,6 +73,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test search category by empty title")
     public void testFindByEmptyTitle() {
         // given
         final String title = "Test";
@@ -83,6 +86,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test search category by title")
     public void testFindByTitle() {
         // given
         final String title = "Category 01";

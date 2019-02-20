@@ -21,24 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
+
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.repository.AuditModelRepository;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.AuditModelService;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
 
 /**
- * Persistable audit model definition
+ * Custom audit model service implementation {@link AuditModelService}
+ *
+ * @param <E>  type of audit model {@link AuditModel}
+ * @param <ID> type of audit model identifier {@link Serializable}
  */
-public interface PersistableAuditModel {
+@Slf4j
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Transactional
+public abstract class AuditModelServiceImpl<E extends AuditModel, ID extends Serializable> extends BaseServiceImpl<E, ID> implements AuditModelService<E, ID> {
 
-    /**
-     * Default document ID
-     */
-    String MODEL_ID = "AuditModel";
-
-    /**
-     * Default field names
-     */
-    String CREATED_FIELD_NAME = "created";
-    String CHANGED_FIELD_NAME = "changed";
-    String CREATED_BY_FIELD_NAME = "createdBy";
-    String CHANGED_BY_FIELD_NAME = "changedBy";
-    String VERSION_BY_FIELD_NAME = "version";
+    protected abstract AuditModelRepository<E, ID> getRepository();
 }

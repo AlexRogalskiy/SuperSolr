@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.BaseDocumentTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
@@ -55,7 +56,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 
 /**
- * Category search repository implementation unit test {@link BaseDocumentTest}
+ * Category search repository implementation unit test {@link BaseTest}
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -63,7 +64,7 @@ import static org.hamcrest.Matchers.empty;
 @PostgresDataJpaTest
 @AutoConfigurationPackage
 @Transactional
-public class CategorySearchRepositoryTest extends BaseDocumentTest {
+public class CategorySearchRepositoryTest extends BaseTest {
 
     @Autowired
     private CategorySearchRepository categorySearchRepository;
@@ -79,6 +80,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by title")
     public void testFindByTitle() {
         // given
         final Category category = createCategory("01", 1, "Cardigans", "Best seller by R.L.S.");
@@ -98,6 +100,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by description")
     public void testFindByDescription() {
         // terms
         final String searchTerm = "best seller";
@@ -120,6 +123,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by title starting with")
     public void testFindByTitleStartingWith() {
         // terms
         final String searchExistingTitle = "Solr";
@@ -157,6 +161,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by title like")
     public void testFindByTitleLike() {
         // terms
         final List<String> titles = Arrays.asList("Treasure");
@@ -177,6 +182,7 @@ public class CategorySearchRepositoryTest extends BaseDocumentTest {
     }
 
     @Test
+    @DisplayName("Test search category by title in collection")
     public void testFindByTitleIn() {
         // terms
         final List<String> titles = Arrays.asList("Treasure", "Island");

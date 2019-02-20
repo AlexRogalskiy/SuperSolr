@@ -23,47 +23,60 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAccount;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.domain.Persistable;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Objects;
+import java.util.*;
 
 /**
- * Custom base model {@link AuditModel}
- *
- * @param <ID> type of model identifier {@link Serializable}
+ * Custom account model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@MappedSuperclass
-public abstract class BaseModel<ID extends Serializable> extends AuditModel implements PersistableBaseModel, Persistable<ID> {
+@Entity(name = PersistableAccount.MODEL_ID)
+@BatchSize(size = 10)
+@Table(name = PersistableAccount.TABlE_NAME, catalog = "auth")
+@AttributeOverrides({
+    @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableAccount.ID_FIELD_NAME, unique = true, nullable = false))
+})
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Account extends BaseModel<Long> implements PersistableAccount {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
-    private static final long serialVersionUID = 6444143028591284804L;
+    private static final long serialVersionUID = -7537326168433942579L;
 
-    @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@GeneratedValue(generator = "base_generator")
-//    @SequenceGenerator(
-//            name = "base_generator",
-//            sequenceName = "base_generator"
-//    )
-    @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
-    private ID id;
+    @Column(name = USERNAME_FIELD_NAME)
+    private String username;
 
-    @Override
-    public boolean isNew() {
-        return Objects.isNull(this.getId());
+    @Column(name = PASSWORD_FIELD_NAME)
+    private String password;
+
+    @Column(name = ENABLED_FIELD_NAME)
+    private boolean enabled;
+
+    @ManyToMany(mappedBy = ACCOUNTS_REF_FIELD_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final Set<Role> roles = new HashSet<>();
+
+    public void setRoles(final Collection<? extends Role> roles) {
+        this.getRoles().clear();
+        Optional.ofNullable(roles)
+            .orElseGet(Collections::emptyList)
+            .forEach(role -> this.addRole(role));
+    }
+
+    public void addRole(final Role role) {
+        if (Objects.nonNull(role)) {
+            this.getRoles().add(role);
+        }
     }
 }

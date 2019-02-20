@@ -21,24 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service;
+
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
- * Persistable audit model definition
+ * Custom authentication user service declaration {@link UserDetailsService}
  */
-public interface PersistableAuditModel {
+public interface AuthUserService extends UserDetailsService {
 
     /**
-     * Default document ID
+     * Default service ID
      */
-    String MODEL_ID = "AuditModel";
-
+    String SERVICE_ID = "AuthUserService";
     /**
-     * Default field names
+     * Default role delimiter
      */
-    String CREATED_FIELD_NAME = "created";
-    String CHANGED_FIELD_NAME = "changed";
-    String CREATED_BY_FIELD_NAME = "createdBy";
-    String CHANGED_BY_FIELD_NAME = "changedBy";
-    String VERSION_BY_FIELD_NAME = "version";
+    String DEFAULT_ROLE_DELIMITER = "_";
+    /**
+     * Default role prefix
+     */
+    String DEFAULT_ROLE_PREFIX = "ROLE";
 }

@@ -21,24 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service;
+
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
+
+import java.util.Optional;
 
 /**
- * Persistable audit model definition
+ * Custom account service declaration {@link BaseService}
  */
-public interface PersistableAuditModel {
+public interface AccountService extends BaseService<Account, Long> {
 
     /**
-     * Default document ID
+     * Default service ID
      */
-    String MODEL_ID = "AuditModel";
+    String SERVICE_ID = "AccountService";
 
-    /**
-     * Default field names
-     */
-    String CREATED_FIELD_NAME = "created";
-    String CHANGED_FIELD_NAME = "changed";
-    String CREATED_BY_FIELD_NAME = "createdBy";
-    String CHANGED_BY_FIELD_NAME = "changedBy";
-    String VERSION_BY_FIELD_NAME = "version";
+    Optional<Account> findByUsername(final String username);
 }

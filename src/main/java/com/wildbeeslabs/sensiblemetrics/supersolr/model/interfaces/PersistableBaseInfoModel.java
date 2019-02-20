@@ -24,21 +24,17 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
 /**
- * Persistable audit model definition
+ * Persistable base info model definition
  */
-public interface PersistableAuditModel {
+public interface PersistableBaseInfoModel {
 
     /**
      * Default document ID
      */
-    String MODEL_ID = "AuditModel";
+    String MODEL_ID = "BaseInfoModel";
 
     /**
      * Default field names
      */
-    String CREATED_FIELD_NAME = "created";
-    String CHANGED_FIELD_NAME = "changed";
-    String CREATED_BY_FIELD_NAME = "createdBy";
-    String CHANGED_BY_FIELD_NAME = "changedBy";
-    String VERSION_BY_FIELD_NAME = "version";
+    String ID_FIELD_NAME = "id";
 }

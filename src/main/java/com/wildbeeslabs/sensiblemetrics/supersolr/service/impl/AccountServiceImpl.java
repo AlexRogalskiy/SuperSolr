@@ -21,49 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model;
+package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
-import lombok.Data;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
+import com.wildbeeslabs.sensiblemetrics.supersolr.repository.AccountRepository;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.AccountService;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.domain.Persistable;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Custom base model {@link AuditModel}
- *
- * @param <ID> type of model identifier {@link Serializable}
+ * Custom account service implementation {@link AccountService}
  */
-@Data
-@NoArgsConstructor
+@Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@MappedSuperclass
-public abstract class BaseModel<ID extends Serializable> extends AuditModel implements PersistableBaseModel, Persistable<ID> {
+@Service(AccountService.SERVICE_ID)
+@Transactional
+public class AccountServiceImpl extends BaseServiceImpl<Account, Long> implements AccountService {
 
-    /**
-     * Default explicit serialVersionUID for interoperability
-     */
-    private static final long serialVersionUID = 6444143028591284804L;
-
-    @Id
-    @Basic(optional = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@GeneratedValue(generator = "base_generator")
-//    @SequenceGenerator(
-//            name = "base_generator",
-//            sequenceName = "base_generator"
-//    )
-    @Column(name = ID_FIELD_NAME, unique = true, nullable = false)
-    private ID id;
+    @Autowired
+    private AccountRepository userRepository;
 
     @Override
-    public boolean isNew() {
-        return Objects.isNull(this.getId());
+    @Transactional(readOnly = true)
+    public Optional<Account> findByUsername(final String username) {
+        return getRepository().findByUsername(username);
+    }
+
+    protected AccountRepository getRepository() {
+        return this.userRepository;
     }
 }

@@ -29,7 +29,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.utils.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.BaseDocumentView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -43,6 +42,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
@@ -60,33 +60,30 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
 
     @Override
     public E updateItem(
-            final ID id,
-            final T itemDto,
-            final Class<? extends E> entityClass) {
-        final Optional<? extends E> currentItem = getSearchService().find(id);
-        if (!currentItem.isPresent()) {
-            throw new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id));
-        }
-        final E itemEntity = MapperUtils.map(itemDto, entityClass);
+        final ID id,
+        final T itemDto,
+        final Class<? extends E> entityClass) {
+        final E currentItem = getSearchService().find(id).orElseThrow(() -> new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id)));
+        final E itemEntity = map(itemDto, entityClass);
         getSearchService().saveOrUpdate(itemEntity, entityClass);
-        return currentItem.get();
+        return currentItem;
     }
 
     protected T getHighLightSearchResult(
-            final E entity,
-            final List<HighlightEntry.Highlight> highlights,
-            final Class<? extends T> dtoClass) {
+        final E entity,
+        final List<HighlightEntry.Highlight> highlights,
+        final Class<? extends T> dtoClass) {
         final Map<String, List<String>> highlightMap = highlights
-                .stream()
-                .collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
-        final T updatedDto = MapperUtils.map(entity, dtoClass);
+            .stream()
+            .collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
+        final T updatedDto = map(entity, dtoClass);
         updatedDto.setHighlights(highlightMap);
         return updatedDto;
     }
 
     protected Set<String> getResultSetByTerm(
-            final FacetPage<? extends E> facetPage,
-            final String searchTerm) {
+        final FacetPage<? extends E> facetPage,
+        final String searchTerm) {
         if (!StringUtils.hasText(searchTerm)) {
             return Collections.emptySet();
         }
@@ -102,17 +99,17 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
     }
 
     protected Map<String, Long> getResultMapByTerm(
-            final FacetPage<? extends E> facetPage,
-            final String searchTerm) {
+        final FacetPage<? extends E> facetPage,
+        final String searchTerm) {
         if (!StringUtils.hasText(searchTerm)) {
             return Collections.emptyMap();
         }
         final Map<String, Long> resultMap = new HashMap<>();
         facetPage.getAllFacets()
-                .stream()
-                .forEach(page -> page.forEach(facetEntry -> {
-                    resultMap.put(facetEntry.getValue(), facetEntry.getValueCount());
-                }));
+            .stream()
+            .forEach(page -> page.forEach(facetEntry -> {
+                resultMap.put(facetEntry.getValue(), facetEntry.getValueCount());
+            }));
         return resultMap;
     }
 
@@ -128,9 +125,9 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
     }
 
     protected HighlightPage<? extends E> findBy(
-            final String searchTerm,
-            int offset,
-            int limit) {
+        final String searchTerm,
+        int offset,
+        int limit) {
         return getSearchService().find(searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
     }
 

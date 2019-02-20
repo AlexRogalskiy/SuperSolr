@@ -47,4 +47,8 @@ public interface BaseDocumentSearchController<E extends BaseDocument<ID>, T exte
      * Default page limit value
      */
     String DEFAULT_PAGE_LIMIT_VALUE = "10";
+    /**
+     * Default page size
+     */
+    int DEFAULT_PAGE_SIZE = 5;
 }
