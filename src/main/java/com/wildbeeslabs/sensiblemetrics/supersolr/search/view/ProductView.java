@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableProductView;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -55,6 +56,7 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
      */
     private static final long serialVersionUID = 5714315073889762969L;
 
+    @ApiModelProperty(example = "product", required = true)
     @JacksonXmlProperty(localName = NAME_FIELD_NAME)
     @JsonProperty(NAME_FIELD_NAME)
     private String name;
@@ -79,10 +81,12 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     @JsonProperty(PAGE_TITLE_FIELD_NAME)
     private String pageTitle;
 
+    @ApiModelProperty(example = "availability", required = true)
     @JacksonXmlProperty(localName = AVAILABLE_FIELD_NAME)
     @JsonProperty(AVAILABLE_FIELD_NAME)
     private boolean available;
 
+    @ApiModelProperty(example = "price", required = true)
     @JacksonXmlProperty(localName = PRICE_FIELD_NAME)
     @JsonProperty(PRICE_FIELD_NAME)
     private double price;
@@ -99,6 +103,7 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     @JsonProperty(AGE_RESTRICTION_FIELD_NAME)
     private Integer ageRestriction;
 
+    @ApiModelProperty(value = "lock type attribute", allowableValues = "1-registered,2-blocked,3-in stock,4-in sale,5-in decommission")
     @JacksonXmlProperty(localName = LOCK_TYPE_FIELD_NAME)
     @JsonProperty(LOCK_TYPE_FIELD_NAME)
     private Integer lockType;
@@ -125,8 +130,8 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     public void setAttributes(final Collection<? extends AttributeView> attributes) {
         this.getAttributes().clear();
         Optional.ofNullable(attributes)
-                .orElseGet(Collections::emptyList)
-                .forEach(attribute -> this.addAttribute(attribute));
+            .orElseGet(Collections::emptyList)
+            .forEach(attribute -> this.addAttribute(attribute));
     }
 
     public void addAttribute(final AttributeView attribute) {
@@ -138,8 +143,8 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     public void setCategories(final Collection<? extends CategoryView> categories) {
         this.getCategories().clear();
         Optional.ofNullable(categories)
-                .orElseGet(Collections::emptyList)
-                .forEach(category -> this.addCategory(category));
+            .orElseGet(Collections::emptyList)
+            .forEach(category -> this.addCategory(category));
     }
 
     public void addCategory(final CategoryView category) {
@@ -151,8 +156,8 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     public void setMainCategories(final Collection<? extends CategoryView> mainCategories) {
         this.getMainCategories().clear();
         Optional.ofNullable(mainCategories)
-                .orElseGet(Collections::emptyList)
-                .forEach(mainCategory -> this.addMainCategory(mainCategory));
+            .orElseGet(Collections::emptyList)
+            .forEach(mainCategory -> this.addMainCategory(mainCategory));
     }
 
     public void addMainCategory(final CategoryView mainCategory) {

@@ -2,6 +2,12 @@ spring:
   profiles:
     active: "local"
 ---
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: classpath:securityDefinition.json
+
 spring:
   main:
     allow-bean-definition-overriding: true

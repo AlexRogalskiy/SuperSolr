@@ -29,6 +29,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.OrderSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
+import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -53,7 +55,15 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(OrderSearchController.CONTROLLER_ID)
-@RequestMapping("/api")
+@RequestMapping("/api/order")
+@ApiModel(value = "OrderSearchController", description = "Order search controller documentation")
+@Api(value = "/api/order", description = "Operations on order documents", authorizations = {
+    @Authorization(value = "order_store_auth",
+        scopes = {
+            @AuthorizationScope(scope = "write:documents", description = "modify order documents"),
+            @AuthorizationScope(scope = "read:documents", description = "read order documents")
+        })
+})
 public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<Order, OrderView, String> implements OrderSearchController {
 
     @Autowired
@@ -62,9 +72,22 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     @Autowired
     private OrderSearchService orderService;
 
-    @GetMapping("/orders")
+    @GetMapping("/all")
     @ResponseBody
     @Override
+    @ApiOperation(
+        httpMethod = "GET",
+        value = "Find all order documents",
+        notes = "Returns list of all order documents",
+        nickname = "getAll",
+        tags = {"fetchAll"},
+        response = List.class,
+        responseContainer = "List",
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "Not found")
+    })
     public ResponseEntity<?> getAll() {
         log.info("Fetching all orders");
         try {
@@ -74,9 +97,27 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         }
     }
 
-    @PostMapping("/order")
+    @PostMapping("/")
     @ResponseStatus
-    public ResponseEntity<?> createOrder(final @Valid @RequestBody OrderView orderDto) {
+    @ApiOperation(
+        httpMethod = "POST",
+        value = "Creates order document",
+        notes = "Returns empty response",
+        nickname = "createOrder",
+        tags = {"newOrder"},
+        position = 1,
+        response = String.class,
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        authorizations = @Authorization(value = "api_key"),
+        responseHeaders = {
+            @ResponseHeader(name = "Location", description = "location with newly created order", response = String.class)
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid order document value"),
+        @ApiResponse(code = 405, message = "Validation exception")
+    })
+    public ResponseEntity<?> createOrder(final @ApiParam(value = "Order document that needs to be added to the store", required = true) @Valid @RequestBody OrderView orderDto) {
         log.info("Creating new order by view: {}", orderDto);
         final OrderView orderDtoCreated = MapperUtils.map(this.createItem(orderDto, Order.class), OrderView.class);
         final UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
@@ -85,54 +126,137 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
-    @GetMapping("/order/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
     @Override
-    public ResponseEntity<?> getById(final @PathVariable String id) {
+    @ApiOperation(
+        httpMethod = "GET",
+        value = "Find order document by ID",
+        notes = "Returns order document by ID",
+        nickname = "getById",
+        tags = {"fetchById"},
+        position = 2,
+        response = OrderView.class,
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid order ID value"),
+        @ApiResponse(code = 404, message = "Not found")
+    })
+    public ResponseEntity<?> getById(final @ApiParam(value = "ID of order document that needs to be fetched", allowableValues = "range[1,infinity]", required = true) @PathVariable String id) {
         log.info("Fetching order by ID: {}", id);
         return new ResponseEntity<>(MapperUtils.map(this.getItem(id), OrderView.class), HttpStatus.OK);
     }
 
-    @PutMapping("/order")
+    @PutMapping("/")
     @ResponseBody
-    public ResponseEntity<?> updateOrder(final @Valid @RequestBody OrderView orderDto) {
+    @ApiOperation(
+        httpMethod = "PUT",
+        value = "Updates order document in the store with form data",
+        notes = "Returns updated order document",
+        nickname = "updateOrder",
+        tags = {"updateOrder"},
+        position = 3,
+        response = OrderView.class,
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 405, message = "Invalid input value")
+    })
+    public ResponseEntity<?> updateOrder(final @ApiParam(value = "Order document that needs to be updated", required = true) @Valid @RequestBody OrderView orderDto) {
         log.info("Updating order by view: {}", orderDto);
         final OrderView orderDtoUpdated = MapperUtils.map(this.updateItem(orderDto.getId(), orderDto, Order.class), OrderView.class);
         return new ResponseEntity<>(orderDtoUpdated, HttpStatus.OK);
     }
 
-    @DeleteMapping("/order/{id}")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<?> deleteOrder(final @PathVariable String id) {
+    @ApiOperation(
+        httpMethod = "DELETE",
+        value = "Deletes order document by ID",
+        notes = "For valid response try integer IDs with positive integer value. Negative or non-integer values will generate API errors",
+        nickname = "deleteOrder",
+        tags = {"removeOrder"},
+        position = 4,
+        response = OrderView.class,
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid order ID value")
+    })
+    public ResponseEntity<?> deleteOrder(
+        final @ApiParam() String apiKey,
+        final @ApiParam(value = "ID of the order that needs to be deleted", allowableValues = "range[1,infinity]", required = true) @PathVariable String id) {
         log.info("Updating order by ID: {}", id);
         final OrderView orderDtoDeleted = MapperUtils.map(this.deleteItem(id), OrderView.class);
         return new ResponseEntity<>(orderDtoDeleted, HttpStatus.OK);
     }
 
-    @DeleteMapping("/orders")
+    @DeleteMapping("/delete-all")
     @ResponseStatus
-    @Override
-    public ResponseEntity<?> deleteAll() {
+    @ApiOperation(
+        httpMethod = "DELETE",
+        value = "Deletes all order documents",
+        notes = "Returns empty response",
+        nickname = "deleteAll",
+        tags = {"removeAll"},
+        position = 5,
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 404, message = "Not found")
+    })
+    public ResponseEntity<?> deleteAll(final @ApiParam() String apiKey) {
         log.info("Deleting all orders");
         this.deleteAllItems();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/order/desc/{description}/{page}")
+    @GetMapping("/desc/{description}/{page}")
     @ResponseBody
+    @ApiOperation(
+        httpMethod = "GET",
+        value = "Finds order documents by description",
+        notes = "Returns list of order documents by description query",
+        nickname = "findByDescription",
+        tags = {"fetchByDesc"},
+        position = 6,
+        response = List.class,
+        responseContainer = "List",
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid description value")
+    })
     public ResponseEntity<?> findByDescription(
-            final @PathVariable String description,
-            final @PathVariable int page) {
+        final @ApiParam(value = "Description search query to filter by", required = true) @PathVariable String description,
+        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching order by description: {}, page: {}", description, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getSearchService().findByDescription(description, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);
     }
 
-    @GetMapping("/order/search/{searchTerm}/{page}")
+    @GetMapping("/search/{searchTerm}/{page}")
     @ResponseBody
+    @ApiOperation(
+        httpMethod = "GET",
+        value = "Finds order documents by search term",
+        notes = "Returns list of order documents by search term",
+        nickname = "findBySearchTerm",
+        tags = {"fetchByTerm"},
+        position = 7,
+        response = List.class,
+        responseContainer = "List",
+        authorizations = @Authorization(value = "api_key")
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid search term value")
+    })
     public ResponseEntity<?> findBySearchTerm(
-            final @PathVariable String searchTerm,
-            final @PathVariable int page) {
+        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable String searchTerm,
+        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching order by term: {}, page: {}", searchTerm, page);
         final List<? extends OrderView> orderDtos = MapperUtils.mapAll(getSearchService().find(searchTerm, PageRequest.of(page, 2)).getContent(), OrderView.class);
         return new ResponseEntity<>(orderDtos, HttpStatus.OK);

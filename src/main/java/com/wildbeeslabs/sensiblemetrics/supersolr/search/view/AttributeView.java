@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableAttributetView;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -54,6 +55,7 @@ public class AttributeView extends BaseDocumentView<String> implements Exposable
      */
     private static final long serialVersionUID = -6304630916069644472L;
 
+    @ApiModelProperty(example = "size", required = true)
     @JacksonXmlProperty(localName = NAME_FIELD_NAME)
     @JsonProperty(NAME_FIELD_NAME)
     private String name;
@@ -62,6 +64,7 @@ public class AttributeView extends BaseDocumentView<String> implements Exposable
     @JsonProperty(SYNONYM_FIELD_NAME)
     private String name2;
 
+    @ApiModelProperty(example = "short remark", required = true)
     @JacksonXmlProperty(localName = DESCRIPTION_TEXT_FIELD_NAME)
     @JsonProperty(DESCRIPTION_TEXT_FIELD_NAME)
     private String descriptionText;
@@ -70,6 +73,7 @@ public class AttributeView extends BaseDocumentView<String> implements Exposable
     @JsonProperty(KEYWORDS_FIELD_NAME)
     private String keywords;
 
+    @ApiModelProperty(value = "list of products per attribute", allowableValues = "available,pending,sold")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = PRODUCTS_FIELD_NAME)
     @JsonProperty(PRODUCTS_FIELD_NAME)
@@ -78,8 +82,8 @@ public class AttributeView extends BaseDocumentView<String> implements Exposable
     public void setProducts(final Collection<? extends ProductView> products) {
         this.getProducts().clear();
         Optional.ofNullable(products)
-                .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+            .orElseGet(Collections::emptyList)
+            .forEach(product -> this.addProduct(product));
     }
 
     public void addProduct(final ProductView product) {

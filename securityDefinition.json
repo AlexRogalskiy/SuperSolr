@@ -1,0 +1,34 @@
+{
+  "api_key": {
+    "type": "apiKey",
+    "name": "api_key",
+    "in": "header"
+  },
+  "category_store_auth": {
+    "type": "oauth2",
+    "authorizationUrl": "http://swagger.io/api/oauth/dialog",
+    "flow": "implicit",
+    "scopes": {
+      "write:documents": "modify category documents",
+      "read:documents": "read category documents"
+    }
+  },
+  "order_store_auth": {
+    "type": "oauth2",
+    "authorizationUrl": "http://swagger.io/api/oauth/dialog",
+    "flow": "implicit",
+    "scopes": {
+      "write:documents": "modify order documents",
+      "read:documents": "read order documents"
+    }
+  },
+  "product_store_auth": {
+    "type": "oauth2",
+    "authorizationUrl": "http://swagger.io/api/oauth/dialog",
+    "flow": "implicit",
+    "scopes": {
+      "write:documents": "modify product documents",
+      "read:documents": "read product documents"
+    }
+  }
+}

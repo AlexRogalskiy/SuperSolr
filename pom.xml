@@ -420,6 +420,12 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <scope>compile</scope>
+            <version>1.5.3</version>
+        </dependency>
 
         <!-- Database Combo Pool library dependencies -->
         <dependency>
@@ -588,30 +594,26 @@
                             <apiSource>
                                 <springmvc>true</springmvc>
                                 <locations>${rest-locations}</locations>
-                                <hostswagger>service.url:8080</hostswagger>
+                                <hostswagger>localhost.com:8080</hostswagger>
                                 <schemes>
                                     <scheme>http</scheme>
                                     <scheme>https</scheme>
                                 </schemes>
-                                <host>www.localhost.com:8080</host>
+                                <host>localhost.com:8080</host>
                                 <basePath>/api</basePath>
                                 <securityDefinitions>
                                     <securityDefinition>
-                                        <name>basicAuth</name>
-                                        <type>basic</type>
-                                    </securityDefinition>
-                                    <securityDefinition>
-                                        <json>/securityDefinition.json</json>
+                                        <json>${project.basedir}/securityDefinition.json</json>
                                     </securityDefinition>
                                 </securityDefinitions>
-                                <templatePath>${basedir}/src/test/resources/strapdown.html.hbs</templatePath>
-                                <outputPath>${basedir}/generated/document.html</outputPath>
+                                <templatePath>${project.basedir}/src/main/resources/template/strapdown.html.hbs
+                                </templatePath>
+                                <outputPath>${project.basedir}/generated/document.html</outputPath>
                                 <swaggerDirectory>${project.build.directory}/generated/swagger-ui</swaggerDirectory>
                                 <attachSwaggerArtifact>true</attachSwaggerArtifact>
                                 <swaggerApiReader>
                                     com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader
                                 </swaggerApiReader>
-                                <attachSwaggerArtifact>true</attachSwaggerArtifact>
                                 <modelConverters>
                                     io.swagger.validator.BeanValidator
                                 </modelConverters>
@@ -640,13 +642,6 @@
                             </goals>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>io.swagger</groupId>
-                            <artifactId>swagger-hibernate-validations</artifactId>
-                            <version>1.5.21</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -915,6 +910,27 @@
                         <tag>${project.version}</tag>
                     </configuration>
                 </plugin>
+
+                <!-- Download plugins -->
+                <plugin>
+                    <groupId>com.googlecode.maven-download-plugin</groupId>
+                    <artifactId>download-maven-plugin</artifactId>
+                    <version>1.4.1</version>
+                    <executions>
+                        <execution>
+                            <id>swagger-ui</id>
+                            <goals>
+                                <goal>wget</goal>
+                            </goals>
+                            <configuration>
+                                <url>https://github.com/AlexRogalskiy/SuperSolr/archive/master.zip</url>
+                                <unpack>true</unpack>
+                                <outputDirectory>${project.build.directory}</outputDirectory>
+                                <skipCache>true</skipCache>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -1083,7 +1099,7 @@
 
     <repositories>
         <repository>
-            <id>central</id>
+            <id>maven</id>
             <name>Maven Repository Switchboard</name>
             <layout>default</layout>
             <url>http://repo1.maven.org/maven2</url>
@@ -1107,7 +1123,7 @@
             </releases>
         </repository>
         <repository>
-            <id>GridGain repository</id>
+            <id>gridgain-systems</id>
             <url>http://www.gridgainsystems.com/nexus/content/repositories/external/</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1129,7 +1145,7 @@
             </releases>
         </repository>
         <repository>
-            <id>JBoss repository</id>
+            <id>jboss-maven</id>
             <url>http://repository.jboss.com/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1140,7 +1156,7 @@
             </releases>
         </repository>
         <repository>
-            <id>OSGEO GeoTools repo</id>
+            <id>osgeo-geotools</id>
             <url>http://download.osgeo.org/webdav/geotools</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1151,7 +1167,7 @@
             </releases>
         </repository>
         <repository>
-            <id>Hibernate Spatial repo</id>
+            <id>hibernate-spatial</id>
             <url>http://www.hibernatespatial.org/repository</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1162,7 +1178,7 @@
             </releases>
         </repository>
         <repository>
-            <id>JBOSS</id>
+            <id>jboss-release</id>
             <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1173,7 +1189,7 @@
             </releases>
         </repository>
         <repository>
-            <id>repo-maven</id>
+            <id>apache-maven</id>
             <url>https://repo.maven.apache.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1184,7 +1200,7 @@
             </releases>
         </repository>
         <repository>
-            <id>Sonatype-public</id>
+            <id>sonatype-public</id>
             <name>Sonatype repository</name>
             <url>http://oss.sonatype.org/content/groups/public/</url>
             <snapshots>
@@ -1196,7 +1212,19 @@
             </releases>
         </repository>
         <repository>
-            <id>spring-releases</id>
+            <id>sonatype-snapshot</id>
+            <name>Sonatype snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>springsource-libs-release</id>
             <url>http://repo.springsource.org/libs-release</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -1209,6 +1237,17 @@
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>sonatype-public-repository</id>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </pluginRepository>
         <pluginRepository>
             <id>central</id>
             <name>Maven Plugin Repository</name>

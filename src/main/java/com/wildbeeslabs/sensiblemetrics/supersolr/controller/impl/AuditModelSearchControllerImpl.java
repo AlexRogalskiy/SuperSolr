@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.AuditDocumentSearch
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.AuditDocumentSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.AuditDocumentView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -35,6 +36,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * Audit document search controller implementation
@@ -49,9 +52,24 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 public abstract class AuditModelSearchControllerImpl<E extends AuditDocument, T extends AuditDocumentView, ID extends Serializable> extends BaseSearchControllerImpl<E, T, ID> implements AuditDocumentSearchController<E, T, ID> {
 
+    /**
+     * Default token expire period
+     */
+    public static final int DEFAULT_TOKEN_EXPIRE_PERIOS = 5;
+
     protected HttpHeaders getHeaders(final Page<?> page) {
         final HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Elements", Long.toString(page.getTotalElements()));
+        return headers;
+    }
+
+    protected HttpHeaders getConstraintHeaders() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Expires-After", String.valueOf(
+            LocalDateTime.from(DateUtils.now().toInstant())
+                .plusDays(DEFAULT_TOKEN_EXPIRE_PERIOS)
+                .toEpochSecond(ZoneOffset.UTC)));
+        headers.add("X-Rate-Limit", String.valueOf(5000));
         return headers;
     }
 
