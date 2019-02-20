@@ -51,8 +51,9 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(
-        value = {CREATED_FIELD_NAME, CHANGED_FIELD_NAME},
-        allowGetters = true
+    value = {CREATED_FIELD_NAME, CHANGED_FIELD_NAME},
+    allowGetters = true,
+    ignoreUnknown = true
 )
 public abstract class AuditDocumentView implements ExposableAuditDocumentView, Serializable {
 

@@ -112,6 +112,10 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
     @JsonProperty(LOCATION_FIELD_NAME)
     private Point location;
 
+    @JacksonXmlProperty(localName = GEO_LOCATION_FIELD_NAME)
+    @JsonProperty(GEO_LOCATION_FIELD_NAME)
+    private Point geoLocation;
+
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = ATTRIBUTES_FIELD_NAME)
     @JsonProperty(ATTRIBUTES_FIELD_NAME)

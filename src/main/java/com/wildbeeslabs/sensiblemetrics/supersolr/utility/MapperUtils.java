@@ -29,16 +29,21 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Custom string utilities implementation
+ * Custom mapper utilities implementation
  */
 @Slf4j
 @UtilityClass
 public class MapperUtils {
 
+    /**
+     * Default model mapper instance {@link ModelMapper}
+     */
     private static ModelMapper modelMapper;
 
     /**
@@ -56,10 +61,10 @@ public class MapperUtils {
      *
      * <p>Note: outClass object must have default constructor with no arguments</p>
      *
-     * @param <D>      type of result object.
-     * @param <T>      type of source object to map from.
-     * @param entity   entity that needs to be mapped.
-     * @param outClass class of result object.
+     * @param <D>      type of result object
+     * @param <T>      type of source object to map from
+     * @param entity   entity that needs to be mapped
+     * @param outClass class of result object {@link Class}
      * @return mapped entity of <code>outClass</code> type
      */
     public static <D, T> D map(final T entity, final Class<D> outClass) {
@@ -67,19 +72,21 @@ public class MapperUtils {
     }
 
     /**
-     * Converts input collection of entities by initial output class instance {@link Class}
+     * Converts input collection of entities {@link Collection} by initial output class instance {@link Class}
      * <p>Note: outClass object must have default constructor with no arguments</p>
      *
-     * @param entityList list of entities that needs to be mapped
-     * @param outCLass   class of result list element
+     * @param entityList list of entities that needs to be mapped {@link Collection}
+     * @param outClass   class of result list element {@link Class}
      * @param <D>        type of objects in result list
      * @param <T>        type of entity in <code>entityList</code>
      * @return list of mapped entities with <code><D></code> type
      */
-    public static <D, T> List<D> mapAll(final Collection<T> entityList, final Class<D> outCLass) {
-        return entityList.stream()
-                .map(entity -> map(entity, outCLass))
-                .collect(Collectors.toList());
+    public static <D, T> List<D> mapAll(final Collection<T> entityList, final Class<D> outClass) {
+        return Optional.ofNullable(entityList)
+            .orElseGet(Collections::emptyList)
+            .stream()
+            .map(entity -> map(entity, outClass))
+            .collect(Collectors.toList());
     }
 
     /**

@@ -25,10 +25,13 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.utility;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Custom string utilities implementation
@@ -45,8 +48,10 @@ public class StringUtils {
      * @return localized string message {@link String}
      */
     public static String getLocaleMessage(final MessageSource messageSource, final String message) {
+        Objects.requireNonNull(messageSource, "Username must not be null!");
+
         final Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(message, null, locale);
+        return messageSource.getMessage(Optional.ofNullable(message).orElse(Strings.EMPTY), null, locale);
     }
 
     /**

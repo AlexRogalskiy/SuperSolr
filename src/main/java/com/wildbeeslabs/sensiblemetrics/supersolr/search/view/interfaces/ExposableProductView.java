@@ -52,4 +52,5 @@ public interface ExposableProductView {
     String AGE_RESTRICTION_FIELD_NAME = "ageRestriction";
     String LOCK_TYPE_FIELD_NAME = "lockType";
     String LOCATION_FIELD_NAME = "location";
+    String GEO_LOCATION_FIELD_NAME = "geoLocation";
 }
