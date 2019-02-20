@@ -55,14 +55,14 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
         SearchableCategory.TITLE_FIELD_NAME,
         SearchableCategory.DESCRIPTION_FIELD_NAME
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
-    HighlightPage<? extends Category> findByTitleIn(final Collection<String> titles, final Pageable pageable);
+    HighlightPage<? extends Category> findByTitleIn(final Collection<String> titles, final Pageable page);
 
     @RestResource(rel = "by-title-like", description = @Description(value = "find categories by title like"))
     @Query(name = "Category.findByTitleLike")
-    Page<? extends Category> findByTitleLike(@Boost(1.5f) final String title, final Pageable pageable);
+    Page<? extends Category> findByTitleLike(@Boost(1.5f) final String title, final Pageable page);
 
     @RestResource(rel = "by-title", description = @Description(value = "find categories by title"))
-    Page<? extends Category> findByTitle(@Boost(2) final String title, final Pageable pageable);
+    Page<? extends Category> findByTitle(@Boost(2) final String title, final Pageable page);
 
     @RestResource(rel = "by-all", description = @Description(value = "find all categories"))
     @Query(name = "Category.findAll")
@@ -71,19 +71,19 @@ public interface CategorySearchRepository extends BaseDocumentSearchRepository<C
     @RestResource(rel = "by-title-and-starting-with", description = @Description(value = "find categories by title starting with"))
     @Query(name = "Category.findByTitleStartingWith")
     @Facet(fields = {SearchableCategory.TITLE_FIELD_NAME})
-    FacetPage<? extends Category> findByTitleStartingWith(final String searchTerm, final Pageable pageable);
+    FacetPage<? extends Category> findByTitleStartingWith(final String searchTerm, final Pageable page);
 
     @RestResource(rel = "by-description", description = @Description(value = "find categories by description"))
     @Query(name = "Category.findByDescription")
-    Page<? extends Category> findByDescription(final String description, final Pageable pageable);
+    Page<? extends Category> findByDescription(final String description, final Pageable page);
 
     @RestResource(rel = "by-named-text", description = @Description(value = "find categories by named text"))
     @Query(name = "Category.findByText")
-    Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    Page<? extends Category> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable page);
 
     @RestResource(rel = "by-title-like-in-collection", description = @Description(value = "find categories like in collection of titles"))
     List<? extends Category> findByTitleLike(final Collection<String> titles);
 
     @RestResource(rel = "by-top10-title-or-description", description = @Description(value = "find top ten categories by title or description"))
-    Page<? extends Category> findTop10ByTitleOrDescription(final @Boost(2) String title, final String description, final Pageable pageable);
+    Page<? extends Category> findTop10ByTitleOrDescription(final @Boost(2) String title, final String description, final Pageable page);
 }

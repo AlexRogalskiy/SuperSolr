@@ -43,14 +43,14 @@ import java.util.concurrent.CompletableFuture;
 public interface AuditDocumentSearchRepository<E extends AuditDocument, ID extends Serializable> extends BaseSearchRepository<E, ID> {
 
     @RestResource(rel = "by-created-date-less-than-equal", description = @Description(value = "find documents by created date less than or equal"))
-    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date date);
+    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date createdDate);
 
-    @RestResource(rel = "by-created-date-greater-than", description = @Description(value = "find documents by created date greated than"))
-    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date date);
+    @RestResource(rel = "by-created-date-greater-than", description = @Description(value = "find documents by created date greater than"))
+    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date createdDate);
 
     @RestResource(rel = "by-created-date-between", description = @Description(value = "find documents by created date between"))
-    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
+    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date createdDateFrom, final Date createdDateTo);
 
-    @RestResource(rel = "by-changed-date-between", description = @Description(value = "find documents by changed date betweeen"))
-    CompletableFuture<List<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
+    @RestResource(rel = "by-changed-date-between", description = @Description(value = "find documents by changed date between"))
+    CompletableFuture<List<? extends E>> findByChangedBetween(final Date changedDateFrom, final Date changedDateTo);
 }

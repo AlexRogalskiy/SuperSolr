@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.ProductSearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
@@ -32,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -42,7 +40,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -61,11 +58,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Product controller implementation unit test
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@WebMvcTest(ProductSearchControllerImpl.class)
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:application-test.properties")
+@TestPropertySource(locations = "file:src/test/resources/application.properties")
 @DirtiesContext
 public class ProductSearchControllerImplTest {
 

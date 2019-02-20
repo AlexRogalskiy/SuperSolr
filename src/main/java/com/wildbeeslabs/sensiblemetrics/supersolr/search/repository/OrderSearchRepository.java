@@ -47,7 +47,7 @@ public interface OrderSearchRepository extends BaseDocumentSearchRepository<Orde
 
     @RestResource(rel = "by-description", description = @Description(value = "find orders by description"))
     @Query(name = "Order.findByDescription")
-    Page<? extends Order> findByDescription(final String description, final Pageable pageable);
+    Page<? extends Order> findByDescription(final String description, final Pageable page);
 
     @RestResource(rel = "by-title", description = @Description(value = "find orders by title"))
     @Query(fields = {
@@ -55,16 +55,16 @@ public interface OrderSearchRepository extends BaseDocumentSearchRepository<Orde
         SearchableOrder.DESCRIPTION_FIELD_NAME,
         SearchableOrder.TITLE_FIELD_NAME
     }, defaultOperator = Operator.OR)
-    Page<? extends Order> findByTitle(@Boost(2) final String searchTerm, final Pageable pageable);
+    Page<? extends Order> findByTitle(@Boost(2) final String searchTerm, final Pageable page);
 
     @RestResource(rel = "by-title-like", description = @Description(value = "find orders by title like"))
     List<? extends Order> findByTitleLike(final Collection<String> titles);
 
     @RestResource(rel = "by-title-starting-with", description = @Description(value = "find orders by title starting with"))
     @Query(name = "Order.findByTitleStartingWith")
-    Page<? extends Order> findByTitleStartingWith(final String title, final Pageable pageable);
+    Page<? extends Order> findByTitleStartingWith(final String title, final Pageable page);
 
     @RestResource(rel = "by-named-text", description = @Description(value = "find orders by named text"))
     @Query(name = "Order.findByText")
-    Page<? extends Order> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
+    Page<? extends Order> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable page);
 }

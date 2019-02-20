@@ -31,6 +31,7 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -67,13 +68,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user").password("user123").roles("USER")
-                .and()
-                .withUser("admin").password("admin123").roles("ADMIN")
-                .and()
-                .withUser("dba").password("dba123").roles("ADMIN", "DBA")
-                .and()
-                .withUser("epadmin").password("epadmin123").roles("EPADMIN");
+            .withUser("user").password("user123").roles("USER")
+            .and()
+            .withUser("admin").password("admin123").roles("ADMIN");
     }
 
     @Override
@@ -84,22 +81,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .httpBasic().realmName("REST API")
-                //                .exceptionHandling()
-                //                .accessDeniedHandler(accessDeniedHandler)
-                //                .authenticationEntryPoint(restAuthenticationEntryPoint)
-                .and().authorizeRequests()
-                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN", "DBA")
-                .antMatchers("/*").permitAll()
-                //.anyRequest().authenticated()
-                //.usernameParameter("ssid").passwordParameter("password")
-                //.and().exceptionHandling().accessDeniedPage("/denied")
-                //                .antMatchers("/api/**").authenticated()
-                //                .and().formLogin().loginPage("/api/login")
-                //                .successHandler(authenticationSuccessHandler)
-                //                .failureHandler(new SimpleUrlAuthenticationFailureHandler())
-                .and().headers().cacheControl().disable()
-                .and().logout();
+            .httpBasic().realmName("REST API")
+            //                .exceptionHandling()
+            //                .accessDeniedHandler(accessDeniedHandler)
+            //                .authenticationEntryPoint(restAuthenticationEntryPoint)
+            .and().authorizeRequests()
+            .antMatchers("/api/**").hasAnyRole("USER", "ADMIN", "DBA")
+            .antMatchers("/*").permitAll()
+            //.anyRequest().authenticated()
+            //.usernameParameter("ssid").passwordParameter("password")
+            //.and().exceptionHandling().accessDeniedPage("/denied")
+            //                .antMatchers("/api/**").authenticated()
+            //                .and().formLogin().loginPage("/api/login")
+            //                .successHandler(authenticationSuccessHandler)
+            //                .failureHandler(new SimpleUrlAuthenticationFailureHandler())
+            .and().headers().cacheControl().disable()
+            .and().logout();
+
+        http.httpBasic().and().authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/api/order").hasRole("USER")
+            .antMatchers(HttpMethod.POST, "/api/order").hasRole("USER")
+            .antMatchers(HttpMethod.PUT, "/api/order").hasRole("USER")
+            .antMatchers(HttpMethod.DELETE, "/api/order").hasRole("ADMIN")
+            .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN").and()
+            .csrf().disable();
     }
 
     @Bean

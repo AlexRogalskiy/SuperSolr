@@ -246,8 +246,8 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     @Test
     public void testFindByLocationQueryString() {
         // given
-        final Point location = new Point(15.10, -76.102);
-        final String locationString = String.format("%f,%f", location.getX(), location.getY());
+        final Point location = new Point(15.10, -76.10);
+        final String locationString = String.format(Locale.ROOT, "%.2f,%.2f", location.getX(), location.getY());
         final Distance distance = new Distance(0.3, Metrics.KILOMETERS);
 
         final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true);
@@ -256,7 +256,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLocationWithin("15.10,-76.102", distance);
+        final List<? extends Product> products = getProductService().findByLocationWithin(locationString, distance);
 
         // then
         assertThat(products, hasSize(1));
@@ -308,10 +308,9 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         // given
         final Point location = new Point(52.51790, 13.41239);
         final Distance distance = new Distance(0.2, Metrics.KILOMETERS);
-        final org.springframework.data.solr.core.geo.Point point = new org.springframework.data.solr.core.geo.Point(location.getX(), location.getY());
 
         // when
-        final GeoResults<? extends Product> products = getProductService().findByGeoLocationNear(point, distance);
+        final GeoResults<? extends Product> products = getProductService().findByGeoLocationNear(location, distance);
 
         // then
         assertNotNull(products);

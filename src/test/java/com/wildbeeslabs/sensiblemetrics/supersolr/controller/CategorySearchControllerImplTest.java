@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.CategorySearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
@@ -33,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -64,9 +62,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@WebMvcTest(CategorySearchControllerImpl.class)
+//@WebMvcTest(CategorySearchControllerImpl.class)
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:application-test.properties")
+@TestPropertySource(locations = "file:src/test/resources/application.properties")
 @DirtiesContext
 public class CategorySearchControllerImplTest {
 

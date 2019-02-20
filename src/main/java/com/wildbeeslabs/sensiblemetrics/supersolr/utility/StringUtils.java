@@ -29,6 +29,8 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +41,19 @@ import java.util.Optional;
 @Slf4j
 @UtilityClass
 public class StringUtils {
+
+    /**
+     * Default numeric pattern format
+     */
+    public static final String DEFAULT_FORMAT_PATTERN = "#.##";
+    /**
+     * Default decimal format instance {@link DecimalFormat}
+     */
+    public static final ThreadLocal<DecimalFormat> DEFAULT_DECIMAL_FORMATTER = ThreadLocal.withInitial(() -> {
+        final DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance();
+        decimalSymbols.setDecimalSeparator('.');
+        return new DecimalFormat(DEFAULT_FORMAT_PATTERN, decimalSymbols);
+    });
 
     /**
      * Returns localized string message {@link String} by initial message source {@link MessageSource} and raw string message {@link String}
@@ -64,5 +79,15 @@ public class StringUtils {
      */
     public static String formatMessage(final MessageSource messageSource, final String message, final Object... args) {
         return String.format(getLocaleMessage(messageSource, message), args);
+    }
+
+    /**
+     * Returns string formatted decimal number by default formatter instance {@link DecimalFormat}
+     *
+     * @param num - initial input decimal number
+     * @return string formatted decimal number
+     */
+    public static String format(double num) {
+        return DEFAULT_DECIMAL_FORMATTER.get().format(num);
     }
 }
