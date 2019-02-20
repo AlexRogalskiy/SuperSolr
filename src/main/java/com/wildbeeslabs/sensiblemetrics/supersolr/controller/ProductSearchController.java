@@ -25,6 +25,8 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 
 /**
  * Custom product search controller declaration
@@ -35,4 +37,9 @@ public interface ProductSearchController extends BaseDocumentSearchController<Pr
      * Default service ID
      */
     String CONTROLLER_ID = "ProductSearchController";
+
+    /**
+     * Default distance distance {@link Distance}
+     */
+    Distance DEFAULT_LOCATION_DISTANCE = new Distance(0.1, Metrics.KILOMETERS);
 }

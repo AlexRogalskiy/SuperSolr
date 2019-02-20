@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.CategorySearch
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,36 +82,49 @@ public class CategorySearchControllerImplTest {
     private CategorySearchService categoryService;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearch() {
+        // given
         final List<? extends CategoryView> list = new ArrayList<>();
-        final ResponseEntity<? extends List> entity = this.restTemplate.getForEntity(this.url, list.getClass());
 
+        // when
+        final ResponseEntity<? extends List<ProductView>> entity = (ResponseEntity<? extends List<ProductView>>) this.restTemplate.getForEntity(this.url, list.getClass());
+
+        // then
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals("Test", entity.getBody());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
+        // given
         final Category category = new Category();
+
+        // when
         final Iterable<Category> categories = (Iterable<Category>) getCategoryService().findAll();
+
+        // then
         given(categories).willReturn(Arrays.asList(category));
 
         this.mvc.perform(get("/api/categories")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is(category.getTitle())));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is(category.getTitle())));
     }
 
     @Test
     public void testSearchById() throws Exception {
+        // when
         given(getCategoryService().find("01"))
-                .willReturn(Optional.of(new Category()));
+            .willReturn(Optional.of(new Category()));
 
+        // then
         this.mvc.perform(get("/api/category/search")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello World"));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Hello World"));
     }
 
     protected CategorySearchService getCategoryService() {

@@ -39,10 +39,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Shape;
 import org.springframework.data.solr.UncategorizedSolrException;
 import org.springframework.data.solr.core.geo.GeoConverters;
-import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -143,15 +143,25 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
+    public List<? extends Product> findByLocationWithin(final Point location, final Distance distance) {
+        return getRepository().findByLocationWithin(location, distance);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<? extends Product> findByLocationNear(final Point location, final Distance distance) {
         return getRepository().findByLocationNear(location, distance);
     }
 
     @Override
+    public Page<? extends Product> findByLocationNear(final Point location, final Distance distance, final Pageable pageable) {
+        return getRepository().findByLocation(location, distance, pageable);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<? extends Product> findByLocationWithin(final String location, final Distance distance) {
-        final org.springframework.data.geo.Point point = GeoConverters.StringToPointConverter.INSTANCE.convert(location);
+        final Point point = GeoConverters.StringToPointConverter.INSTANCE.convert(location);
         return getRepository().findByLocationWithin(new Point(point.getX(), point.getY()), distance);
     }
 
@@ -175,18 +185,6 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findAvailable(final Pageable pageable) {
-        return getRepository().findByAvailableTrue(pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<? extends Product> findUnavailable(final Pageable pageable) {
-        return getRepository().findByAvailableFalse(pageable);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Page<? extends Product> findAllProducts(final Pageable pageable) {
         return getRepository().findAllProducts(pageable);
     }
@@ -195,6 +193,12 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     @Transactional(readOnly = true)
     public Page<? extends Product> findAvailableProductsByName(final String name, final Pageable pageable) {
         return getRepository().findByAvailableTrueAndNameStartingWith(name, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<? extends Product> findByAvailableQuery(boolean inStock, final Pageable pageable) {
+        return getRepository().findByAvailableQuery(inStock, pageable);
     }
 
     @Override

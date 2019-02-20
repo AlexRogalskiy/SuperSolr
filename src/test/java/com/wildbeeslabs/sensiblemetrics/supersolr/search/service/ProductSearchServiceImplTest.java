@@ -244,7 +244,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
-    public void testFindByLocationString() {
+    public void testFindByLocationQueryString() {
         // given
         final Point location = new Point(15.10, -76.102);
         final String locationString = String.format("%f,%f", location.getX(), location.getY());
@@ -256,7 +256,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLocationWithin(locationString, distance);
+        final List<? extends Product> products = getProductService().findByLocationWithin("15.10,-76.102", distance);
 
         // then
         assertThat(products, hasSize(1));
@@ -303,7 +303,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("GeoResults is null or not supported yet")
     public void testFindByGeoLocationNear() {
         // given
         final Point location = new Point(52.51790, 13.41239);
@@ -314,6 +314,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         final GeoResults<? extends Product> products = getProductService().findByGeoLocationNear(point, distance);
 
         // then
+        assertNotNull(products);
         assertThat(products.getContent(), hasSize(1));
 
         final Distance distanceResult = products.getContent().get(0).getDistance();
@@ -347,6 +348,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
 
         // then
         assertEquals(2, productPage.getTotalElements());
+        assertThat(productPage.getContent(), hasSize(2));
     }
 
     @Test
@@ -393,6 +395,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
 
         // then
         assertEquals(10, productPage.getTotalElements());
+        assertThat(productPage.getContent(), hasSize(2));
     }
 
     @Test
@@ -429,6 +432,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
 
         // then
         assertEquals(1, productPage.getTotalElements());
+        assertThat(productPage.getContent(), hasSize(1));
     }
 
     @Test

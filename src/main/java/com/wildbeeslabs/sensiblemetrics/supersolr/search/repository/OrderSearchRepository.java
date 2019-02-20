@@ -27,6 +27,9 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.solr.core.query.Query.Operator;
 import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Query;
@@ -39,11 +42,14 @@ import java.util.List;
  * Custom order search repository declaration {@link BaseDocumentSearchRepository}
  */
 @Repository
+@RepositoryRestResource(collectionResourceRel = "order-search-repo", itemResourceDescription = @Description(value = "search operations on order documents"))
 public interface OrderSearchRepository extends BaseDocumentSearchRepository<Order, String> {
 
+    @RestResource(rel = "by-description", description = @Description(value = "find orders by description"))
     @Query(name = "Order.findByDescription")
     Page<? extends Order> findByDescription(final String description, final Pageable pageable);
 
+    @RestResource(rel = "by-title", description = @Description(value = "find orders by title"))
     @Query(fields = {
         SearchableOrder.ID_FIELD_NAME,
         SearchableOrder.DESCRIPTION_FIELD_NAME,
@@ -51,11 +57,14 @@ public interface OrderSearchRepository extends BaseDocumentSearchRepository<Orde
     }, defaultOperator = Operator.OR)
     Page<? extends Order> findByTitle(@Boost(2) final String searchTerm, final Pageable pageable);
 
+    @RestResource(rel = "by-title-like", description = @Description(value = "find orders by title like"))
     List<? extends Order> findByTitleLike(final Collection<String> titles);
 
+    @RestResource(rel = "by-title-starting-with", description = @Description(value = "find orders by title starting with"))
     @Query(name = "Order.findByTitleStartingWith")
     Page<? extends Order> findByTitleStartingWith(final String title, final Pageable pageable);
 
+    @RestResource(rel = "by-named-text", description = @Description(value = "find orders by named text"))
     @Query(name = "Order.findByText")
     Page<? extends Order> findByNamedQuery(@Boost(2) final String searchTerm, final Pageable pageable);
 }

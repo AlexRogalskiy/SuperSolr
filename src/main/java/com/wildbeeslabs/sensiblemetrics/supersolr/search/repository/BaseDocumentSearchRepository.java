@@ -25,6 +25,8 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.solr.repository.Boost;
 import org.springframework.data.solr.repository.Query;
 
@@ -40,6 +42,7 @@ import java.util.Optional;
 @NoRepositoryBean
 public interface BaseDocumentSearchRepository<E extends BaseDocument<ID>, ID extends Serializable> extends AuditDocumentSearchRepository<E, ID> {
 
+    @RestResource(rel = "by-id", description = @Description(value = "find documents by id"))
     @Query(name = "BaseDocument.findById")
     Optional<E> findById(@Boost(2) final ID id);
 }

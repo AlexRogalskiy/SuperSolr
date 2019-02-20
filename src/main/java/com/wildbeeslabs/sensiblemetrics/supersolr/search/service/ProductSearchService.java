@@ -29,8 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Shape;
-import org.springframework.data.solr.core.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 
@@ -73,21 +73,23 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     Page<? extends Product> findByLocation(final Point location, final Distance distance, final Pageable pageable);
 
-    List<? extends Product> findByLocationWithin(final String location, final Distance distance);
-
-    List<? extends Product> findByLocationNear(final Point location, final Distance distance);
-
-    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);
+    List<? extends Product> findByLocationWithin(final Point location, final Distance distance);
 
     List<? extends Product> findByLocationNear(final Shape shape);
 
+    List<? extends Product> findByLocationNear(final Point location, final Distance distance);
+
+    List<? extends Product> findByLocationWithin(final String location, final Distance distance);
+
+    Page<? extends Product> findByLocationNear(final Point location, final Distance distance, final Pageable pageable);
+
     GeoResults<? extends Product> findByGeoLocationNear(final Point location, final Distance distance);
+
+    Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);
 
     Page<? extends Product> findAvailableProductsByName(final String name, final Pageable pageable);
 
-    Page<? extends Product> findAvailable(final Pageable pageable);
-
-    Page<? extends Product> findUnavailable(final Pageable pageable);
+    Page<? extends Product> findByAvailableQuery(boolean inStock, final Pageable page);
 
     Page<? extends Product> findAllProducts(final Pageable pageable);
 

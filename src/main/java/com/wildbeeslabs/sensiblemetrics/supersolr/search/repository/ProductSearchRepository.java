@@ -30,8 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Shape;
-import org.springframework.data.solr.core.geo.Point;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.repository.Boost;
@@ -47,8 +50,10 @@ import java.util.List;
  * Custom product search repository declaration {@link BaseDocumentSearchRepository}
  */
 @Repository
+@RepositoryRestResource(collectionResourceRel = "product-search-repo", itemResourceDescription = @Description(value = "search operations on product documents"))
 public interface ProductSearchRepository extends BaseDocumentSearchRepository<Product, String> {
 
+    @RestResource(rel = "by-name-in-collection", description = @Description(value = "find products by collection of names"))
     @Highlight(prefix = "<highlight>", postfix = "</highlight>")
     @Query(fields = {
         SearchableProduct.ID_FIELD_NAME,
@@ -61,6 +66,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.AND)
     HighlightPage<? extends Product> findByNameIn(final Collection<String> names, final Pageable page);
 
+    @RestResource(rel = "by-short-description", description = @Description(value = "find products by short description"))
     @Query(fields = {
         SearchableProduct.ID_FIELD_NAME,
         SearchableProduct.NAME_FIELD_NAME,
@@ -71,78 +77,101 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     }, defaultOperator = org.springframework.data.solr.core.query.Query.Operator.OR)
     Page<? extends Product> findByShortDescription(@Boost(2) final String searchTerm, final Pageable pageable);
 
+    @RestResource(rel = "by-name-like-in-collection", description = @Description(value = "find products like in collection of titles"))
     @Query(name = "Product.findByNameLike")
     List<? extends Product> findByNameLike(final Collection<String> names);
 
+    @RestResource(rel = "by-id", description = @Description(value = "find products by ID"))
     @Query(name = "Product.findById")
     Page<? extends Product> findProductById(final String id, final Pageable pageable);
 
+    @RestResource(rel = "by-name", description = @Description(value = "find products by name"))
     Page<? extends Product> findByName(final String name, final Pageable pageable);
 
+    @RestResource(rel = "by-all", description = @Description(value = "find all products"))
     @Query(name = "Product.findAll")
     Page<? extends Product> findAllProducts(final Pageable pageable);
 
+    @RestResource(rel = "by-description", description = @Description(value = "find products by description"))
     @Query(name = "Product.findByDescription")
     Page<? extends Product> findByDescription(final String description, final Pageable pageable);
 
+    @RestResource(rel = "by-name-starting-with", description = @Description(value = "find products by name starting with"))
     @Query(name = "Product.findByTitleStartingWith")
     @Facet(fields = {SearchableProduct.NAME_FIELD_NAME})
     FacetPage<? extends Product> findByNameStartingWith(@Boost(1.5f) final String name, final Pageable pageable);
 
+    @RestResource(rel = "by-name-or-description", description = @Description(value = "find products by name or description"))
     @Query(name = "Product.findByNameOrDescription")
     Page<? extends Product> findByNameOrDescription(@Boost(2) final String searchTerm, final Pageable pageable);
 
+    @RestResource(rel = "by-name-category", description = @Description(value = "find products by category"))
     @Query(name = "Product.findByCategory")
     Page<? extends Product> findByCategory(final String category, final Pageable pageable);
 
+    @RestResource(rel = "by-available", description = @Description(value = "find available products"))
     @Query(name = "Product.findAvailable")
     Page<? extends Product> findAvailableProducts(final Pageable pageable);
 
+    @RestResource(rel = "by-availability", description = @Description(value = "find products by availability"))
     @Query(name = "Product.findByAvailability")
     Page<? extends Product> findByAvailableQuery(boolean inStock, final Pageable page);
 
+    @RestResource(rel = "by-name-or-category", description = @Description(value = "find products by name or category"))
     @Query(name = "Product.findByNameOrCategory")
     Page<? extends Product> findByNameOrCategory(final String searchTerm, final Pageable pageable);
 
+    @RestResource(rel = "by-rating", description = @Description(value = "find products by rating"))
     Page<? extends Product> findByRating(final Integer popularity, final Pageable pageable);
 
+    @RestResource(rel = "by-rating-greater-than-equal", description = @Description(value = "find products by rating greater than or equal"))
     Page<? extends Product> findByRatingGreaterThanEqual(final Integer popularity, final Pageable page);
 
+    @RestResource(rel = "by-lock-type", description = @Description(value = "find products by locktype"))
     List<? extends Product> findByLockType(final Integer lockType, final Sort sort);
 
+    @RestResource(rel = "by-location", description = @Description(value = "find products by location"))
     Page<? extends Product> findByLocation(final Point location, final Distance distance, final Pageable pageable);
 
+    @RestResource(rel = "by-location-within", description = @Description(value = "find products by location within"))
     List<? extends Product> findByLocationWithin(final Point location, final Distance distance);
 
+    @RestResource(rel = "by-shape-location-near", description = @Description(value = "find products by shape location near"))
     List<? extends Product> findByLocationNear(final Shape shape);
 
+    @RestResource(rel = "by-location-near", description = @Description(value = "find products by location near"))
     List<? extends Product> findByLocationNear(final Point location, final Distance distance);
 
+    @RestResource(rel = "by-geolocation-near", description = @Description(value = "find products by geolocation near"))
     GeoResults<? extends Product> findByGeoLocationNear(final Point location, final Distance distance);
 
-    Page<? extends Product> findByAvailableTrue(final Pageable pageable);
-
-    Page<? extends Product> findByAvailableFalse(final Pageable pageable);
-
+    @RestResource(rel = "by-location", description = @Description(value = "find products by location"))
     @Query(name = "Product.findByLocation")
     List<? extends Product> findByLocationSomewhereNear(final Point location, final Distance distance);
 
+    @RestResource(rel = "by-name-or-category-contains", description = @Description(value = "find products by name or category contains"))
     List<? extends Product> findByNameContainsOrCategoriesContains(final String name, final String category, final Sort sort);
 
+    @RestResource(rel = "by-price-in-range", description = @Description(value = "find products by price in range"))
     @Query(name = "Product.findByPriceInRange")
     Page<? extends Product> findByPriceInRange(double lowerBound, double upperBound, final Pageable pageable);
 
+    @RestResource(rel = "by-price-in-range-exclusive", description = @Description(value = "find products by price in range exclusive"))
     @Query(name = "Product.findByPriceInRangeExclusive")
     Page<? extends Product> findByPriceInRangeExclusive(double lowerBound, double upperBound, final Pageable pageable);
 
+    @RestResource(rel = "by-available-and-name-starting-with", description = @Description(value = "find available products by name starting with"))
     Page<? extends Product> findByAvailableTrueAndNameStartingWith(final String name, final Pageable pageable);
 
+    @RestResource(rel = "by-name-and-rating", description = @Description(value = "find products by name and rating"))
     @Query(name = "Product.findByNameAndRating")
     List<? extends Product> findByNameAndRating(final String name, final Integer rating);
 
+    @RestResource(rel = "by-name-like-and-by-facet-category", description = @Description(value = "find products by name like"))
     @Query(name = "Product.findByNameLike")
     @Facet(fields = {SearchableProduct.CATEGORIES_FIELD_NAME}, limit = 20)
     FacetPage<? extends Product> findByNameAndFacetOnCategory(final String name, Pageable page);
 
+    @RestResource(rel = "by-top10-name-or-short-description", description = @Description(value = "find top ten products by name or short description"))
     Page<? extends Product> findTop10ByNameOrShortDescription(final @Boost(2) String name, final String shortDescription, final Pageable pageable);
 }

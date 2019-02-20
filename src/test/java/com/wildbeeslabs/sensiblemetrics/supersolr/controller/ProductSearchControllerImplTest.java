@@ -81,36 +81,38 @@ public class ProductSearchControllerImplTest {
     private ProductSearchService productService;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearch() {
         final List<? extends ProductView> list = new ArrayList<>();
-        final ResponseEntity<? extends List> entity = this.restTemplate.getForEntity(this.url, list.getClass());
+        final ResponseEntity<? extends List<ProductView>> entity = (ResponseEntity<? extends List<ProductView>>) this.restTemplate.getForEntity(this.url, list.getClass());
 
         assertEquals(HttpStatus.OK, entity.getStatusCode());
         assertEquals("Test", entity.getBody());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
         final Product product = new Product();
         final Iterable<Product> products = (Iterable<Product>) getProductService().findAll();
         given(products).willReturn(Arrays.asList(product));
 
         this.mvc.perform(get("/api/products")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is(product.getName())));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is(product.getName())));
     }
 
     @Test
     public void testSearchById() throws Exception {
         given(getProductService().find("01"))
-                .willReturn(Optional.of(new Product()));
+            .willReturn(Optional.of(new Product()));
 
         this.mvc.perform(get("/api/product/search")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello World"));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Hello World"));
     }
 
     protected ProductSearchService getProductService() {

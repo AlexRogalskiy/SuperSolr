@@ -38,6 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Point;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.web.PageableDefault;
@@ -48,6 +50,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -225,6 +228,32 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
         log.info("Fetching product by term: {}, page: {}", searchTerm, page);
         final List<? extends ProductView> productViews = MapperUtils.mapAll(getSearchService().find(searchTerm, PageRequest.of(page, 2)).getContent(), ProductView.class);
         return new ResponseEntity<>(productViews, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/location")
+    @ResponseBody
+    @ApiOperation(
+        httpMethod = "GET",
+        value = "Finds category documents by location",
+        notes = "Returns list of category documents by location",
+        nickname = "findByLocation",
+        tags = {"fetchByLoc"},
+        position = 6,
+        response = List.class,
+        responseContainer = "List"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "Invalid description value"),
+        @ApiResponse(code = 404, message = "Not found"),
+        @ApiResponse(code = 405, message = "Validation exception")
+    })
+    public ResponseEntity<?> findByLocation(
+        final @RequestParam Point location,
+        final @RequestParam Optional<Distance> distance,
+        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
+        log.info("Fetching products by location: {}, distance: {}, page: {}", location, distance, page);
+        final Page<? extends Product> productPage = getSearchService().findByLocationNear(location, distance.orElse(DEFAULT_LOCATION_DISTANCE), PageRequest.of(page, 2));
+        return new ResponseEntity<>(MapperUtils.mapAll(productPage.getContent(), ProductView.class), getHeaders(productPage), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
