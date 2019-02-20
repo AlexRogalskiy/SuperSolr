@@ -41,8 +41,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.*;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -166,7 +165,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         // when
         final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria(SearchableProduct.COLLECTION_ID, new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).is(searhTerms), PageRequest.of(0, 10));
 
-        // assert
+        // then
         assertEquals(1, productPage.getTotalElements());
 
         // when
@@ -186,7 +185,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         final Page<? extends Product> productPage = getProductService().findByDescription("Island", PageRequest.of(0, 10));
         final List<? extends Product> products = productPage.getContent();
 
-        // assert
+        // then
         assertThat(products, hasSize(1));
         assertTrue(containsIds(products, idsToCheck));
     }
@@ -248,7 +247,6 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
     public void testFindByLocationString() {
         // given
         final Point location = new Point(15.10, -76.102);
-        //final Point locationPoint = new Point(25.10, -86.102);
         final String locationString = String.format("%f,%f", location.getX(), location.getY());
         final Distance distance = new Distance(0.3, Metrics.KILOMETERS);
 
@@ -258,7 +256,7 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLocationWithin("15.10,-76.102", distance);
+        final List<? extends Product> products = getProductService().findByLocationWithin(locationString, distance);
 
         // then
         assertThat(products, hasSize(1));
@@ -431,6 +429,30 @@ public class ProductSearchServiceImplTest extends BaseDocumentTest {
 
         // then
         assertEquals(1, productPage.getTotalElements());
+    }
+
+    @Test
+    public void testFindByFacetQuery() {
+        // given
+        final Criteria criteria = new Criteria(Criteria.WILDCARD).expression(Criteria.WILDCARD);
+        final FacetQuery facetQuery = new SimpleFacetQuery(criteria)
+            .setFacetOptions(new FacetOptions()
+                .addFacetOnField(SearchableProduct.NAME_FIELD_NAME)
+                .setFacetLimit(5));
+
+        // when
+        final FacetPage<? extends Product> productPage = getProductService().findByFacetQuery(SearchableProduct.COLLECTION_ID, facetQuery);
+
+        // then
+        assertThat(productPage.getContent(), hasSize(10));
+
+        // when
+        final Map<String, Long> categoryFacetCounts = getFacetCounts(productPage);
+
+        // then
+        assertNull(categoryFacetCounts.get("Test"));
+        assertEquals(Long.valueOf(8), categoryFacetCounts.get("name"));
+        assertEquals(Long.valueOf(2), categoryFacetCounts.get("new"));
     }
 
     @Test

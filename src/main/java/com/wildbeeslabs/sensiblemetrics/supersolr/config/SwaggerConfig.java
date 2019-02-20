@@ -71,6 +71,11 @@ public class SwaggerConfig {
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             enable(SerializationFeature.INDENT_OUTPUT);
         }
+
+        public ObjectMapper copy() {
+            //_checkInvalidCopy(ObjectMapper.class);
+            return new CustomObjectMapper();
+        }
     }
 
     private ApiInfo apiInfo() {

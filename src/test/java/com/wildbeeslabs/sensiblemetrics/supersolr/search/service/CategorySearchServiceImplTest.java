@@ -39,6 +39,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.FacetOptions;
+import org.springframework.data.solr.core.query.FacetQuery;
+import org.springframework.data.solr.core.query.SimpleFacetQuery;
 import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
@@ -82,7 +86,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
         final Iterable<? extends Category> categoryIterable = getCategoryService().findAll();
         final List<? extends Category> categories = Lists.newArrayList(categoryIterable);
 
-        // assert
+        // then
         assertThat(categories, not(empty()));
         assertThat(categories, hasSize(totalElements));
     }
@@ -96,7 +100,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
         final Iterable<? extends Category> categoryIterable = getCategoryService().findAll(categoryIds);
         final List<? extends Category> categories = Lists.newArrayList(categoryIterable);
 
-        // assert
+        // then
         assertThat(categories, not(empty()));
         assertThat(categories, hasSize(categoryIds.size()));
     }
@@ -175,7 +179,7 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
         // when
         final FacetPage<? extends Category> categoryFacetPage = getCategoryService().findByAutoCompleteTitleFragment(titleTerms, PageRequest.of(0, 5));
 
-        // assert
+        // then
         assertEquals(4, categoryFacetPage.getNumberOfElements());
 
         // when
@@ -192,12 +196,36 @@ public class CategorySearchServiceImplTest extends BaseDocumentTest {
         // given
         final String queryString = "index:[1 TO 3] OR title:*land*";
 
-        //assert
+        // when
         final Page<? extends Category> productPage = getCategoryService().findByQuery(SearchableCategory.COLLECTION_ID, getQuery(queryString));
         productPage.getContent();
 
         // then
         assertEquals(6, productPage.getTotalElements());
+    }
+
+    @Test
+    public void testFindByFacetQuery() {
+        // given
+        final Criteria criteria = new Criteria(Criteria.WILDCARD).expression(Criteria.WILDCARD);
+        final FacetQuery facetQuery = new SimpleFacetQuery(criteria)
+            .setFacetOptions(new FacetOptions()
+                .addFacetOnField(SearchableCategory.TITLE_FIELD_NAME)
+                .setFacetLimit(5));
+
+        // when
+        final FacetPage<? extends Category> productPage = getCategoryService().findByFacetQuery(SearchableCategory.COLLECTION_ID, facetQuery);
+
+        // then
+        assertThat(productPage.getContent(), hasSize(10));
+
+        // when
+        final Map<String, Long> categoryFacetCounts = getFacetCounts(productPage);
+
+        // then
+        assertNull(categoryFacetCounts.get("Test"));
+        assertEquals(Long.valueOf(4), categoryFacetCounts.get("island"));
+        assertEquals(Long.valueOf(2), categoryFacetCounts.get("treasure"));
     }
 
     @Test

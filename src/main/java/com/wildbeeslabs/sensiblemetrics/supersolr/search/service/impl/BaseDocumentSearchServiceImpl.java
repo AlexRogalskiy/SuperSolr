@@ -109,7 +109,6 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
     }
 
     protected FacetPage<? extends E> findByFacetQuery(final String collection, final FacetQuery facetQuery, final Class<? extends E> clazz) {
-        //final FacetQuery facetQuery = new SimpleFacetQuery(new Criteria(Criteria.WILDCARD).expression(Criteria.WILDCARD)).setFacetOptions(new FacetOptions().addFacetOnField("name").setFacetLimit(5));
         return getSolrTemplate().queryForFacetPage(collection, facetQuery, clazz);
     }
 
