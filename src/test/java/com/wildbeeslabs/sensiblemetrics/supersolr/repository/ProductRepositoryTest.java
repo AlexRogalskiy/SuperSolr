@@ -42,6 +42,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -96,7 +97,7 @@ public class ProductRepositoryTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(1, products.size());
+        assertThat(products, hasSize(1));
         assertEquals(name, products.get(0).getName());
     }
 

@@ -42,6 +42,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -96,7 +97,7 @@ public class CategoryRepositoryTest {
 
         // then
         assertThat(categories, not(empty()));
-        assertEquals(1, categories.size());
+        assertThat(categories, hasSize(1));
         assertEquals(title, categories.get(0).getTitle());
     }
 

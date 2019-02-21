@@ -55,6 +55,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 
 /**
  * Product search repository implementation unit test {@link BaseTest}
@@ -96,7 +97,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(1, products.size());
+        assertThat(products, hasSize(1));
         assertEquals(product.getName(), products.get(0).getName());
     }
 
@@ -119,7 +120,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(2, products.size());
+        assertThat(products, hasSize(2));
         assertEquals(product.getShortDescription(), products.get(0).getShortDescription());
     }
 
@@ -142,7 +143,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(1, products.size());
+        assertThat(products, hasSize(1));
     }
 
     @Test
@@ -172,7 +173,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(1, products.size());
+        assertThat(products, hasSize(1));
         assertTrue(products.get(0).getName().startsWith(searchExistingName));
 
         // when
@@ -202,7 +203,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(1, products.size());
+        assertThat(products, hasSize(1));
         assertTrue(names.stream().allMatch(name -> products.get(0).getName().contains(name)));
     }
 
@@ -244,7 +245,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(1, products.size());
+        assertThat(products, hasSize(1));
     }
 
     @Test
@@ -267,7 +268,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(3, products.size());
+        assertThat(products, hasSize(3));
     }
 
     @Test
@@ -290,7 +291,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(products, not(empty()));
-        assertEquals(2, products.size());
+        assertThat(products, hasSize(2));
     }
 
     @SuppressWarnings("unchecked")

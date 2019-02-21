@@ -54,6 +54,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 
 /**
  * Category search repository implementation unit test {@link BaseTest}
@@ -95,7 +96,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(categories, not(empty()));
-        assertEquals(1, categories.size());
+        assertThat(categories, hasSize(1));
         assertEquals(category.getTitle(), categories.get(0).getTitle());
     }
 
@@ -117,8 +118,8 @@ public class CategorySearchRepositoryTest extends BaseTest {
         final List<? extends Category> categories = categoryPage.getContent();
 
         // then
-        assertThat(categories, not(empty()));
-        assertEquals(2, categories.size());
+        assertThat(categories, not(empty()));        assertThat(categories, hasSize(1));
+        assertThat(categories, hasSize(2));
         assertEquals(category.getDescription(), categories.get(0).getDescription());
     }
 
@@ -178,7 +179,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(categories, not(empty()));
-        assertEquals(3, categories.size());
+        assertThat(categories, hasSize(3));
     }
 
     @Test
@@ -200,7 +201,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // then
         assertThat(categories, not(empty()));
-        assertEquals(3, categories.size());
+        assertThat(categories, hasSize(3));
         assertTrue(titles.stream().allMatch(title -> categories.get(0).getTitle().contains(title)));
     }
 
