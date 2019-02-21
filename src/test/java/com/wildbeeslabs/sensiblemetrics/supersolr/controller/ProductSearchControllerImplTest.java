@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.google.common.net.HttpHeaders;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
@@ -38,12 +37,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -105,6 +102,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
     @Before
     public void before() {
         getProductService().save(getSampleData());
+        SecurityContextHolder.clearContext();
     }
 
     @After
@@ -117,16 +115,19 @@ public class ProductSearchControllerImplTest extends BaseTest {
     @SuppressWarnings("unchecked")
     public void testSearch() {
         // given
+        final String urlTemplate = "/api/product/all";
+
         final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
         final Map<String, String> params = new HashMap<>();
         params.put("page", "0");
         params.put("size", "5");
 
         // when
-        final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, "/api/product/all"), HttpMethod.GET, requestEntity, List.class, params);
+        final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, urlTemplate), HttpMethod.GET, requestEntity, List.class, params);
 
         // then
         assertThat(response.getBody(), is(nullValue()));
+        //assertThat(response.getHeaders().getContentType(), is(MediaType.APPLICATION_JSON_UTF8_VALUE));
         //assertEquals(HttpStatus.OK, response.getStatusCode());
         //assertEquals("Test", response.getBody());
     }
@@ -138,10 +139,15 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // when
         final String urlTemplate = "/api/products";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -151,15 +157,22 @@ public class ProductSearchControllerImplTest extends BaseTest {
     @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
         // given
-        final String responseText = "";
+        final String urlTemplate = "/api/product/all";
+        final String responseText = "[{\"id\":\"01\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":10.0,\"recommendedPrice\":2.0,\"rating\":4},{\"id\":\"02\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":1.0,\"recommendedPrice\":2.0,\"rating\":32},{\"id\":\"03\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":11.0,\"recommendedPrice\":2.0,\"rating\":2},{\"id\":\"04\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":18.0,\"recommendedPrice\":2.0,\"rating\":4},{\"id\":\"05\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":1.0,\"recommendedPrice\":2.0,\"rating\":7},{\"id\":\"06\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":8.0,\"recommendedPrice\":2.0,\"rating\":9},{\"id\":\"07\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":5.0,\"recommendedPrice\":2.0,\"rating\":10},{\"id\":\"08\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":3.0,\"recommendedPrice\":2.0,\"rating\":11},{\"id\":\"09\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":120.0,\"recommendedPrice\":2.0,\"rating\":13}]";
+
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
 
         // then
-        this.mockMvc.perform(get("/api/product/all")
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+
             .andExpect(content().json(responseText));
     }
 
@@ -167,15 +180,24 @@ public class ProductSearchControllerImplTest extends BaseTest {
     @DisplayName("Test search product by non-existing term")
     public void testSearchByNonExistingTerm() throws Exception {
         // given
+        final String urlTemplate = "/api/product/search/test/1";
         final String responseText = "[]";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+        //headers.add(HttpHeaders.AUTHORIZATION, "Basic " + new String(Base64.encode(("greg:turnquist").getBytes())));
+
         // then
-        this.mockMvc.perform(get("/api/product/search/test/1")
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
+            .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+            //.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(responseText));
     }
 
@@ -183,16 +205,39 @@ public class ProductSearchControllerImplTest extends BaseTest {
     @DisplayName("Test search product by term")
     public void testSearchById() throws Exception {
         // given
+        final String urlTemplate = "/api/product/search/Blackbeard/1";
         final String responseText = "[]";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
         // then
-        this.mockMvc.perform(get("/api/product/search/Blackbeard/1")
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().string(responseText));
+    }
+
+    @Test
+    @DisplayName("Test unauthorized access")
+    public void testForbiddenAccess() throws Exception {
+        // given
+        final String urlTemplate = "/api/product/all";
+
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
+        this.mockMvc.perform(get(urlTemplate)
+            .headers(headers)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnauthorized());
     }
 
     protected UsernamePasswordAuthenticationToken getPrincipal(final String username) {

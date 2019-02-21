@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
-import com.google.common.net.HttpHeaders;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
@@ -38,10 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -103,16 +99,19 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @SuppressWarnings("unchecked")
     public void testSearch() {
         // given
+        final String urlTemplate = "/api/category/all";
+
         final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
         final Map<String, String> params = new HashMap<>();
         params.put("page", "0");
         params.put("size", "5");
 
         // when
-        final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, "/api/category/all"), HttpMethod.GET, requestEntity, List.class, params);
+        final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, urlTemplate), HttpMethod.GET, requestEntity, List.class, params);
 
         // then
         assertThat(response.getBody(), is(nullValue()));
+        //assertThat(response.getHeaders().getContentType(), is(MediaType.APPLICATION_JSON_UTF8_VALUE));
         //assertEquals(HttpStatus.OK, response.getStatusCode());
         //assertEquals("Test", response.getBody());
     }
@@ -124,10 +123,15 @@ public class CategorySearchControllerImplTest extends BaseTest {
         //given
         final String urlTemplate = "/api/categories";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -137,15 +141,21 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
         // given
+        final String urlTemplate = "/api/category/all";
         final String responseText = "[{\"id\":\"01\",\"score\":1.0,\"index\":1,\"title\":\"Treasure Island\",\"description\":\"Best seller by R.L.S.\"},{\"id\":\"02\",\"score\":1.0,\"index\":2,\"title\":\"Treasure Island 2.0\",\"description\":\"Humorous remake of the famous best seller\"},{\"id\":\"03\",\"score\":1.0,\"index\":3,\"title\":\"Solr for dummies\",\"description\":\"Get started with solr\"},{\"id\":\"04\",\"score\":1.0,\"index\":4,\"title\":\"Moon landing\",\"description\":\"All facts about Apollo 11, a best seller\"},{\"id\":\"05\",\"score\":1.0,\"index\":5,\"title\":\"Spring Island\",\"description\":\"The perfect island romance..\"},{\"id\":\"06\",\"score\":1.0,\"index\":6,\"title\":\"Refactoring\",\"description\":\"It's about improving the design of existing code.\"},{\"id\":\"07\",\"score\":1.0,\"index\":7,\"title\":\"Baking for dummies\",\"description\":\"Bake your own cookies, on a secret island!\"},{\"id\":\"08\",\"score\":1.0,\"index\":8,\"title\":\"The Pirate Island\",\"description\":\"Oh noes, the pirates are coming!\"},{\"id\":\"09\",\"score\":1.0,\"index\":9,\"title\":\"Blackbeard\",\"description\":\"It's the pirate Edward Teach!\"},{\"id\":\"10\",\"score\":1.0,\"index\":10,\"title\":\"Handling Cookies\",\"description\":\"How to handle cookies in web applications\"}]";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
         // then
-        this.mockMvc.perform(get("/api/category/all")
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(responseText));
     }
 
@@ -153,15 +163,21 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @DisplayName("Test search category by non-existing term")
     public void testSearchByNonExistingTerm() throws Exception {
         // given
+        final String urlTemplate = "/api/category/search/test/1";
         final String responseText = "[]";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
         // then
-        this.mockMvc.perform(get("/api/category/search/test/1")
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(responseText));
     }
 
@@ -169,16 +185,39 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @DisplayName("Test search category by term")
     public void testSearchByTerm() throws Exception {
         // given
+        final String urlTemplate = "/api/category/search/Blackbeard/1";
         final String responseText = "[]";
 
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
         // then
-        this.mockMvc.perform(get("/api/category/search/Blackbeard/1")
+        this.mockMvc.perform(get(urlTemplate)
             .session(getSession("USER"))
-            .header(HttpHeaders.ORIGIN, this.url)
+            .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(responseText));
+    }
+
+    @Test
+    @DisplayName("Test unauthorized access")
+    public void testForbiddenAccess() throws Exception {
+        // given
+        final String urlTemplate = "/api/category/all";
+
+        // headers
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+
+        this.mockMvc.perform(get(urlTemplate)
+            .headers(headers)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnauthorized());
     }
 
     protected UsernamePasswordAuthenticationToken getPrincipal(final String username) {
