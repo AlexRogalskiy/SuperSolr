@@ -150,7 +150,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
         getProductService().save(product);
 
         // when
-        final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria(SearchableProduct.COLLECTION_ID, nameAndDescriptionCriteria(searchTerms), PageRequest.of(0, 10));
+        final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, nameAndDescriptionCriteria(searchTerms), PageRequest.of(0, 10));
 
         // then
         assertEquals(1, productPage.getTotalElements());
@@ -170,7 +170,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
         final String[] idsToCheck = {"02"};
 
         // when
-        final Page<? extends Product> productPage = getProductService().findByQueryAndCriteria(SearchableProduct.COLLECTION_ID, new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).is(searhTerms), PageRequest.of(0, 10));
+        final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).is(searhTerms), PageRequest.of(0, 10));
 
         // then
         assertEquals(1, productPage.getTotalElements());
@@ -298,10 +298,11 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
     @Test
     @DisplayName("Test search products by location near")
-    public void testFindByLocationNear() {
+    public void testFindByLocationShapeNear() {
         // given
         final Box locationBox = new Box(new Point(20, -101), new Point(23, -90));
         final Point point = new Point(21, -92);
+        final Criteria criteria = new Criteria(SearchableProduct.LOCATION_FIELD_NAME).near(locationBox);
 
         final Product product = createProduct("03", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 10, 1.0, 2.0, true);
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr"));
@@ -309,11 +310,12 @@ public class ProductSearchServiceImplTest extends BaseTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLocationNear(locationBox);
+        final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, criteria, PageRequest.of(0, 2));
+        productPage.getContent();
 
-        // then
-        assertThat(products, hasSize(1));
-        assertEquals(product.getLocation(), products.get(0).getLocation());
+        // then;
+        assertEquals(1, productPage.getTotalElements());
+        assertThat(productPage.getContent(), hasSize(1));
     }
 
     @Test
@@ -436,8 +438,8 @@ public class ProductSearchServiceImplTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Test search product by query")
-    public void testFindByQuery() {
+    @DisplayName("Test search products by location query")
+    public void testFindByLocationQuery() {
         // given
         final Point location = new Point(20.15, -92.85);
         final Criteria criteria = new Criteria(SearchableProduct.LOCATION_FIELD_NAME).near(location, new Distance(5, Metrics.NEUTRAL));
@@ -449,6 +451,28 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByQuery(SearchableProduct.COLLECTION_ID, new SimpleQuery(criteria));
+        productPage.getContent();
+
+        // then
+        assertEquals(1, productPage.getTotalElements());
+        assertThat(productPage.getContent(), hasSize(1));
+    }
+
+    @Test
+    @DisplayName("Test search products by location shape query")
+    public void testFindByLocationShapeWithin() {
+        // given
+        final Point location = new Point(51.8911912, -0.4979756);
+        final Circle innerCircle = new Circle(location, new Distance(0.2, Metrics.KILOMETERS));
+        final Criteria criteria = new Criteria(SearchableProduct.LOCATION_FIELD_NAME).within(innerCircle);
+
+        final Product product = createProduct("13", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true);
+        product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr"));
+        product.setLocation(location);
+        getProductService().save(product);
+
+        // when
+        final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, criteria, PageRequest.of(0, 2));
         productPage.getContent();
 
         // then

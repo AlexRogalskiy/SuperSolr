@@ -9,6 +9,12 @@ springfox:
         path: classpath:securityDefinition.json
 
 spring:
+  metrics:
+    export:
+      enabled: false
+      redis:
+        prefix: metrics.supersolr.${spring.application.name:application}.${random.value:0000}
+        key: keys.metrics.supersolr
   main:
     allow-bean-definition-overriding: true
   batch:
@@ -146,7 +152,7 @@ spring:
   jackson:
     serialization:
       indent_output: true
-      writeDatesAsTimestamps: false
+      write_dates_as_timestamps: false
   main:
     banner-mode: "console"
   jmx:

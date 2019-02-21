@@ -21,41 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.search.document;
+package com.wildbeeslabs.sensiblemetrics.supersolr.security;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableBaseDocument;
-import lombok.*;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.solr.core.mapping.Indexed;
-import org.springframework.data.solr.core.mapping.Score;
+import com.wildbeeslabs.sensiblemetrics.supersolr.utility.SecurityUtils;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Custom full-text search base document {@link AuditDocument}
- *
- * @param <ID> type of document identifier {@link Serializable}
+ * Custom security auditor aware implementation {@link AuditorAware}
  */
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public abstract class BaseDocument<ID extends Serializable> extends AuditDocument implements Persistable<ID>, SearchableBaseDocument {
+public class SecurityAuditorAwareHandler implements AuditorAware<UserDetails> {
 
-    /**
-     * Default explicit serialVersionUID for interoperability
-     */
-    private static final long serialVersionUID = 6444143028591284804L;
-
-    @Indexed(name = DOCTYPE_FIELD_NAME)
-    private String doctype;
-
-    @Score
-    @Setter(AccessLevel.PROTECTED)
-    private float score;
-
-    public boolean isNew() {
-        return Objects.isNull(this.getId());
+    @Override
+    public Optional<UserDetails> getCurrentAuditor() {
+        final Authentication authentication = SecurityUtils.getCurrentAuthentication();
+        if (Objects.isNull(authentication) || !authentication.isAuthenticated()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable((UserDetails) authentication.getPrincipal());
     }
 }

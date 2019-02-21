@@ -28,12 +28,16 @@
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.core.env.Environment;
+//import org.springframework.data.redis.connection.RedisConnectionFactory;
+//import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 //import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 //import org.springframework.data.redis.core.StringRedisTemplate;
 //import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 //import org.springframework.data.redis.serializer.RedisSerializer;
 //import org.springframework.data.redis.serializer.StringRedisSerializer;
 //import redis.clients.jedis.JedisPoolConfig;
+//
+//import javax.annotation.PreDestroy;
 //
 ///**
 // * Custom redis configuration
@@ -46,9 +50,12 @@
 //    @Autowired
 //    private Environment env;
 //
+//    @Autowired
+//    private RedisConnectionFactory factory;
+//
 //    @Bean
 //    public StringRedisTemplate redisTemplate() {
-//        final StringRedisTemplate template = new StringRedisTemplate(jedisConnectionFactory());
+//        final StringRedisTemplate template = new StringRedisTemplate(connectionFactory());
 //        template.setEnableTransactionSupport(true);
 //        return template;
 //    }
@@ -69,8 +76,21 @@
 //    }
 //
 //    @Bean
-//    public JedisConnectionFactory jedisConnectionFactory() {
-//        final JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-//        return jedisConnectionFactory;
+//    public JedisConnectionFactory connectionFactory() {
+//        return new JedisConnectionFactory(sentinelConfig());
+//    }
+//
+//    @Bean
+//    public RedisSentinelConfiguration sentinelConfig() {
+//        return new RedisSentinelConfiguration()
+//            .master(env.getRequiredProperty("supersolr.redis.config.master"))
+//            .sentinel(env.getRequiredProperty("supersolr.redis.config.host1"), env.getRequiredProperty("supersolr.redis.config.post1", Integer.class))
+//            .sentinel(env.getRequiredProperty("supersolr.redis.config.host2"), env.getRequiredProperty("supersolr.redis.config.post2", Integer.class))
+//            .sentinel(env.getRequiredProperty("supersolr.redis.config.host3"), env.getRequiredProperty("supersolr.redis.config.post3", Integer.class));
+//    }
+//
+//    @PreDestroy
+//    public void flushTestDb() {
+//        this.factory.getConnection().flushDb();
 //    }
 //}

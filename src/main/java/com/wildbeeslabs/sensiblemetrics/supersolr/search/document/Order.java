@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,8 +69,8 @@ public class Order extends BaseDocument<String> implements SearchableOrder {
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();
         Optional.ofNullable(products)
-                .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+            .orElseGet(Collections::emptyList)
+            .forEach(product -> this.addProduct(product));
     }
 
     public void addProduct(final Product product) {

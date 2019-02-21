@@ -35,8 +35,13 @@ import java.io.IOException;
  */
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    /**
+     * Default unauthorized message
+     */
+    public static final String MESSAGE_UNAUTHORIZED = "Unauthorized";
+
     @Override
     public void commence(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException e) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, MESSAGE_UNAUTHORIZED);
     }
 }

@@ -174,8 +174,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByLocationNear(final Shape shape) {
-        return getRepository().findByLocationNear(shape);
+    public List<? extends Product> findByGeoLocationWithin(final Shape shape) {
+        return getRepository().findByGeoLocationWithin(shape);
     }
 
     @Override
@@ -252,8 +252,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Product> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
-        return this.findByQueryAndCriteria(collection, criteria, pageable, Product.class);
+    public Page<? extends Product> findByCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
+        return this.findByCriteria(collection, criteria, pageable, Product.class);
     }
 
     @Override

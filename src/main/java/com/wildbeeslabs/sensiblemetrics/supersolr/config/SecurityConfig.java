@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAccessDeniedHandler;
+import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuditorAwareHandler;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationEntryPoint;
 import com.wildbeeslabs.sensiblemetrics.supersolr.security.SecurityAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -41,6 +43,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -144,6 +147,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            .successHandler(customSuccesHandler).usernameParameter("nomUsuario")
 //            .passwordParameter("password");
 //    }
+
+    @Bean
+    public AuditorAware<UserDetails> auditorAware() {
+        return new SecurityAuditorAwareHandler();
+    }
 
     @Bean
     public SecurityAccessDeniedHandler authenticationAccessDeniedHandler() {

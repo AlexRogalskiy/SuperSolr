@@ -132,8 +132,8 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Category> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
-        return this.findByQueryAndCriteria(collection, criteria, pageable, Category.class);
+    public Page<? extends Category> findByCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
+        return this.findByCriteria(collection, criteria, pageable, Category.class);
     }
 
     @Override

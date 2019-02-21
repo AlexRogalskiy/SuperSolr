@@ -139,7 +139,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     List<? extends Product> findByLocationWithin(final Point location, final Distance distance);
 
     @RestResource(rel = "by-shape-location-near", description = @Description(value = "find products by shape location near"))
-    List<? extends Product> findByLocationNear(final Shape shape);
+    List<? extends Product> findByGeoLocationWithin(final Shape shape);
 
     @RestResource(rel = "by-location-near", description = @Description(value = "find products by location near"))
     List<? extends Product> findByLocationNear(final Point location, final Distance distance);
@@ -147,7 +147,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     @RestResource(rel = "by-geolocation-near", description = @Description(value = "find products by geolocation near"))
     GeoResults<? extends Product> findByGeoLocationNear(final Point location, final Distance distance);
 
-    @RestResource(rel = "by-location", description = @Description(value = "find products by location"))
+    @RestResource(rel = "by-location", description = @Description(value = "find products by location near"))
     @Query(name = "Product.findByLocation")
     List<? extends Product> findByLocationSomewhereNear(final Point location, final Distance distance);
 
@@ -183,6 +183,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
     @RestResource(rel = "by-age-restriction-less-than", description = @Description(value = "find products by age restriction less than"))
     Page<? extends Product> findByAgeRestrictionLessThan(final Integer ageRestriction, final Pageable page);
 
+    @RestResource(rel = "by-rating-and-facet-on-name", description = @Description(value = "find products by rating and facet on name"))
     @Query(value = "Product.findByRating")
     @Facet(fields = {
         SearchableProduct.ID_FIELD_NAME,
@@ -193,7 +194,7 @@ public interface ProductSearchRepository extends BaseDocumentSearchRepository<Pr
         SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME,
         SearchableProduct.RECOMMENDED_PRICE_FIELD_NAME,
     }, prefix = "?1")
-    FacetPage<Product> findByRatingFacetOnName(final Integer rating, String prefix, final Pageable page);
+    FacetPage<Product> findByRatingFacetOnName(final Integer rating, final String prefix, final Pageable page);
 
     @RestResource(rel = "by-top10-name-or-short-description", description = @Description(value = "find top ten products by name or short description"))
     Page<? extends Product> findTop10ByNameOrShortDescription(final @Boost(2) String name, final String shortDescription, final Pageable page);

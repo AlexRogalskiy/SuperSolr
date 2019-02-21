@@ -73,7 +73,7 @@ public interface BaseDocumentSearchService<E extends BaseDocument<ID>, ID extend
 
     FacetPage<? extends E> findByFacetQuery(final String collection, final FacetQuery facetQuery);
 
-    Page<? extends E> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable);
+    Page<? extends E> findByCriteria(final String collection, final Criteria criteria, final Pageable pageable);
 
     Page<? extends E> findByQueryAndCriteria(final String collection, final String queryString, final Criteria criteria, final Pageable pageable);
 }

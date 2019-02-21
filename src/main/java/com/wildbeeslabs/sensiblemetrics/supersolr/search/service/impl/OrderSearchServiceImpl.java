@@ -92,8 +92,8 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
 
     @Override
     @Transactional(readOnly = true)
-    public Page<? extends Order> findByQueryAndCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
-        return this.findByQueryAndCriteria(collection, criteria, pageable, Order.class);
+    public Page<? extends Order> findByCriteria(final String collection, final Criteria criteria, final Pageable pageable) {
+        return this.findByCriteria(collection, criteria, pageable, Order.class);
     }
 
     @Override

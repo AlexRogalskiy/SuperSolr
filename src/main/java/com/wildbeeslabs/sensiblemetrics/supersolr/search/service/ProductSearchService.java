@@ -75,7 +75,7 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     List<? extends Product> findByLocationWithin(final Point location, final Distance distance);
 
-    List<? extends Product> findByLocationNear(final Shape shape);
+    List<? extends Product> findByGeoLocationWithin(final Shape shape);
 
     List<? extends Product> findByLocationNear(final Point location, final Distance distance);
 

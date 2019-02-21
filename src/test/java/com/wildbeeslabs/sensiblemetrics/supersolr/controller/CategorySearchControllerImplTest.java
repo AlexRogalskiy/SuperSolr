@@ -38,11 +38,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -68,6 +64,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(locations = "file:src/test/resources/application.properties")
 @DirtiesContext
 public class CategorySearchControllerImplTest extends BaseTest {
+
+    /**
+     * Default authentication user name
+     */
+    public static final String DEFAULT_USERNAME = "USER";
 
     @Value("${supersolr.solr.server.url}")
     private String url;
@@ -96,7 +97,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
     @Test
     @DisplayName("Test search all categories by rest template")
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void testSearch() {
         // given
         final String urlTemplate = "/api/category/all";
@@ -130,7 +131,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
         // then
         this.mockMvc.perform(get(urlTemplate)
-            .session(getSession("USER"))
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
             .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
@@ -151,7 +152,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
         // then
         this.mockMvc.perform(get(urlTemplate)
-            .session(getSession("USER"))
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
             .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -173,7 +174,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
         // then
         this.mockMvc.perform(get(urlTemplate)
-            .session(getSession("USER"))
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
             .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -195,7 +196,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
         // then
         this.mockMvc.perform(get(urlTemplate)
-            .session(getSession("USER"))
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
             .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -218,25 +219,6 @@ public class CategorySearchControllerImplTest extends BaseTest {
             .headers(headers)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isUnauthorized());
-    }
-
-    protected UsernamePasswordAuthenticationToken getPrincipal(final String username) {
-        final UserDetails user = this.userDetailsService.loadUserByUsername(username);
-        final UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(
-                user,
-                user.getPassword(),
-                user.getAuthorities());
-        return authentication;
-    }
-
-    protected MockHttpSession getSession(final String username) {
-        final UsernamePasswordAuthenticationToken principal = this.getPrincipal(username);
-        final MockHttpSession session = new MockHttpSession();
-        session.setAttribute(
-            HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-            new MockSecurityContext(principal));
-        return session;
     }
 
     @SuppressWarnings("unchecked")

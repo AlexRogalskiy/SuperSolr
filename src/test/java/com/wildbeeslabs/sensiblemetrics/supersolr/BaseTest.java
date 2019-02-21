@@ -23,10 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Attribute;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -42,8 +39,13 @@ import org.springframework.data.solr.core.query.result.FacetEntry;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightEntry;
 import org.springframework.data.solr.core.query.result.HighlightPage;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.io.Serializable;
 import java.util.*;
@@ -129,6 +131,23 @@ public abstract class BaseTest {
         return product;
     }
 
+    protected Order createOrder(
+        final String id,
+        final String clientMobile,
+        final String clientName,
+        final String title,
+        final String description,
+        final Product... products) {
+        final Order order = new Order();
+        order.setId(id);
+        order.setClientMobile(clientMobile);
+        order.setClientName(clientName);
+        order.setTitle(title);
+        order.setDescription(description);
+        order.setProducts(Arrays.asList(Optional.ofNullable(products).orElse(new Product[0])));
+        return order;
+    }
+
     protected <E extends BaseDocument<ID>, ID extends Serializable> Map<String, Long> getFacetCounts(final FacetPage<? extends E> facetPage) {
         final Map<String, Long> facetCounts = new HashMap<>();
         for (final Page<? extends FacetEntry> page : facetPage.getAllFacets()) {
@@ -157,6 +176,19 @@ public abstract class BaseTest {
             }
         }
         return false;
+    }
+
+    protected UsernamePasswordAuthenticationToken getPrincipal(final UserDetailsService userDetailsService, final String username) {
+        final UserDetails user = userDetailsService.loadUserByUsername(username);
+        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+        return authentication;
+    }
+
+    protected MockHttpSession getSession(final UserDetailsService userDetailsService, final String username) {
+        final UsernamePasswordAuthenticationToken principal = this.getPrincipal(userDetailsService, username);
+        final MockHttpSession session = new MockHttpSession();
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, new BaseTest.MockSecurityContext(principal));
+        return session;
     }
 
     protected void clear(final String collection) {
