@@ -200,8 +200,7 @@ public abstract class BaseTest {
     }
 
     protected Query getQuery(final String queryString, final Pageable page) {
-        return new SimpleQuery(new SimpleStringCriteria(queryString))
-            .setPageRequest(page);
+        return new SimpleQuery(new SimpleStringCriteria(queryString)).setPageRequest(page);
     }
 
     protected SolrTemplate getSolrTemplate() {

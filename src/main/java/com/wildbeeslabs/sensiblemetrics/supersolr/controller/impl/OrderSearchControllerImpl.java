@@ -39,6 +39,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -67,6 +68,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
             @AuthorizationScope(scope = "read:documents", description = "read order documents")
         })
 })
+@Secured("ROLE_MANAGER")
 public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<Order, OrderView, String> implements OrderSearchController {
 
     @Autowired
@@ -125,9 +127,9 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         @ApiResponse(code = 400, message = "Invalid order document value"),
         @ApiResponse(code = 405, message = "Validation exception")
     })
-    public ResponseEntity<?> createOrder(final @ApiParam(value = "Order document that needs to be added to the store", required = true) @Valid @RequestBody OrderView orderDto) {
-        log.info("Creating new order by view: {}", orderDto);
-        final OrderView orderDtoCreated = map(this.createItem(orderDto, Order.class), OrderView.class);
+    public ResponseEntity<?> createOrder(final @ApiParam(value = "Order document that needs to be added to the store", required = true) @Valid @RequestBody OrderView order) {
+        log.info("Creating new order by view: {}", order);
+        final OrderView orderDtoCreated = map(this.createItem(order, Order.class), OrderView.class);
         final UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
         final URI uri = ucBuilder.path(this.request.getRequestURI() + "/{id}").buildAndExpand(orderDtoCreated.getId()).toUri();
         return ResponseEntity
@@ -179,12 +181,12 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
     @ApiResponses(value = {
         @ApiResponse(code = 405, message = "Invalid input value")
     })
-    public ResponseEntity<?> updateOrder(final @ApiParam(value = "Order document that needs to be updated", required = true) @Valid @RequestBody OrderView orderDto) {
-        log.info("Updating order by view: {}", orderDto);
+    public ResponseEntity<?> updateOrder(final @ApiParam(value = "Order document that needs to be updated", required = true) @Valid @RequestBody OrderView order) {
+        log.info("Updating order by view: {}", order);
         return ResponseEntity
             .ok()
             .contentType(MediaType.APPLICATION_JSON_UTF8)
-            .body(map(this.updateItem(orderDto.getId(), orderDto, Order.class), OrderView.class));
+            .body(map(this.updateItem(order.getId(), order, Order.class), OrderView.class));
     }
 
     @DeleteMapping("/{id}")

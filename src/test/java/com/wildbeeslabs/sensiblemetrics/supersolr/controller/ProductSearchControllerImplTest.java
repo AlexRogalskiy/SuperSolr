@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
@@ -40,12 +41,16 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
 import static org.hamcrest.CoreMatchers.is;
@@ -112,16 +117,18 @@ public class ProductSearchControllerImplTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Test search all products by rest template")
+    @DisplayName("Test fetch all products by rest template")
+    @WithMockUser(roles = "USER")
     @SuppressWarnings("rawtypes")
     public void testSearch() {
         // given
         final String urlTemplate = "/api/product/all";
 
         final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
-        final Map<String, String> params = new HashMap<>();
-        params.put("page", "0");
-        params.put("size", "5");
+        final Map<String, String> params = new ImmutableMap.Builder<String, String>()
+            .put("page", "0")
+            .put("size", "5")
+            .build();
 
         // when
         final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, urlTemplate), HttpMethod.GET, requestEntity, List.class, params);
@@ -134,66 +141,52 @@ public class ProductSearchControllerImplTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Test search products by non-existing url")
+    @DisplayName("Test fetch products by non-existing url")
+    @WithMockUser(roles = "USER")
     @SuppressWarnings("unchecked")
     public void testNotFound() throws Exception {
         // when
         final String urlTemplate = "/api/products";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Test search all products")
+    @DisplayName("Test fetch all products")
+    @WithMockUser(roles = "USER")
     @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
         // given
         final String urlTemplate = "/api/product/all";
         final String responseText = "[{\"id\":\"01\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":10.0,\"recommendedPrice\":2.0,\"rating\":4},{\"id\":\"02\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":1.0,\"recommendedPrice\":2.0,\"rating\":32},{\"id\":\"03\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":11.0,\"recommendedPrice\":2.0,\"rating\":2},{\"id\":\"04\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":18.0,\"recommendedPrice\":2.0,\"rating\":4},{\"id\":\"05\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":1.0,\"recommendedPrice\":2.0,\"rating\":7},{\"id\":\"06\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":8.0,\"recommendedPrice\":2.0,\"rating\":9},{\"id\":\"07\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":5.0,\"recommendedPrice\":2.0,\"rating\":10},{\"id\":\"08\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":3.0,\"recommendedPrice\":2.0,\"rating\":11},{\"id\":\"09\",\"score\":1.0,\"name\":\"Name\",\"shortDescription\":\"Short description\",\"longDescription\":\"Long description\",\"priceDescription\":\"Price description\",\"catalogNumber\":\"Catalog number\",\"pageTitle\":\"Page title\",\"inStock\":true,\"price\":120.0,\"recommendedPrice\":2.0,\"rating\":13}]";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-
             .andExpect(content().json(responseText));
     }
 
     @Test
-    @DisplayName("Test search product by non-existing term")
+    @DisplayName("Test fetch product by non-existing term")
+    @WithMockUser(roles = "USER")
     public void testSearchByNonExistingTerm() throws Exception {
         // given
-        final String urlTemplate = "/api/product/search/test/1";
+        final String urlTemplate = "/api/product/search/{term}/{page}";
         final String responseText = "[]";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-        //headers.add(HttpHeaders.AUTHORIZATION, "Basic " + new String(Base64.encode(("greg:turnquist").getBytes())));
-
         // then
-        this.mockMvc.perform(get(urlTemplate)
+        this.mockMvc.perform(get(urlTemplate, "test", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -203,21 +196,17 @@ public class ProductSearchControllerImplTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Test search product by term")
+    @DisplayName("Test fetch product by term")
+    @WithMockUser(roles = "USER")
     public void testSearchById() throws Exception {
         // given
-        final String urlTemplate = "/api/product/search/Blackbeard/1";
+        final String urlTemplate = "/api/product/search/{term}/{page}";
         final String responseText = "[]";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
-        this.mockMvc.perform(get(urlTemplate)
+        this.mockMvc.perform(get(urlTemplate, "local", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -288,6 +277,14 @@ public class ProductSearchControllerImplTest extends BaseTest {
         product.addCategory(createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications"));
         products.add(product);
         return products;
+    }
+
+    protected HttpHeaders getHeaders() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+        //headers.add(HttpHeaders.AUTHORIZATION, "Basic " + new String(Base64.encode(("greg:turnquist").getBytes())));
+        return headers;
     }
 
     protected ProductSearchService getProductService() {

@@ -65,12 +65,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
-        final InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user").password("user123").roles("USER").build());
-        manager.createUser(User.withUsername("admin").password("admin123").roles("ADMIN").build());
-        manager.createUser(User.withUsername("dba").password("dba123").roles("ADMIN", "DBA").build());
-        manager.createUser(User.withUsername("epadmin").password("epadmin123").roles("EPADMIN").build());
-        return manager;
+        final InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+        userDetailsManager.createUser(
+            User.withUsername("user")
+                .password("user123")
+                .roles("USER")
+                .authorities("PERM_READ", "PERM_WRITE")
+                .build()
+        );
+        userDetailsManager.createUser(
+            User.withUsername("manager")
+                .password("manager123")
+                .roles("MANAGER")
+                .authorities("PERM_READ", "PERM_WRITE", "PERM_MANAGE")
+                .build()
+        );
+        return userDetailsManager;
     }
 
     @Autowired
@@ -78,10 +88,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService());
         auth.authenticationProvider(authenticationProvider());
-        auth.inMemoryAuthentication()
-            .withUser("user").password("user123").roles("USER")
-            .and()
-            .withUser("admin").password("admin123").roles("ADMIN");
     }
 
     @Override
@@ -91,37 +97,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .httpBasic().realmName("REST API")
-            //                .exceptionHandling()
-            //                .accessDeniedHandler(accessDeniedHandler)
-            //                .authenticationEntryPoint(restAuthenticationEntryPoint)
-            .and().authorizeRequests()
-            .antMatchers("/api/**").hasAnyRole("USER", "ADMIN", "DBA")
-            .antMatchers("/*").permitAll()
-            //.anyRequest().authenticated()
-            //.usernameParameter("ssid").passwordParameter("password")
-            //.and().exceptionHandling().accessDeniedPage("/denied")
-            //                .antMatchers("/api/**").authenticated()
-            //                .and().formLogin().loginPage("/api/login")
-            //                .successHandler(authenticationSuccessHandler)
-            //                .failureHandler(new SimpleUrlAuthenticationFailureHandler())
-            .and().headers().cacheControl().disable()
-            .and().logout();
+        //.anyRequest().authenticated()
+        //.usernameParameter("ssid").passwordParameter("password")
+        //.and().exceptionHandling().accessDeniedPage("/denied")
+        //                .antMatchers("/api/**").authenticated()
+        //                .and().formLogin().loginPage("/api/login")
+        //                .successHandler(authenticationSuccessHandler)
+        //                .failureHandler(new SimpleUrlAuthenticationFailureHandler())
+        //.and().logout();
 
-        http.httpBasic().and().authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/api/order").hasRole("USER")
-            .antMatchers(HttpMethod.POST, "/api/order").hasRole("USER")
-            .antMatchers(HttpMethod.PUT, "/api/order").hasRole("USER")
-            .antMatchers(HttpMethod.DELETE, "/api/order").hasRole("ADMIN")
-            .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN").and()
+        http.httpBasic().realmName("REST API").and()
+            .exceptionHandling().and()
+            //.accessDeniedHandler(authenticationAccessDeniedHandler())
+            //.authenticationEntryPoint(restAuthenticationEntryPoint)
+            .authorizeRequests()
+            .antMatchers("/api/search").permitAll()
+            .antMatchers("/api/**").hasAnyRole("USER", "MANAGER").and()
+//            .antMatchers(HttpMethod.GET, "/api/order").hasRole("USER")
+//            .antMatchers(HttpMethod.POST, "/api/order").hasRole("USER")
+//            .antMatchers(HttpMethod.PUT, "/api/order").hasRole("USER")
+//            .antMatchers(HttpMethod.DELETE, "/api/order").hasRole("MANAGER")
+//            .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("MANAGER").and()
+            .headers().cacheControl().disable().and()
             .csrf().disable();
     }
-
-//    @Autowired
-//    public void configureGlobal(final AuthenticationManagerBuilder auth) {
-//        auth.authenticationProvider(authenticationProvider());
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -135,18 +134,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception{
-//        http.authorizeRequests()
-//            .antMatchers("/register").permitAll()
-//            .antMatchers("/admin/**").access("hasRole('ADMIN')")
-//            .antMatchers("/coordinador/**").access("hasRole('COORD')")
-//            .antMatchers("/director/**").access("hasRole('DIR')")
-//            .and().formLogin().loginPage("/").permitAll()
-//            .successHandler(customSuccesHandler).usernameParameter("nomUsuario")
-//            .passwordParameter("password");
-//    }
 
     @Bean
     public AuditorAware<UserDetails> auditorAware() {

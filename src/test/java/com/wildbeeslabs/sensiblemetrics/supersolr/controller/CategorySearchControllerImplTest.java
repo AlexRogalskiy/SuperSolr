@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
@@ -39,16 +40,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -69,6 +76,11 @@ public class CategorySearchControllerImplTest extends BaseTest {
      * Default authentication user name
      */
     public static final String DEFAULT_USERNAME = "USER";
+
+    /**
+     * Default authentication principal instance {@link Principal}
+     */
+    public static final Principal DEFAULT_PRINCIPAL = () -> DEFAULT_USERNAME;
 
     @Value("${supersolr.solr.server.url}")
     private String url;
@@ -97,15 +109,17 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
     @Test
     @DisplayName("Test search all categories by rest template")
+    @WithMockUser(roles = "USER")
     @SuppressWarnings("rawtypes")
     public void testSearch() {
         // given
         final String urlTemplate = "/api/category/all";
 
         final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
-        final Map<String, String> params = new HashMap<>();
-        params.put("page", "0");
-        params.put("size", "5");
+        final Map<String, String> params = new ImmutableMap.Builder<String, String>()
+            .put("page", "0")
+            .put("size", "5")
+            .build();
 
         // when
         final ResponseEntity<List> response = this.restTemplate.exchange(getString(this.url, urlTemplate), HttpMethod.GET, requestEntity, List.class, params);
@@ -119,85 +133,72 @@ public class CategorySearchControllerImplTest extends BaseTest {
 
     @Test
     @DisplayName("Test search categories by non-existing url")
+    @WithMockUser(roles = "USER")
     @SuppressWarnings("unchecked")
     public void testNotFound() throws Exception {
         //given
         final String urlTemplate = "/api/categories";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Test search all categories")
+    @WithMockUser(roles = "USER")
     @SuppressWarnings("unchecked")
     public void testSearchAll() throws Exception {
         // given
         final String urlTemplate = "/api/category/all";
         final String responseText = "[{\"id\":\"01\",\"score\":1.0,\"index\":1,\"title\":\"Treasure Island\",\"description\":\"Best seller by R.L.S.\"},{\"id\":\"02\",\"score\":1.0,\"index\":2,\"title\":\"Treasure Island 2.0\",\"description\":\"Humorous remake of the famous best seller\"},{\"id\":\"03\",\"score\":1.0,\"index\":3,\"title\":\"Solr for dummies\",\"description\":\"Get started with solr\"},{\"id\":\"04\",\"score\":1.0,\"index\":4,\"title\":\"Moon landing\",\"description\":\"All facts about Apollo 11, a best seller\"},{\"id\":\"05\",\"score\":1.0,\"index\":5,\"title\":\"Spring Island\",\"description\":\"The perfect island romance..\"},{\"id\":\"06\",\"score\":1.0,\"index\":6,\"title\":\"Refactoring\",\"description\":\"It's about improving the design of existing code.\"},{\"id\":\"07\",\"score\":1.0,\"index\":7,\"title\":\"Baking for dummies\",\"description\":\"Bake your own cookies, on a secret island!\"},{\"id\":\"08\",\"score\":1.0,\"index\":8,\"title\":\"The Pirate Island\",\"description\":\"Oh noes, the pirates are coming!\"},{\"id\":\"09\",\"score\":1.0,\"index\":9,\"title\":\"Blackbeard\",\"description\":\"It's the pirate Edward Teach!\"},{\"id\":\"10\",\"score\":1.0,\"index\":10,\"title\":\"Handling Cookies\",\"description\":\"How to handle cookies in web applications\"}]";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().string(containsString("Treasure Island")))
             .andExpect(content().json(responseText));
+        //.andExpect(redirectedUrl(LOGOUT_PATH));
     }
 
     @Test
     @DisplayName("Test search category by non-existing term")
+    @WithMockUser(roles = "USER")
     public void testSearchByNonExistingTerm() throws Exception {
         // given
-        final String urlTemplate = "/api/category/search/test/1";
+        final String urlTemplate = "/api/category/search/{term}/{page}";
         final String responseText = "[]";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
-        this.mockMvc.perform(get(urlTemplate)
+        this.mockMvc.perform(get(urlTemplate, "test", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
+            //.principal(principal))
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(responseText));
     }
 
     @Test
     @DisplayName("Test search category by term")
+    @WithMockUser(roles = "USER")
     public void testSearchByTerm() throws Exception {
         // given
-        final String urlTemplate = "/api/category/search/Blackbeard/1";
+        final String urlTemplate = "/api/category/search/{term}/{page}";
         final String responseText = "[]";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         // then
-        this.mockMvc.perform(get(urlTemplate)
+        this.mockMvc.perform(get(urlTemplate, "Black", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -210,13 +211,8 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // given
         final String urlTemplate = "/api/category/all";
 
-        // headers
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-
         this.mockMvc.perform(get(urlTemplate)
-            .headers(headers)
+            .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isUnauthorized());
     }
@@ -268,6 +264,13 @@ public class CategorySearchControllerImplTest extends BaseTest {
         category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 0, 1.0, 2.0, true));
         categories.add(category);
         return categories;
+    }
+
+    protected HttpHeaders getHeaders() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        headers.add(HttpHeaders.ORIGIN, this.url);
+        return headers;
     }
 
     protected CategorySearchService getCategoryService() {
