@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableOrderView;
@@ -34,6 +35,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView.ID_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView.SCORE_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableOrderView.DESCRIPTION_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableOrderView.TITLE_FIELD_NAME;
+
 /**
  * Custom order document view {@link BaseDocumentView}
  */
@@ -42,6 +48,12 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonPropertyOrder(value = {
+    ID_FIELD_NAME,
+    SCORE_FIELD_NAME,
+    TITLE_FIELD_NAME,
+    DESCRIPTION_FIELD_NAME
+}, alphabetic = true)
 @JacksonXmlRootElement(localName = ExposableOrderView.VIEW_ID)
 @ApiModel(value = ExposableOrderView.VIEW_ID, description = "All details about order document")
 public class OrderView extends BaseDocumentView<String> implements ExposableOrderView {

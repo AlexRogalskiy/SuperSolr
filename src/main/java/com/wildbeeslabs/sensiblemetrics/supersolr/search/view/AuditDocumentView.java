@@ -37,8 +37,7 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.Date;
 
-import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel.CHANGED_FIELD_NAME;
-import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel.CREATED_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel.*;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_LOCALE;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
@@ -51,7 +50,12 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(
-    value = {CREATED_FIELD_NAME, CHANGED_FIELD_NAME},
+    value = {
+        CREATED_FIELD_NAME,
+        CREATED_BY_FIELD_NAME,
+        CHANGED_FIELD_NAME,
+        CHANGED_BY_FIELD_NAME
+    },
     allowGetters = true,
     ignoreUnknown = true
 )

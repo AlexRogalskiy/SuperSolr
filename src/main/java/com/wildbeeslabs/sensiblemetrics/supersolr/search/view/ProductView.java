@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -42,6 +43,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView.ID_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView.SCORE_FIELD_NAME;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableProductView.*;
+
 /**
  * Custom product document view {@link BaseDocumentView}
  */
@@ -50,6 +55,26 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonPropertyOrder(value = {
+    ID_FIELD_NAME,
+    SCORE_FIELD_NAME,
+    NAME_FIELD_NAME,
+    SHORT_DESCRIPTION_FIELD_NAME,
+    LONG_DESCRIPTION_FIELD_NAME,
+    PRICE_DESCRIPTION_FIELD_NAME,
+    CATALOG_NUMBER_FIELD_NAME,
+    PAGE_TITLE_FIELD_NAME,
+    AVAILABLE_FIELD_NAME,
+    PRICE_FIELD_NAME,
+    RECOMMENDE_PRICE_FIELD_NAME,
+    RATING_FIELD_NAME,
+    AGE_RESTRICTION_FIELD_NAME,
+    LOCK_TYPE_FIELD_NAME,
+    GEO_LOCATION_FIELD_NAME,
+    ATTRIBUTES_FIELD_NAME,
+    CATEGORIES_FIELD_NAME,
+    MAIN_CATEGORIES_FIELD_NAME
+}, alphabetic = true)
 @JacksonXmlRootElement(localName = ExposableProductView.VIEW_ID)
 @ApiModel(value = ExposableProductView.VIEW_ID, description = "All details about product document")
 public class ProductView extends BaseDocumentView<String> implements ExposableProductView {

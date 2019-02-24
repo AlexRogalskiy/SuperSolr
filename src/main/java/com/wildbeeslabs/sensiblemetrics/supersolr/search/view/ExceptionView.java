@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableExceptionView;
@@ -38,6 +39,7 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.Date;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableExceptionView.*;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_LOCALE;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
@@ -49,6 +51,13 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @EqualsAndHashCode
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonPropertyOrder(value = {
+    PATH_FIELD_NAME,
+    CODE_FIELD_NAME,
+    ERROR_FIELD_NAME,
+    MESSAGE_FIELD_NAME,
+    TIMESTAMP_FIELD_NAME
+}, alphabetic = true)
 @JacksonXmlRootElement(localName = ExposableExceptionView.VIEW_ID)
 @ApiModel(value = ExposableExceptionView.VIEW_ID, description = "All details about exception document")
 public class ExceptionView implements ExposableExceptionView, Serializable {
