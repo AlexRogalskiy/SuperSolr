@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -44,6 +45,7 @@ import java.util.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class BaseDocumentView<ID extends Serializable> extends AuditDocumentView implements ExposableBaseDocumentView {
 

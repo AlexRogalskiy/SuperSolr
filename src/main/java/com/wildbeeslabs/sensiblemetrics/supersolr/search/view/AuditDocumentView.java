@@ -23,10 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableAuditDocumentView;
 import lombok.Data;
@@ -48,6 +45,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(
     value = {
