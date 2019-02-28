@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableOrderView;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -63,10 +64,12 @@ public class OrderView extends BaseDocumentView<String> implements ExposableOrde
      */
     private static final long serialVersionUID = -5143268414907649969L;
 
+    @ApiModelProperty(value = "Order title", name = "title", example = "title")
     @JacksonXmlProperty(localName = TITLE_FIELD_NAME)
     @JsonProperty(TITLE_FIELD_NAME)
     private String title;
 
+    @ApiModelProperty(value = "Order description", name = "description", example = "description")
     @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
     @JsonProperty(DESCRIPTION_FIELD_NAME)
     private String description;

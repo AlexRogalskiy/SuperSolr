@@ -66,7 +66,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.
     PAGE_TITLE_FIELD_NAME,
     AVAILABLE_FIELD_NAME,
     PRICE_FIELD_NAME,
-    RECOMMENDE_PRICE_FIELD_NAME,
+    RECOMMENDED_PRICE_FIELD_NAME,
     RATING_FIELD_NAME,
     AGE_RESTRICTION_FIELD_NAME,
     LOCK_TYPE_FIELD_NAME,
@@ -84,76 +84,89 @@ public class ProductView extends BaseDocumentView<String> implements ExposablePr
      */
     private static final long serialVersionUID = 5714315073889762969L;
 
-    @ApiModelProperty(example = "product", required = true)
+    @ApiModelProperty(value = "Product name", name = "name", example = "name", required = true)
     @JacksonXmlProperty(localName = NAME_FIELD_NAME)
     @JsonProperty(NAME_FIELD_NAME)
     private String name;
 
+    @ApiModelProperty(value = "Product short description", name = "shortDescription", example = "short description")
     @JacksonXmlProperty(localName = SHORT_DESCRIPTION_FIELD_NAME)
     @JsonProperty(SHORT_DESCRIPTION_FIELD_NAME)
     private String shortDescription;
 
+    @ApiModelProperty(value = "Product long description", name = "longDescription", example = "long description")
     @JacksonXmlProperty(localName = LONG_DESCRIPTION_FIELD_NAME)
     @JsonProperty(LONG_DESCRIPTION_FIELD_NAME)
     private String longDescription;
 
+    @ApiModelProperty(value = "Product price description", name = "priceDescription", example = "price description")
     @JacksonXmlProperty(localName = PRICE_DESCRIPTION_FIELD_NAME)
     @JsonProperty(PRICE_DESCRIPTION_FIELD_NAME)
     private String priceDescription;
 
+    @ApiModelProperty(value = "Product catalog number", name = "catalogNumber", example = "catalog number")
     @JacksonXmlProperty(localName = CATALOG_NUMBER_FIELD_NAME)
     @JsonProperty(CATALOG_NUMBER_FIELD_NAME)
     private String catalogNumber;
 
+    @ApiModelProperty(value = "Product page title", name = "pageTitle", example = "page title")
     @JacksonXmlProperty(localName = PAGE_TITLE_FIELD_NAME)
     @JsonProperty(PAGE_TITLE_FIELD_NAME)
     private String pageTitle;
 
-    @ApiModelProperty(example = "availability", required = true)
+    @ApiModelProperty(value = "Product availability", name = "availability", example = "product availability", required = true)
     @JacksonXmlProperty(localName = AVAILABLE_FIELD_NAME)
     @JsonProperty(AVAILABLE_FIELD_NAME)
     private boolean available;
 
-    @ApiModelProperty(example = "price", required = true)
+    @ApiModelProperty(value = "Product price", name = "price", example = "product price", required = true)
     @JacksonXmlProperty(localName = PRICE_FIELD_NAME)
     @JsonProperty(PRICE_FIELD_NAME)
     private double price;
 
-    @JacksonXmlProperty(localName = RECOMMENDE_PRICE_FIELD_NAME)
-    @JsonProperty(RECOMMENDE_PRICE_FIELD_NAME)
+    @ApiModelProperty(value = "Product recommended price", name = "recommendedPrice", example = "recommended price")
+    @JacksonXmlProperty(localName = RECOMMENDED_PRICE_FIELD_NAME)
+    @JsonProperty(RECOMMENDED_PRICE_FIELD_NAME)
     private double recommendedPrice;
 
+    @ApiModelProperty(value = "Product rating", name = "rating", example = "rating")
     @JacksonXmlProperty(localName = RATING_FIELD_NAME)
     @JsonProperty(RATING_FIELD_NAME)
     private Integer rating;
 
+    @ApiModelProperty(value = "Product age restriction", name = "ageRestriction", example = "6+")
     @JacksonXmlProperty(localName = AGE_RESTRICTION_FIELD_NAME)
     @JsonProperty(AGE_RESTRICTION_FIELD_NAME)
     private Integer ageRestriction;
 
-    @ApiModelProperty(value = "lock type attribute", allowableValues = "1-registered,2-blocked,3-in stock,4-in sale,5-in decommission")
+    @ApiModelProperty(value = "Product lock type", name = "lock type", example = "lock type", allowableValues = "1-registered,2-blocked,3-in stock,4-in sale,5-in decommission")
     @JacksonXmlProperty(localName = LOCK_TYPE_FIELD_NAME)
     @JsonProperty(LOCK_TYPE_FIELD_NAME)
     private Integer lockType;
 
+    @ApiModelProperty(value = "Product location", name = "location", example = "location")
     @JacksonXmlProperty(localName = LOCATION_FIELD_NAME)
     @JsonProperty(LOCATION_FIELD_NAME)
     private Point location;
 
+    @ApiModelProperty(value = "Product geo location", name = "geoLocation", example = "geoLocation")
     @JacksonXmlProperty(localName = GEO_LOCATION_FIELD_NAME)
     @JsonProperty(GEO_LOCATION_FIELD_NAME)
     private Point geoLocation;
 
+    @ApiModelProperty(value = "List of attributes per product", name = "attributes", example = "attributes")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = ATTRIBUTES_FIELD_NAME)
     @JsonProperty(ATTRIBUTES_FIELD_NAME)
     private final List<AttributeView> attributes = new ArrayList<>();
 
+    @ApiModelProperty(value = "List of categories per product", name = "categories", example = "categories")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = CATEGORIES_FIELD_NAME)
     @JsonProperty(CATEGORIES_FIELD_NAME)
     private final Set<CategoryView> categories = new HashSet<>();
 
+    @ApiModelProperty(value = "List of main categories per product", name = "mainCategories", example = "mainCategories")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = MAIN_CATEGORIES_FIELD_NAME)
     @JsonProperty(MAIN_CATEGORIES_FIELD_NAME)

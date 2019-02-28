@@ -31,6 +31,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableCategoryView;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -69,23 +70,28 @@ public class CategoryView extends BaseDocumentView<String> implements ExposableC
      */
     private static final long serialVersionUID = -878245565646636436L;
 
+    @ApiModelProperty(value = "Category index", name = "index", example = "index", required = true)
     @JacksonXmlProperty(localName = INDEX_FIELD_NAME)
     @JsonProperty(INDEX_FIELD_NAME)
     private Integer index;
 
+    @ApiModelProperty(value = "Category title", name = "title", example = "title", required = true)
     @JacksonXmlProperty(localName = TITLE_FIELD_NAME)
     @JsonProperty(TITLE_FIELD_NAME)
     private String title;
 
+    @ApiModelProperty(value = "Category description", name = "description", example = "description")
     @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
     @JsonProperty(DESCRIPTION_FIELD_NAME)
     private String description;
 
+    @ApiModelProperty(value = "List of products per category", name = "products", example = "products")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = PRODUCTS_FIELD_NAME)
     @JsonProperty(PRODUCTS_FIELD_NAME)
     private final Set<ProductView> products = new HashSet<>();
 
+    @ApiModelProperty(value = "List of main products per category", name = "mainProducts", example = "mainProducts")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = MAIN_PRODUCTS_FIELD_NAME)
     @JsonProperty(MAIN_PRODUCTS_FIELD_NAME)

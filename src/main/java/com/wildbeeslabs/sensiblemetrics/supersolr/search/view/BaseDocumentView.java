@@ -27,7 +27,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -47,6 +50,8 @@ import java.util.*;
 @ToString(callSuper = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JacksonXmlRootElement(localName = ExposableBaseDocumentView.VIEW_ID)
+@ApiModel(value = ExposableBaseDocumentView.VIEW_ID, description = "All details about document")
 public abstract class BaseDocumentView<ID extends Serializable> extends AuditDocumentView implements ExposableBaseDocumentView {
 
     /**
@@ -54,14 +59,17 @@ public abstract class BaseDocumentView<ID extends Serializable> extends AuditDoc
      */
     private static final long serialVersionUID = 602615748387358410L;
 
+    @ApiModelProperty(value = "Document ID", name = "id", example = "id", required = true)
     @JacksonXmlProperty(localName = ID_FIELD_NAME)
     @JsonProperty(ID_FIELD_NAME)
     private ID id;
 
+    @ApiModelProperty(value = "Document score", name = "score", example = "score")
     @JacksonXmlProperty(localName = SCORE_FIELD_NAME)
     @JsonProperty(SCORE_FIELD_NAME)
     private float score;
 
+    @ApiModelProperty(value = "Document highlights", name = "highlights", example = "highlights")
     @JacksonXmlProperty(localName = HIGHLIGHTS_FIELD_NAME)
     @JsonProperty(HIGHLIGHTS_FIELD_NAME)
     private Map<String, List<String>> highlights;
@@ -69,9 +77,9 @@ public abstract class BaseDocumentView<ID extends Serializable> extends AuditDoc
     public void setHighlights(final Map<String, List<String>> highlights) {
         this.getHighlights().clear();
         Optional.ofNullable(highlights)
-                .orElseGet(Collections::emptyMap)
-                .entrySet()
-                .forEach(entry -> this.addHighlight(entry.getKey(), entry.getValue()));
+            .orElseGet(Collections::emptyMap)
+            .entrySet()
+            .forEach(entry -> this.addHighlight(entry.getKey(), entry.getValue()));
     }
 
     public void addHighlight(final String key, final List<String> value) {

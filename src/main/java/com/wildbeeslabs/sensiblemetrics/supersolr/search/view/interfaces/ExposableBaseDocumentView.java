@@ -29,6 +29,11 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 public interface ExposableBaseDocumentView {
 
     /**
+     * Default view ID
+     */
+    String VIEW_ID = "baseDocument";
+
+    /**
      * Default field names
      */
     String ID_FIELD_NAME = "id";

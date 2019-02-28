@@ -29,6 +29,11 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 public interface ExposableAuditDocumentView {
 
     /**
+     * Default view ID
+     */
+    String VIEW_ID = "audit";
+
+    /**
      * Default field names
      */
     String CREATED_FIELD_NAME = "createdAt";

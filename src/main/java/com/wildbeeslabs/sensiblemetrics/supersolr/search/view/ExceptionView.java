@@ -31,6 +31,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableExceptionView;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -67,22 +68,27 @@ public class ExceptionView implements ExposableExceptionView, Serializable {
      */
     private static final long serialVersionUID = -328743858984114195L;
 
+    @ApiModelProperty(value = "Exception url path", name = "url", example = "url")
     @JacksonXmlProperty(localName = PATH_FIELD_NAME)
     @JsonProperty(PATH_FIELD_NAME)
     private String path;
 
+    @ApiModelProperty(value = "Exception code", name = "code", example = "code", required = true)
     @JacksonXmlProperty(localName = CODE_FIELD_NAME)
     @JsonProperty(CODE_FIELD_NAME)
     private Integer code;
 
+    @ApiModelProperty(value = "Exception error name", name = "name", example = "name", required = true)
     @JacksonXmlProperty(localName = ERROR_FIELD_NAME)
     @JsonProperty(ERROR_FIELD_NAME)
     private String error;
 
+    @ApiModelProperty(value = "Exception error message", name = "message", example = "message", required = true)
     @JacksonXmlProperty(localName = MESSAGE_FIELD_NAME)
     @JsonProperty(MESSAGE_FIELD_NAME)
     private String message;
 
+    @ApiModelProperty(value = "Exception timestamp", name = "timestamp", example = "timestamp")
     @JacksonXmlProperty(localName = TIMESTAMP_FIELD_NAME)
     @JsonProperty(TIMESTAMP_FIELD_NAME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT, locale = DEFAULT_DATE_FORMAT_LOCALE)
