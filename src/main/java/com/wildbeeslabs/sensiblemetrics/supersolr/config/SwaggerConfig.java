@@ -23,7 +23,11 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -34,10 +38,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.Locale;
 
 /**
  * Custom swagger configuration
@@ -45,14 +53,28 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Default resource management tag
+     */
+    public static final String TAG_RESOURCE_MANAGEMENT = "Resource Management";
+    /**
+     * Default main functional tag
+     */
+    public static final String TAG_MAIN_FUNCTIONAL = "Main functional";
+
     @Bean
     public Docket swaggerSpringMvcPlugin() {
         return new Docket(DocumentationType.SWAGGER_2)
             .useDefaultResponseMessages(false)
             .apiInfo(apiInfo())
             .select()
+            .apis(RequestHandlerSelectors.any())
             .paths(Predicates.not(PathSelectors.regex("/error.*")))
-            .build();
+            .paths(PathSelectors.regex("/api/.*"))
+            .build()
+            .tags(
+                new Tag(TAG_MAIN_FUNCTIONAL, "All apis relating to main service purpose"),
+                new Tag(TAG_RESOURCE_MANAGEMENT, "All apis relating to upload resources"));
     }
 
     @Component
@@ -65,15 +87,27 @@ public class SwaggerConfig {
         private static final long serialVersionUID = -5589192375212209265L;
 
         public CustomObjectMapper() {
+            setDefaultMergeable(Boolean.TRUE);
+            setLocale(Locale.getDefault());
             setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            enable(SerializationFeature.INDENT_OUTPUT);
+            setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+            configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+            configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+            configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+
+            disable(SerializationFeature.INDENT_OUTPUT);
+            disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+            disable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         }
 
         public ObjectMapper copy() {
-            //_checkInvalidCopy(ObjectMapper.class);
+            _checkInvalidCopy(ObjectMapper.class);
             return new CustomObjectMapper();
         }
     }
