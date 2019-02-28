@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable attribute document view definition
+ * Attribute document view definition
  */
 public interface ExposableAttributetView {
 

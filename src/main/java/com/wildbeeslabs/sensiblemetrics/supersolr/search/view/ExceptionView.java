@@ -55,7 +55,8 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @JsonPropertyOrder(value = {
     PATH_FIELD_NAME,
     CODE_FIELD_NAME,
-    ERROR_FIELD_NAME,
+    TYPE_FIELD_NAME,
+    DESCRIPTION_FIELD_NAME,
     MESSAGE_FIELD_NAME,
     TIMESTAMP_FIELD_NAME
 }, alphabetic = true)
@@ -68,27 +69,32 @@ public class ExceptionView implements ExposableExceptionView, Serializable {
      */
     private static final long serialVersionUID = -328743858984114195L;
 
-    @ApiModelProperty(value = "Exception url path", name = "url", example = "url")
+    @ApiModelProperty(value = "Exception url", name = "path", example = "/pem-gateway-template/149", required = true)
     @JacksonXmlProperty(localName = PATH_FIELD_NAME)
     @JsonProperty(PATH_FIELD_NAME)
     private String path;
 
-    @ApiModelProperty(value = "Exception code", name = "code", example = "code", required = true)
+    @ApiModelProperty(value = "Exception code", name = "code", example = "500", required = true)
     @JacksonXmlProperty(localName = CODE_FIELD_NAME)
     @JsonProperty(CODE_FIELD_NAME)
     private Integer code;
 
-    @ApiModelProperty(value = "Exception error name", name = "name", example = "name", required = true)
-    @JacksonXmlProperty(localName = ERROR_FIELD_NAME)
-    @JsonProperty(ERROR_FIELD_NAME)
-    private String error;
+    @ApiModelProperty(value = "Exception type", name = "type", example = "Internal Server Error", required = true)
+    @JacksonXmlProperty(localName = TYPE_FIELD_NAME)
+    @JsonProperty(TYPE_FIELD_NAME)
+    private String type;
 
-    @ApiModelProperty(value = "Exception error message", name = "message", example = "message", required = true)
+    @ApiModelProperty(value = "Exception description", name = "description", example = "org.springframework.dao.EmptyResultDataAccessException")
+    @JacksonXmlProperty(localName = DESCRIPTION_FIELD_NAME)
+    @JsonProperty(DESCRIPTION_FIELD_NAME)
+    private String description;
+
+    @ApiModelProperty(value = "Exception message", name = "message", example = "Incorrect result size: expected 1, actual 0")
     @JacksonXmlProperty(localName = MESSAGE_FIELD_NAME)
     @JsonProperty(MESSAGE_FIELD_NAME)
     private String message;
 
-    @ApiModelProperty(value = "Exception timestamp", name = "timestamp", example = "timestamp")
+    @ApiModelProperty(value = "Exception timestamp", name = "timestamp", example = "1551372385400", required = true)
     @JacksonXmlProperty(localName = TIMESTAMP_FIELD_NAME)
     @JsonProperty(TIMESTAMP_FIELD_NAME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_FORMAT_PATTERN_EXT, locale = DEFAULT_DATE_FORMAT_LOCALE)

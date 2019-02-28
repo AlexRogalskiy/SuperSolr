@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable product document view definition
+ * Product document view definition
  */
 public interface ExposableProductView {
 

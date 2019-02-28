@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable audit document view definition
+ * Audit document view definition
  */
 public interface ExposableAuditDocumentView {
 

@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable order document view definition
+ * Order document view definition
  */
 public interface ExposableOrderView {
 

@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable category document view definition
+ * Category document view definition
  */
 public interface ExposableCategoryView {
 

@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable base document view definition
+ * Base document view definition
  */
 public interface ExposableBaseDocumentView {
 

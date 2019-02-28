@@ -24,7 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces;
 
 /**
- * Custom exposable exception document view definition
+ * Exception document view definition
  */
 public interface ExposableExceptionView {
 
@@ -38,7 +38,8 @@ public interface ExposableExceptionView {
      */
     String PATH_FIELD_NAME = "path";
     String CODE_FIELD_NAME = "code";
-    String ERROR_FIELD_NAME = "error";
+    String TYPE_FIELD_NAME = "type";
+    String DESCRIPTION_FIELD_NAME = "description";
     String MESSAGE_FIELD_NAME = "message";
     String TIMESTAMP_FIELD_NAME = "timestamp";
 }
