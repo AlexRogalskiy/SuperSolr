@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.batch;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.config.BatchConfigProperties;
+import com.wildbeeslabs.sensiblemetrics.supersolr.config.properties.BatchConfigProperties;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.SolrItemWriterException;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;

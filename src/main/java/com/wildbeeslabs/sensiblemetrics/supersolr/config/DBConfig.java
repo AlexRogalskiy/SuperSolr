@@ -23,15 +23,16 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -67,16 +68,16 @@ import java.util.UUID;
 @EnableJpaAuditing
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = {
-                "com.wildbeeslabs.sensiblemetrics.supersolr.model",
-                "com.wildbeeslabs.sensiblemetrics.supersolr.repository"
-        }
+    basePackages = {
+        "com.wildbeeslabs.sensiblemetrics.supersolr.model",
+        "com.wildbeeslabs.sensiblemetrics.supersolr.repository"
+    }
 )
 @PropertySource("classpath:application.properties")
 public class DBConfig {
 
     /**
-     * Default model/repository packages
+     * Default model/repository source packages
      */
     public static final String DEFAULT_REPOSITORY_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.repository";
     public static final String DEFAULT_MODEL_PACKAGE = "com.wildbeeslabs.sensiblemetrics.supersolr.model";
@@ -93,102 +94,128 @@ public class DBConfig {
     private Environment env;
 
     /**
-     * Returns local container entity manager factory instance {@link LocalContainerEntityManagerFactoryBean}
+     * Returns {@link LocalContainerEntityManagerFactoryBean} configuration
      *
-     * @param defaultDataSource -  initial datasource instance {@link DataSource}
-     * @param jpaVendorAdapter  - initial jpa vendor adapter instance {@link JpaVendorAdapter}
-     * @param jpaProperties     - initial jpa properties {@link Properties}
-     * @param jpaDialect        - initial jpa dialect instance {@link JpaDialect}
-     * @return local container entity manager factory {@link LocalContainerEntityManagerFactoryBean}
+     * @return {@link LocalContainerEntityManagerFactoryBean} configuration
      */
     @Bean
     @Primary
     @ConditionalOnMissingBean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(final DataSource defaultDataSource,
-                                                                       final JpaVendorAdapter jpaVendorAdapter,
-                                                                       final @Qualifier("jpaProperties") Properties jpaProperties,
-                                                                       final JpaDialect jpaDialect) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setDataSource(defaultDataSource);
-        factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-        factoryBean.setJpaProperties(jpaProperties);
-        factoryBean.setJpaDialect(jpaDialect);
+        factoryBean.setDataSource(defaultDataSource());
+        factoryBean.setJpaVendorAdapter(jpaVendorAdapter());
+        factoryBean.setJpaProperties(jpaProperties());
+        factoryBean.setJpaDialect(jpaDialect());
         factoryBean.setPackagesToScan(DEFAULT_REPOSITORY_PACKAGE, DEFAULT_MODEL_PACKAGE);
         factoryBean.setPersistenceUnitName(DEFAULT_PERSISTENCE_UNIT_NAME);
+        //factoryBean.setPersistenceUnitManager(persistenceUnitManager());
         return factoryBean;
     }
 
     /**
-     * Returns datasource instance {@link DataSource}
+     * Returns spring datasource {@link Properties} properties
      *
-     * @return datasource {@link DataSource}
+     * @return spring datasource {@link Properties} properties
      */
-    @Bean(destroyMethod = "close")
-    public HikariDataSource defaultDataSource() {
-        final HikariConfig dataSourceConfig = new HikariConfig();
-        final Properties dataSourceProperties = new Properties();
-        dataSourceProperties.put("spring.datasource.testOnBorrow", env.getRequiredProperty("supersolr.datasource.db.testOnBorrow"));
-        dataSourceProperties.put("spring.datasource.initialization-mode", env.getRequiredProperty("supersolr.datasource.db.initializationMode"));
-        dataSourceProperties.put("spring.datasource.testWhileIdle", env.getRequiredProperty("supersolr.datasource.db.testWhileIdle"));
-        dataSourceProperties.put("spring.datasource.timeBetweenEvictionRunsMillis", env.getRequiredProperty("supersolr.datasource.db.timeBetweenEvictionRunsMillis"));
-        dataSourceProperties.put("spring.datasource.minEvictableIdleTimeMillis", env.getRequiredProperty("supersolr.datasource.db.minEvictableIdleTimeMillis"));
-        dataSourceProperties.put("spring.datasource.validationQuery", env.getRequiredProperty("supersolr.datasource.db.validationQuery"));
-        dataSourceProperties.put("spring.datasource.max-active", env.getRequiredProperty("supersolr.datasource.db.maxActive"));
-        dataSourceProperties.put("spring.datasource.max-idle", env.getRequiredProperty("supersolr.datasource.db.maxIdle"));
-        dataSourceProperties.put("spring.datasource.max-wait", env.getRequiredProperty("supersolr.datasource.db.maxWait"));
-
-        dataSourceProperties.put("spring.datasource.cachePrepStmts", env.getRequiredProperty("supersolr.datasource.db.cachePrepStmts"));
-        dataSourceProperties.put("spring.datasource.prepStmtCacheSize", env.getRequiredProperty("supersolr.datasource.db.prepStmtCacheSize"));
-        dataSourceProperties.put("spring.datasource.prepStmtCacheSqlLimit", env.getRequiredProperty("supersolr.datasource.db.prepStmtCacheSqlLimit"));
-        dataSourceProperties.put("spring.datasource.useServerPrepStmts", env.getRequiredProperty("supersolr.datasource.db.useServerPrepStmts"));
-        dataSourceProperties.put("spring.datasource.useLocalSessionState", env.getRequiredProperty("supersolr.datasource.db.useLocalSessionState"));
-        dataSourceProperties.put("spring.datasource.rewriteBatchedStatements", env.getRequiredProperty("supersolr.datasource.db.rewriteBatchedStatements"));
-        dataSourceProperties.put("spring.datasource.cacheResultSetMetadata", env.getRequiredProperty("supersolr.datasource.db.cacheResultSetMetadata"));
-        dataSourceProperties.put("spring.datasource.cacheServerConfiguration", env.getRequiredProperty("supersolr.datasource.db.cacheServerConfiguration"));
-        dataSourceProperties.put("spring.datasource.elideSetAutoCommits", env.getRequiredProperty("supersolr.datasource.db.elideSetAutoCommits"));
-        dataSourceProperties.put("spring.datasource.maintainTimeStats", env.getRequiredProperty("supersolr.datasource.db.maintainTimeStats"));
-        dataSourceProperties.put("spring.datasource.verifyServerCertificate", env.getRequiredProperty("supersolr.datasource.db.verifyServerCertificate"));
-        dataSourceProperties.put("spring.datasource.useSqlComments", env.getRequiredProperty("supersolr.datasource.db.useSqlComments"));
-        dataSourceProperties.put("spring.datasource.maxStatementsPerConnection", env.getRequiredProperty("supersolr.datasource.db.maxStatementsPerConnection"));
-        dataSourceProperties.put("spring.datasource.maxStatements", env.getRequiredProperty("supersolr.datasource.db.maxStatements"));
-        dataSourceProperties.put("spring.datasource.minPoolSize", env.getRequiredProperty("supersolr.datasource.db.minPoolSize"));
-        dataSourceProperties.put("spring.datasource.maxPoolSize", env.getRequiredProperty("supersolr.datasource.db.maxPoolSize"));
-        dataSourceProperties.put("spring.datasource.autoCommit", env.getRequiredProperty("supersolr.datasource.db.autoCommit"));
-        dataSourceProperties.put("spring.datasource.allowPoolSuspension", env.getRequiredProperty("supersolr.datasource.db.allowPoolSuspension"));
-        dataSourceProperties.put("spring.datasource.checkoutTimeout", env.getRequiredProperty("supersolr.datasource.db.checkoutTimeout"));
-        dataSourceProperties.put("spring.datasource.idleConnectionTestPeriod", env.getRequiredProperty("supersolr.datasource.db.idleConnectionTestPeriod"));
-        dataSourceProperties.put("spring.datasource.initialPoolSize", env.getRequiredProperty("supersolr.datasource.db.initialPoolSize"));
-        dataSourceProperties.put("spring.datasource.testConnectionOnCheckin", env.getRequiredProperty("supersolr.datasource.db.testConnectionOnCheckin"));
-
-        dataSourceConfig.setDriverClassName(env.getRequiredProperty("supersolr.datasource.db.driver"));
-        dataSourceConfig.setPoolName(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.poolName"));
-        dataSourceConfig.setRegisterMbeans(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.registerMbeans", Boolean.class));
-        dataSourceConfig.setJdbcUrl(env.getRequiredProperty("supersolr.datasource.db.url"));
-        dataSourceConfig.setUsername(env.getRequiredProperty("supersolr.datasource.db.username"));
-        dataSourceConfig.setPassword(env.getRequiredProperty("supersolr.datasource.db.password"));
-        dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("supersolr.datasource.db.connectionTestQuery"));
-        //dataSourceConfig.setDataSourceClassName(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.dataSourceClassName"));
-        dataSourceConfig.setMinimumIdle(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.minimumIdle", Integer.class));
-        dataSourceConfig.setMaximumPoolSize(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.maximumPoolSize", Integer.class));
-        dataSourceConfig.setIdleTimeout(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.idleTimeout", Integer.class));
-        dataSourceConfig.setIsolateInternalQueries(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.isolateInternalQueries", Boolean.class));
-        //dataSourceConfig.setLeakDetectionThreshold(env.getRequiredProperty("supersolr.datasource.config.hibernate.hikari.leakDetectionThreshold", Integer.class));
-        dataSourceConfig.setDataSourceProperties(dataSourceProperties);
-        return new HikariDataSource(dataSourceConfig);
+    @Bean
+    public Properties properties() {
+        final Properties properties = new Properties();
+        //properties.put("spring.datasource.testOnBorrow", env.getRequiredProperty("supersolr.datasource.testOnBorrow"));
+        //properties.put("spring.datasource.initialization-mode", env.getRequiredProperty("supersolr.datasource.initializationMode"));
+        //properties.put("spring.datasource.testWhileIdle", env.getRequiredProperty("supersolr.datasource.testWhileIdle"));
+        //properties.put("spring.datasource.timeBetweenEvictionRunsMillis", env.getRequiredProperty("supersolr.datasource.timeBetweenEvictionRunsMillis"));
+        //properties.put("spring.datasource.minEvictableIdleTimeMillis", env.getRequiredProperty("supersolr.datasource.minEvictableIdleTimeMillis"));
+        //properties.put("spring.datasource.validationQuery", env.getRequiredProperty("supersolr.datasource.validationQuery"));
+        //properties.put("spring.datasource.max-active", env.getRequiredProperty("supersolr.datasource.maxActive"));
+        //properties.put("spring.datasource.max-idle", env.getRequiredProperty("supersolr.datasource.maxIdle"));
+        //properties.put("spring.datasource.max-wait", env.getRequiredProperty("supersolr.datasource.maxWait"));
+        //properties.put("spring.datasource.cachePrepStmts", env.getRequiredProperty("supersolr.datasource.cachePrepStmts"));
+        //properties.put("spring.datasource.prepStmtCacheSize", env.getRequiredProperty("supersolr.datasource.prepStmtCacheSize"));
+        //properties.put("spring.datasource.prepStmtCacheSqlLimit", env.getRequiredProperty("supersolr.datasource.prepStmtCacheSqlLimit"));
+        //properties.put("spring.datasource.useServerPrepStmts", env.getRequiredProperty("supersolr.datasource.useServerPrepStmts"));
+        //properties.put("spring.datasource.useLocalSessionState", env.getRequiredProperty("supersolr.datasource.useLocalSessionState"));
+        //properties.put("spring.datasource.useLocalTransactionState", env.getRequiredProperty("supersolr.datasource.useLocalTransactionState"));
+        //properties.put("spring.datasource.rewriteBatchedStatements", env.getRequiredProperty("supersolr.datasource.rewriteBatchedStatements"));
+        //properties.put("spring.datasource.cacheResultSetMetadata", env.getRequiredProperty("supersolr.datasource.cacheResultSetMetadata"));
+        //properties.put("spring.datasource.cacheServerConfiguration", env.getRequiredProperty("supersolr.datasource.cacheServerConfiguration"));
+        //properties.put("spring.datasource.elideSetAutoCommits", env.getRequiredProperty("supersolr.datasource.elideSetAutoCommits"));
+        //properties.put("spring.datasource.maintainTimeStats", env.getRequiredProperty("supersolr.datasource.maintainTimeStats"));
+        //properties.put("spring.datasource.verifyServerCertificate", env.getRequiredProperty("supersolr.datasource.verifyServerCertificate"));
+        //properties.put("spring.datasource.useSqlComments", env.getRequiredProperty("supersolr.datasource.useSqlComments"));
+        //properties.put("spring.datasource.maxStatementsPerConnection", env.getRequiredProperty("supersolr.datasource.maxStatementsPerConnection"));
+        //properties.put("spring.datasource.maxStatements", env.getRequiredProperty("supersolr.datasource.maxStatements"));
+        //properties.put("spring.datasource.minPoolSize", env.getRequiredProperty("supersolr.datasource.minPoolSize"));
+        //properties.put("spring.datasource.maxPoolSize", env.getRequiredProperty("supersolr.datasource.maxPoolSize"));
+        //properties.put("spring.datasource.autoCommit", env.getRequiredProperty("supersolr.datasource.autoCommit"));
+        //properties.put("spring.datasource.allowPoolSuspension", env.getRequiredProperty("supersolr.datasource.allowPoolSuspension"));
+        //properties.put("spring.datasource.checkoutTimeout", env.getRequiredProperty("supersolr.datasource.checkoutTimeout"));
+        //properties.put("spring.datasource.idleConnectionTestPeriod", env.getRequiredProperty("supersolr.datasource.idleConnectionTestPeriod"));
+        //properties.put("spring.datasource.initialPoolSize", env.getRequiredProperty("supersolr.datasource.initialPoolSize"));
+        //properties.put("spring.datasource.testConnectionOnCheckin", env.getRequiredProperty("supersolr.datasource.testConnectionOnCheckin"));
+        //properties.put("spring.datasource.allowUrlInLocalInfile", env.getRequiredProperty("supersolr.datasource.allowUrlInLocalInfile"));
+        //properties.put("spring.datasource.useReadAheadInput", env.getRequiredProperty("supersolr.datasource.useReadAheadInput"));
+        //properties.put("spring.datasource.useUnbufferedIO", env.getRequiredProperty("supersolr.datasource.useUnbufferedIO"));
+        return properties;
     }
 
     /**
-     * Returns jpa vendor adapter instance {@link JpaVendorAdapter}
+     * Returns default {@link DataSource} configuration
      *
-     * @return jpa vendor adapter {@link JpaVendorAdapter}
+     * @return default {@link DataSource} configuration
+     */
+    @Bean(destroyMethod = "close")
+    public HikariDataSource defaultDataSource() {
+        final DataSourceProperties dataSourceProperties = dataSourceProperties();
+        final HikariDataSource hikariDataSource = DataSourceBuilder
+            .create(dataSourceProperties.getClassLoader())
+            .driverClassName(dataSourceProperties.getDriverClassName())
+            .url(dataSourceProperties.getUrl())
+            .username(dataSourceProperties.getUsername())
+            .password(dataSourceProperties.getPassword())
+            .type(HikariDataSource.class)
+            .build();
+        //hikariDataSource.setDriverClassName(env.getRequiredProperty("supersolr.datasource.driver"));
+        //hikariDataSource.setJdbcUrl(env.getRequiredProperty("supersolr.datasource.url"));
+        //hikariDataSource.setUsername(env.getRequiredProperty("supersolr.datasource.username"));
+        //hikariDataSource.setPassword(env.getRequiredProperty("supersolr.datasource.password"));
+        hikariDataSource.setPoolName(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.poolName"));
+        hikariDataSource.setRegisterMbeans(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.registerMbeans", Boolean.class));
+        hikariDataSource.setConnectionTestQuery(env.getRequiredProperty("supersolr.datasource.connectionTestQuery"));
+        hikariDataSource.setDataSourceClassName(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.dataSourceClassName"));
+        hikariDataSource.setMinimumIdle(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.minimumIdle", Integer.class));
+        hikariDataSource.setMaximumPoolSize(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.maximumPoolSize", Integer.class));
+        hikariDataSource.setIdleTimeout(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.idleTimeout", Integer.class));
+        hikariDataSource.setIsolateInternalQueries(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.isolateInternalQueries", Boolean.class));
+        //hikariDataSource.setLeakDetectionThreshold(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.leakDetectionThreshold", Integer.class));
+        hikariDataSource.setDataSourceProperties(properties());
+        return hikariDataSource;
+    }
+
+    /**
+     * Returns default {@link DataSourceProperties} configuration
+     *
+     * @return default {@link DataSourceProperties} configuration
+     */
+    @Bean
+    @Primary
+    @ConfigurationProperties(ignoreInvalidFields = true, prefix = "supersolr.datasource")
+    public DataSourceProperties dataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    /**
+     * Returns {@link JpaVendorAdapter} configuration
+     *
+     * @return {@link JpaVendorAdapter} configuration
      */
     @Bean
     @ConditionalOnMissingBean
     public JpaVendorAdapter jpaVendorAdapter() {
         final HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setGenerateDdl(env.getRequiredProperty("supersolr.datasource.config.jpa.generateDdl", Boolean.class));
-        jpaVendorAdapter.setShowSql(env.getRequiredProperty("supersolr.datasource.config.jpa.showSql", Boolean.class));
-        jpaVendorAdapter.setDatabasePlatform(env.getRequiredProperty("supersolr.datasource.db.databasePlatform"));
+        jpaVendorAdapter.setGenerateDdl(env.getRequiredProperty("supersolr.datasource.jpa.generateDdl", Boolean.class));
+        jpaVendorAdapter.setShowSql(env.getRequiredProperty("supersolr.datasource.jpa.showSql", Boolean.class));
+        jpaVendorAdapter.setDatabasePlatform(env.getRequiredProperty("supersolr.datasource.databasePlatform"));
         return jpaVendorAdapter;
     }
 
@@ -199,6 +226,12 @@ public class DBConfig {
 //        return transactionManager;
 //    }
 
+    /**
+     * Returns {@link HibernateTransactionManager} configuration by initial {@link SessionFactory} instance
+     *
+     * @param sessionFactory - initial {@link SessionFactory} instance
+     * @return {@link HibernateTransactionManager} configuration
+     */
     @Bean
     public HibernateTransactionManager transactionManager(final SessionFactory sessionFactory) {
         final HibernateTransactionManager txManager = new HibernateTransactionManager();
@@ -207,9 +240,9 @@ public class DBConfig {
     }
 
     /**
-     * Return parent aware naming strategy instance (@link ParentAwareNamingStrategy)
+     * Returns {@link ParentAwareNamingStrategy} configuration
      *
-     * @return parent aware naming strategy (@link ParentAwareNamingStrategy)
+     * @return {@link ParentAwareNamingStrategy} configuration
      */
     @Bean
     @ConditionalOnMissingBean(value = ObjectNamingStrategy.class, search = SearchStrategy.CURRENT)
@@ -220,92 +253,92 @@ public class DBConfig {
     }
 
     /**
-     * Returns jpa properties {@link Properties}
+     * Returns jpa {@link Properties} configuration
      *
-     * @return jpa properties {@link Properties}
+     * @return jpa {@link Properties} configuration
      */
     @Bean
     public Properties jpaProperties() {
         final Properties jpaProperties = new Properties();
-        // Hibernate connection properties
-        //jpaProperties.put("hibernate.connection.provider_class", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.providerClass"));
-        jpaProperties.put("hibernate.connection.pool_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.poolSize"));
-        jpaProperties.put("hibernate.connection.autocommit", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.autocommit"));
-        jpaProperties.put("hibernate.connection.release_mode", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.releaseMode"));
-        jpaProperties.put("hibernate.connection.useUnicode", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.useUnicode"));
-        jpaProperties.put("hibernate.connection.charSet", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.charSet"));
-        jpaProperties.put("hibernate.connection.characterEncoding", env.getRequiredProperty("supersolr.datasource.config.hibernate.connection.characterEncoding"));
+        // connection properties
+        //jpaProperties.put("hibernate.connection.provider_class", env.getRequiredProperty("supersolr.datasource.hibernate.connection.providerClass"));
+        jpaProperties.put("hibernate.connection.pool_size", env.getRequiredProperty("supersolr.datasource.hibernate.connection.poolSize"));
+        jpaProperties.put("hibernate.connection.autocommit", env.getRequiredProperty("supersolr.datasource.hibernate.connection.autocommit"));
+        jpaProperties.put("hibernate.connection.release_mode", env.getRequiredProperty("supersolr.datasource.hibernate.connection.releaseMode"));
+        jpaProperties.put("hibernate.connection.useUnicode", env.getRequiredProperty("supersolr.datasource.hibernate.connection.useUnicode"));
+        jpaProperties.put("hibernate.connection.charSet", env.getRequiredProperty("supersolr.datasource.hibernate.connection.charSet"));
+        jpaProperties.put("hibernate.connection.characterEncoding", env.getRequiredProperty("supersolr.datasource.hibernate.connection.characterEncoding"));
 
-        // Hibernate general properties
-        jpaProperties.put("hibernate.dialect", env.getRequiredProperty("supersolr.datasource.config.hibernate.dialect"));
-        jpaProperties.put("hibernate.current_session_context_class", env.getRequiredProperty("supersolr.datasource.config.hibernate.currentSessionContextClass"));
-        jpaProperties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("supersolr.datasource.config.hibernate.hbm2ddl.auto"));
-        jpaProperties.put("hibernate.hbm2ddl.import_files", env.getRequiredProperty("supersolr.datasource.config.hibernate.hbm2ddl.importFiles"));
-        jpaProperties.put("hibernate.ejb.naming_strategy", env.getRequiredProperty("supersolr.datasource.config.hibernate.ejb.namingStrategy"));
-        jpaProperties.put("hibernate.show_sql", env.getRequiredProperty("supersolr.datasource.config.hibernate.showSql"));
-        jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("supersolr.datasource.config.hibernate.formatSql"));
-        jpaProperties.put("hibernate.use_sql_comments", env.getRequiredProperty("supersolr.datasource.config.hibernate.useSqlComments"));
-        jpaProperties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("supersolr.datasource.config.hibernate.enableLazyLoadNoTrans"));
-        jpaProperties.put("hibernate.max_fetch_depth", env.getRequiredProperty("supersolr.datasource.config.hibernate.maxFetchDepth"));
-        jpaProperties.put("hibernate.default_batch_fetch_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.defaultBatchFetchSize"));
-        jpaProperties.put("hibernate.generate_statistics", env.getRequiredProperty("supersolr.datasource.config.hibernate.generateStatistics"));
-        jpaProperties.put("hibernate.globally_quoted_identifiers", env.getRequiredProperty("supersolr.datasource.config.hibernate.globallyQuotedIdentifiers"));
-        jpaProperties.put("hibernate.id.new_generator_mappings", env.getRequiredProperty("supersolr.datasource.config.hibernate.id.newGeneratorMappings"));
-        jpaProperties.put("hibernate.transaction.flush_before_completion", env.getRequiredProperty("supersolr.datasource.config.hibernate.transaction.flushBeforeCompletion"));
-        jpaProperties.put("hibernate.transaction.auto_close_session", env.getRequiredProperty("supersolr.datasource.config.hibernate.transaction.autoCloseSession"));
-        jpaProperties.put("hibernate.getString.merge.entity_copy_observer", env.getRequiredProperty("supersolr.datasource.config.hibernate.event.merge.entityCopyObserver"));
-        jpaProperties.put("hibernate.bytecode.use_reflection_optimizer", env.getRequiredProperty("supersolr.datasource.config.hibernate.bytecode.useReflectionOptimizer"));
-        jpaProperties.put("hibernate.temp.use_jdbc_metadata_defaults", env.getRequiredProperty("supersolr.datasource.config.hibernate.temp.useJdbcMetadataDefaults"));
-        //jpaProperties.put("hibernate.multi_tenant_connection_provider", env.getRequiredProperty("supersolr.datasource.config.hibernate.multiTenantConnectionProvider"));
-        //jpaProperties.put("hibernate.multiTenancy", env.getRequiredProperty("supersolr.datasource.config.hibernate.multiTenancy"));
+        // general properties
+        jpaProperties.put("hibernate.dialect", env.getRequiredProperty("supersolr.datasource.hibernate.dialect"));
+        jpaProperties.put("hibernate.current_session_context_class", env.getRequiredProperty("supersolr.datasource.hibernate.currentSessionContextClass"));
+        jpaProperties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.auto"));
+        jpaProperties.put("hibernate.hbm2ddl.import_files", env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.importFiles"));
+        jpaProperties.put("hibernate.ejb.naming_strategy", env.getRequiredProperty("supersolr.datasource.hibernate.ejb.namingStrategy"));
+        jpaProperties.put("hibernate.show_sql", env.getRequiredProperty("supersolr.datasource.hibernate.showSql"));
+        jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("supersolr.datasource.hibernate.formatSql"));
+        jpaProperties.put("hibernate.use_sql_comments", env.getRequiredProperty("supersolr.datasource.hibernate.useSqlComments"));
+        jpaProperties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("supersolr.datasource.hibernate.enableLazyLoadNoTrans"));
+        jpaProperties.put("hibernate.max_fetch_depth", env.getRequiredProperty("supersolr.datasource.hibernate.maxFetchDepth"));
+        jpaProperties.put("hibernate.default_batch_fetch_size", env.getRequiredProperty("supersolr.datasource.hibernate.defaultBatchFetchSize"));
+        jpaProperties.put("hibernate.generate_statistics", env.getRequiredProperty("supersolr.datasource.hibernate.generateStatistics"));
+        jpaProperties.put("hibernate.globally_quoted_identifiers", env.getRequiredProperty("supersolr.datasource.hibernate.globallyQuotedIdentifiers"));
+        jpaProperties.put("hibernate.id.new_generator_mappings", env.getRequiredProperty("supersolr.datasource.hibernate.id.newGeneratorMappings"));
+        jpaProperties.put("hibernate.transaction.flush_before_completion", env.getRequiredProperty("supersolr.datasource.hibernate.transaction.flushBeforeCompletion"));
+        jpaProperties.put("hibernate.transaction.auto_close_session", env.getRequiredProperty("supersolr.datasource.hibernate.transaction.autoCloseSession"));
+        jpaProperties.put("hibernate.getString.merge.entity_copy_observer", env.getRequiredProperty("supersolr.datasource.hibernate.event.merge.entityCopyObserver"));
+        jpaProperties.put("hibernate.bytecode.use_reflection_optimizer", env.getRequiredProperty("supersolr.datasource.hibernate.bytecode.useReflectionOptimizer"));
+        jpaProperties.put("hibernate.temp.use_jdbc_metadata_defaults", env.getRequiredProperty("supersolr.datasource.hibernate.temp.useJdbcMetadataDefaults"));
+        //jpaProperties.put("hibernate.multi_tenant_connection_provider", env.getRequiredProperty("supersolr.datasource.hibernate.multiTenantConnectionProvider"));
+        //jpaProperties.put("hibernate.multiTenancy", env.getRequiredProperty("supersolr.datasource.hibernate.multiTenancy"));
 
-        // Hibernate cache properties
-//        jpaProperties.put("hibernate.cache.ehcache.missing_cache_strategy", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.ehcache.missingCacheStrategy"));
-//        jpaProperties.put("hibernate.cache.region.factory_class", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.region.factoryClass"));
-//        jpaProperties.put("hibernate.cache.use_second_level_cache", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useSecondLevelCache"));
-//        jpaProperties.put("hibernate.cache.use_structured_entries", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useStructuredEntries"));
-//        jpaProperties.put("hibernate.cache.use_query_cache", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.useQueryCache"));
-//        jpaProperties.put("net.sf.ehcache.configurationResourceName", env.getRequiredProperty("supersolr.datasource.config.hibernate.cache.configurationResourceName"));
+        // cache properties
+        //jpaProperties.put("hibernate.cache.ehcache.missing_cache_strategy", env.getRequiredProperty("supersolr.datasource.hibernate.cache.ehcache.missingCacheStrategy"));
+        //jpaProperties.put("hibernate.cache.region.factory_class", env.getRequiredProperty("supersolr.datasource.hibernate.cache.region.factoryClass"));
+        //jpaProperties.put("hibernate.cache.use_second_level_cache", env.getRequiredProperty("supersolr.datasource.hibernate.cache.useSecondLevelCache"));
+        //jpaProperties.put("hibernate.cache.use_structured_entries", env.getRequiredProperty("supersolr.datasource.hibernate.cache.useStructuredEntries"));
+        //jpaProperties.put("hibernate.cache.use_query_cache", env.getRequiredProperty("supersolr.datasource.hibernate.cache.useQueryCache"));
+        //jpaProperties.put("net.sf.ehcache.configurationResourceName", env.getRequiredProperty("supersolr.datasource.hibernate.cache.configurationResourceName"));
 
-        // Hibernate search properties
-        jpaProperties.put("hibernate.search.exclusive_index_use", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.exclusiveIndexUse"));
-        jpaProperties.put("hibernate.search.lucene_version", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.luceneVersion"));
-        //jpaProperties.put("hibernate.search.default.worker.execution", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.worker.execution"));
-        //jpaProperties.put("hibernate.search.default.directory_provider", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.directoryProvider"));
-        //jpaProperties.put("hibernate.search.default.indexBase", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexBase"));
-        //jpaProperties.put("hibernate.search.default.indexPath", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexPath"));
-        //jpaProperties.put("hibernate.search.default.chunk_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.chunkSize"));
-        //jpaProperties.put("hibernate.search.default.indexmanager", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.indexmanager"));
-        //jpaProperties.put("hibernate.search.default.metadata_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.metadataCachename"));
-        //jpaProperties.put("hibernate.search.default.data_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.dataCachename"));
-        //jpaProperties.put("hibernate.search.default.locking_cachename", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.lockingCachename"));
-        //jpaProperties.put("hibernate.search.default.batch.merge_factor", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.batch.mergeFactor"));
-        //jpaProperties.put("hibernate.search.default.batch.max_buffered_docs", env.getRequiredProperty("supersolr.datasource.config.hibernate.search.default.batch.maxBufferedDocs"));
+        // search properties
+        jpaProperties.put("hibernate.search.exclusive_index_use", env.getRequiredProperty("supersolr.datasource.hibernate.search.exclusiveIndexUse"));
+        jpaProperties.put("hibernate.search.lucene_version", env.getRequiredProperty("supersolr.datasource.hibernate.search.luceneVersion"));
+        //jpaProperties.put("hibernate.search.default.worker.execution", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.worker.execution"));
+        //jpaProperties.put("hibernate.search.default.directory_provider", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.directoryProvider"));
+        //jpaProperties.put("hibernate.search.default.indexBase", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.indexBase"));
+        //jpaProperties.put("hibernate.search.default.indexPath", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.indexPath"));
+        //jpaProperties.put("hibernate.search.default.chunk_size", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.chunkSize"));
+        //jpaProperties.put("hibernate.search.default.indexmanager", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.indexmanager"));
+        //jpaProperties.put("hibernate.search.default.metadata_cachename", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.metadataCachename"));
+        //jpaProperties.put("hibernate.search.default.data_cachename", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.dataCachename"));
+        //jpaProperties.put("hibernate.search.default.locking_cachename", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.lockingCachename"));
+        //jpaProperties.put("hibernate.search.default.batch.merge_factor", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.batch.mergeFactor"));
+        //jpaProperties.put("hibernate.search.default.batch.max_buffered_docs", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.batch.maxBufferedDocs"));
 
-        // Hibernate fetch / batch properties
-        jpaProperties.put("hibernate.jdbc.fetch_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.jdbc.fetchSize"));
-        jpaProperties.put("hibernate.jdbc.batch_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.jdbc.batchSize"));
-        jpaProperties.put("hibernate.jdbc.batch_versioned_data", env.getRequiredProperty("supersolr.datasource.config.hibernate.jdbc.batchVersionedData"));
-        jpaProperties.put("hibernate.order_inserts", env.getRequiredProperty("supersolr.datasource.config.hibernate.orderInserts"));
-        jpaProperties.put("hibernate.order_updates", env.getRequiredProperty("supersolr.datasource.config.hibernate.orderUpdates"));
+        // fetch/batch properties
+        jpaProperties.put("hibernate.jdbc.fetch_size", env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.fetchSize"));
+        jpaProperties.put("hibernate.jdbc.batch_size", env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.batchSize"));
+        jpaProperties.put("hibernate.jdbc.batch_versioned_data", env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.batchVersionedData"));
+        jpaProperties.put("hibernate.order_inserts", env.getRequiredProperty("supersolr.datasource.hibernate.orderInserts"));
+        jpaProperties.put("hibernate.order_updates", env.getRequiredProperty("supersolr.datasource.hibernate.orderUpdates"));
 
-        // Hibernate native properties
+        // connection pool properties
+        jpaProperties.put("hibernate.c3p0.min_size", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.minSize"));
+        jpaProperties.put("hibernate.c3p0.max_size", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.maxSize"));
+        jpaProperties.put("hibernate.c3p0.timeout", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.timeout"));
+        jpaProperties.put("hibernate.c3p0.max_statements", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.maxStatements"));
+        jpaProperties.put("hibernate.c3p0.idle_test_period", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.idleTestPeriod"));
+
+        // native properties
         jpaProperties.setProperty("org.hibernate.SQL", "true");
         jpaProperties.setProperty("org.hibernate.type", "true");
-
-        // Hikari connection pool properties
-        jpaProperties.put("hibernate.c3p0.min_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.c3p0.minSize"));
-        jpaProperties.put("hibernate.c3p0.max_size", env.getRequiredProperty("supersolr.datasource.config.hibernate.c3p0.maxSize"));
-        jpaProperties.put("hibernate.c3p0.timeout", env.getRequiredProperty("supersolr.datasource.config.hibernate.c3p0.timeout"));
-        jpaProperties.put("hibernate.c3p0.max_statements", env.getRequiredProperty("supersolr.datasource.config.hibernate.c3p0.maxStatements"));
-        jpaProperties.put("hibernate.c3p0.idle_test_period", env.getRequiredProperty("supersolr.datasource.config.hibernate.c3p0.idleTestPeriod"));
         return jpaProperties;
     }
 
     /**
-     * Returns jpa dialect instance {@link JpaDialect}
+     * Returns {@link JpaDialect} configuration
      *
-     * @return jpa dialect {@link JpaDialect}
+     * @return {@link JpaDialect} configuration
      */
     @Bean
     public JpaDialect jpaDialect() {
@@ -313,9 +346,9 @@ public class DBConfig {
     }
 
     /**
-     * Returns persistence exception translation post processor instance {@link PersistenceExceptionTranslationPostProcessor}
+     * Returns {@link PersistenceExceptionTranslationPostProcessor} configuration
      *
-     * @return persistence exception translation post processor {@link PersistenceExceptionTranslationPostProcessor}
+     * @return {@link PersistenceExceptionTranslationPostProcessor} configuration
      */
     @Bean
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
@@ -323,9 +356,9 @@ public class DBConfig {
     }
 
     /**
-     * Returns persistence unit manager {@link PersistenceUnitManager}
+     * Returns {@link PersistenceUnitManager} configuration
      *
-     * @return persistence unit manager {@link PersistenceUnitManager}
+     * @return {@link PersistenceUnitManager} configuration
      */
     @Bean
     public PersistenceUnitManager persistenceUnitManager() {
@@ -336,9 +369,9 @@ public class DBConfig {
     }
 
     /**
-     * Returns post processor instance {@link BeanPostProcessor}
+     * Returns {@link BeanPostProcessor} configuration
      *
-     * @return post processor instance {@link BeanPostProcessor}
+     * @return {@link BeanPostProcessor} configuration
      */
     @Bean
     public BeanPostProcessor postProcessor() {
@@ -347,6 +380,11 @@ public class DBConfig {
         return postProcessor;
     }
 
+    /**
+     * Returns {@link LocalSessionFactoryBean} configuration
+     *
+     * @return {@link LocalSessionFactoryBean} configuration
+     */
     @Bean
     public LocalSessionFactoryBean sessionFactory() {
         final LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();

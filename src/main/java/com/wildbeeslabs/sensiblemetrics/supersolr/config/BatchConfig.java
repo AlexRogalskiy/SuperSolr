@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.batch.*;
+import com.wildbeeslabs.sensiblemetrics.supersolr.config.properties.BatchConfigProperties;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;

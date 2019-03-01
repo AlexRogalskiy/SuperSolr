@@ -21,31 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.config;
+package com.wildbeeslabs.sensiblemetrics.supersolr.config.converter;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.*;
+
+import java.io.Serializable;
 
 /**
- * Custom batch configuration properties
+ * Custom redis data model
  */
-@Data
-@EqualsAndHashCode
-@ToString
-@ConfigurationProperties(prefix = "supersolr.batch")
-public class BatchConfigProperties {
-    /**
-     * Default path pattern
-     */
-    private String pathPattern;
-    /**
-     * Default extract path
-     */
-    private String extractPath;
-    /**
-     * Default cron scheduling
-     */
-    private String cron;
+public class RedisData {
+
+    @Data
+    @AllArgsConstructor(staticName = "of")
+    @EqualsAndHashCode
+    @ToString
+    public static class RedisPort implements Serializable {
+
+        /**
+         * Default explicit serialVersionUID for interoperability
+         */
+        private static final long serialVersionUID = 8338897962608852437L;
+
+        @NonNull
+        @Getter
+        private Integer port;
+    }
+
+    @Data
+    @AllArgsConstructor(staticName = "of")
+    @EqualsAndHashCode
+    @ToString
+    public static class RedisHost implements Serializable {
+
+        /**
+         * Default explicit serialVersionUID for interoperability
+         */
+        private static final long serialVersionUID = 3605617087361538636L;
+
+        @NonNull
+        @Getter
+        private String host;
+    }
 }
