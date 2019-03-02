@@ -86,9 +86,9 @@ public class RedisConfig {
     public RedisSentinelConfiguration sentinelConfig() {
         return new RedisSentinelConfiguration()
             .master(env.getRequiredProperty("supersolr.redis.master"))
-            .sentinel(env.getRequiredProperty("supersolr.redis.host1"), env.getRequiredProperty("supersolr.redis.post1", Integer.class))
-            .sentinel(env.getRequiredProperty("supersolr.redis.host2"), env.getRequiredProperty("supersolr.redis.post2", Integer.class))
-            .sentinel(env.getRequiredProperty("supersolr.redis.host3"), env.getRequiredProperty("supersolr.redis.post3", Integer.class));
+            .sentinel(env.getRequiredProperty("supersolr.redis.hosts.host1"), env.getRequiredProperty("supersolr.redis.hosts.port1", Integer.class))
+            .sentinel(env.getRequiredProperty("supersolr.redis.hosts.host2"), env.getRequiredProperty("supersolr.redis.hosts.port2", Integer.class))
+            .sentinel(env.getRequiredProperty("supersolr.redis.hosts.host3"), env.getRequiredProperty("supersolr.redis.hosts.port3", Integer.class));
     }
 
     @PreDestroy

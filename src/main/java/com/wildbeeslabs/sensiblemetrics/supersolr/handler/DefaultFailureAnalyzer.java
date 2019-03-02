@@ -21,37 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.config.properties;
+package com.wildbeeslabs.sensiblemetrics.supersolr.handler;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
+import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
+import org.springframework.boot.diagnostics.FailureAnalysis;
 
 /**
- * Custom redis configuration properties
+ * Custom failure analyzer {@link AbstractFailureAnalyzer}
  */
-@Data
-@Configuration
-@EnableConfigurationProperties
-@PropertySource("classpath:application.yml")
-@ConfigurationProperties(ignoreInvalidFields = true, prefix = "supersolr.redis")
-@Validated
-public class RedisConfigProperties {
+public class DefaultFailureAnalyzer extends AbstractFailureAnalyzer<BeanNotOfRequiredTypeException> {
 
     /**
-     * Default master host
+     * Returns an analysis of the given {@code failure}, or {@code null} if no analysis
+     * was possible.
+     *
+     * @param rootFailure the root failure passed to the analyzer
+     * @param cause       the actual found cause
+     * @return the analysis or {@code null}
      */
-    private String master;
-    
-    /**
-     * Default collection of slave hosts
-     */
-    private List<Map<String, String>> hosts = new ArrayList<>();
+    @Override
+    protected FailureAnalysis analyze(final Throwable rootFailure, final BeanNotOfRequiredTypeException cause) {
+        return new FailureAnalysis(String.format("ERROR: message=%s", getDescription(cause)), null, cause);
+    }
+
+    private String getDescription(final BeanNotOfRequiredTypeException ex) {
+        return String.format("The bean %s could not be injected due to %s", ex.getBeanName(), ex.getRequiredType().getName());
+    }
 }

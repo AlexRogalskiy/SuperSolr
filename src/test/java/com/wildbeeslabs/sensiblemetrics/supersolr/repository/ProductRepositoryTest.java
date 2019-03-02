@@ -25,11 +25,16 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,6 +64,42 @@ public class ProductRepositoryTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Test
+    @DisplayName("Test search all products")
+    public void testFindAll() {
+        // when
+        final List<Product> products = getProductRepository().findAll();
+
+        // then
+        assertThat(products, not(empty()));
+        assertThat(products, hasSize(17));
+    }
+
+    @Test
+    @DisplayName("Test search all products by page")
+    public void testFindAllByPage() {
+        // when
+        final Page<Product> productPage = getProductRepository().findAll(PageRequest.of(0, 5));
+
+        // then
+        assertNotNull("Should not be empty or null", productPage);
+        assertThat(productPage.getContent(), not(empty()));
+        assertThat(productPage.getContent(), hasSize(5));
+        assertThat(productPage.getTotalElements(), IsEqual.equalTo(17L));
+    }
+
+    @Test
+    @DisplayName("Test search all products by sort")
+    public void testFindAllBySort() {
+        // when
+        final List<Product> products = getProductRepository().findAll(new Sort(Sort.Direction.DESC, PersistableBaseModel.ID_FIELD_NAME));
+
+        // then
+        assertThat(products, not(empty()));
+        assertThat(products, hasSize(17));
+        assertThat(products.get(0).getId(), IsEqual.equalTo(17L));
+    }
 
     @Test
     @DisplayName("Test search product by id")

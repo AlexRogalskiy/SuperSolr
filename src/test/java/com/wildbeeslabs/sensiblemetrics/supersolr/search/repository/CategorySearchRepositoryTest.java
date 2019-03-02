@@ -23,12 +23,15 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
+import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import lombok.extern.slf4j.Slf4j;
+import org.flywaydb.core.internal.util.DateUtils;
+import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,9 +52,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -103,7 +108,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by description")
     public void testFindByDescription() {
-        // terms
+        // expected
         final String searchTerm = "best seller";
 
         // given
@@ -118,15 +123,82 @@ public class CategorySearchRepositoryTest extends BaseTest {
         final List<? extends Category> categories = categoryPage.getContent();
 
         // then
-        assertThat(categories, not(empty()));        assertThat(categories, hasSize(1));
+        assertThat(categories, not(empty()));
         assertThat(categories, hasSize(2));
         assertEquals(category.getDescription(), categories.get(0).getDescription());
     }
 
     @Test
+    @DisplayName("Test search all categories")
+    public void testFindAll() {
+        // given
+        final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true));
+
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
+
+        // when
+        final Iterable<Category> categoryIterable = getCategorySearchRepository().findAll();
+        final List<Category> categories = Lists.newArrayList(categoryIterable);
+
+        // then
+        assertThat(categories, not(empty()));
+        assertThat(categories, hasSize(11));
+    }
+
+    @Test
+    @DisplayName("Test search all categories by page")
+    public void testFindAllByPage() {
+        // when
+        final Page<Category> categoryPage = getCategorySearchRepository().findAll(PageRequest.of(0, 5));
+
+        // then
+        assertNotNull("Should not be empty or null", categoryPage);
+        assertThat(categoryPage.getContent(), not(empty()));
+        assertThat(categoryPage.getContent(), hasSize(5));
+        assertThat(categoryPage.getTotalElements(), IsEqual.equalTo(10L));
+    }
+
+    @Test
+    @DisplayName("Test search all categories by sort")
+    public void testFindAllBySort() {
+        // when
+        final Iterable<Category> categoryIterable = getCategorySearchRepository().findAll(new Sort(Sort.Direction.DESC, SearchableCategory.ID_FIELD_NAME));
+        final List<Category> categories = Lists.newArrayList(categoryIterable);
+
+        // then
+        assertThat(categories, not(empty()));
+        assertThat(categories, hasSize(10));
+        assertThat(categories.get(0).getId(), IsEqual.equalTo("10"));
+    }
+
+    @Test
+    @DisplayName("Test search all categories by created date range")
+    public void testFindAllByFuture() throws ExecutionException, InterruptedException {
+        // given
+        final Category category = createCategory("13", 1, "Treasure Island", "Best seller by R.L.S.");
+        category.setCreated(DateUtils.toDate(2018, 05, 05));
+        category.addProduct(createProduct("01", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true));
+
+        getSolrTemplate().saveBean(SearchableCategory.COLLECTION_ID, category);
+        getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
+
+        // when
+        final CompletableFuture<List<? extends Category>> categoriesFuture = getCategorySearchRepository().findByCreatedBetween(DateUtils.toDate(2018, 01, 01), DateUtils.toDate(2018, 12, 01));
+        assertTrue(categoriesFuture.isDone());
+        final List<? extends Category> products = Lists.newArrayList(categoriesFuture.get());
+
+        // then
+        assertThat(products, not(empty()));
+        assertThat(products, hasSize(1));
+        assertThat(products.get(0).getId(), IsEqual.equalTo("13"));
+    }
+
+    @Test
     @DisplayName("Test search category by title starting with")
     public void testFindByTitleStartingWith() {
-        // terms
+        // expected
         final String searchExistingTitle = "Solr";
         final String searchNonExistingTitle = "Trait";
 
@@ -164,7 +236,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by title like")
     public void testFindByTitleLike() {
-        // terms
+        // expected
         final List<String> titles = Arrays.asList("Treasure");
 
         // given
@@ -185,7 +257,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by title in collection")
     public void testFindByTitleIn() {
-        // terms
+        // expected
         final List<String> titles = Arrays.asList("Treasure", "Island");
 
         // given

@@ -23,20 +23,15 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -54,7 +49,9 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -73,7 +70,10 @@ import java.util.UUID;
         "com.wildbeeslabs.sensiblemetrics.supersolr.repository"
     }
 )
-@PropertySource("classpath:application.properties")
+@PropertySources({
+    @PropertySource("classpath:application.properties"),
+    @PropertySource("classpath:application.yml")
+})
 public class DBConfig {
 
     /**
@@ -166,43 +166,36 @@ public class DBConfig {
      */
     @Bean(destroyMethod = "close")
     public HikariDataSource defaultDataSource() {
-        final DataSourceProperties dataSourceProperties = dataSourceProperties();
-        final HikariDataSource hikariDataSource = DataSourceBuilder
-            .create(dataSourceProperties.getClassLoader())
-            .driverClassName(dataSourceProperties.getDriverClassName())
-            .url(dataSourceProperties.getUrl())
-            .username(dataSourceProperties.getUsername())
-            .password(dataSourceProperties.getPassword())
-            .type(HikariDataSource.class)
-            .build();
-        //hikariDataSource.setDriverClassName(env.getRequiredProperty("supersolr.datasource.driver"));
-        //hikariDataSource.setJdbcUrl(env.getRequiredProperty("supersolr.datasource.url"));
-        //hikariDataSource.setUsername(env.getRequiredProperty("supersolr.datasource.username"));
-        //hikariDataSource.setPassword(env.getRequiredProperty("supersolr.datasource.password"));
-        hikariDataSource.setPoolName(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.poolName"));
-        hikariDataSource.setRegisterMbeans(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.registerMbeans", Boolean.class));
-        hikariDataSource.setConnectionTestQuery(env.getRequiredProperty("supersolr.datasource.connectionTestQuery"));
-        hikariDataSource.setDataSourceClassName(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.dataSourceClassName"));
-        hikariDataSource.setMinimumIdle(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.minimumIdle", Integer.class));
-        hikariDataSource.setMaximumPoolSize(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.maximumPoolSize", Integer.class));
-        hikariDataSource.setIdleTimeout(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.idleTimeout", Integer.class));
-        hikariDataSource.setIsolateInternalQueries(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.isolateInternalQueries", Boolean.class));
-        //hikariDataSource.setLeakDetectionThreshold(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.leakDetectionThreshold", Integer.class));
-        hikariDataSource.setDataSourceProperties(properties());
-        return hikariDataSource;
+        final HikariConfig dataSourceConfig = new HikariConfig();
+        dataSourceConfig.setDriverClassName(env.getRequiredProperty("supersolr.datasource.driver"));
+        dataSourceConfig.setPoolName(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.poolName"));
+        dataSourceConfig.setRegisterMbeans(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.registerMbeans", Boolean.class));
+        dataSourceConfig.setJdbcUrl(env.getRequiredProperty("supersolr.datasource.url"));
+        dataSourceConfig.setUsername(env.getRequiredProperty("supersolr.datasource.username"));
+        dataSourceConfig.setPassword(env.getRequiredProperty("supersolr.datasource.password"));
+        dataSourceConfig.setConnectionTestQuery(env.getRequiredProperty("supersolr.datasource.connectionTestQuery"));
+        //dataSourceConfig.setDataSourceClassName(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.dataSourceClassName"));
+        dataSourceConfig.setMinimumIdle(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.minimumIdle", Integer.class));
+        dataSourceConfig.setMaximumPoolSize(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.maximumPoolSize", Integer.class));
+        dataSourceConfig.setIdleTimeout(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.idleTimeout", Integer.class));
+        dataSourceConfig.setIsolateInternalQueries(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.isolateInternalQueries", Boolean.class));
+        //dataSourceConfig.setLeakDetectionThreshold(env.getRequiredProperty("supersolr.datasource.hibernate.hikari.leakDetectionThreshold", Integer.class));
+        dataSourceConfig.setDataSourceProperties(properties());
+        return new HikariDataSource(dataSourceConfig);
     }
 
-    /**
-     * Returns default {@link DataSourceProperties} configuration
-     *
-     * @return default {@link DataSourceProperties} configuration
-     */
-    @Bean
-    @Primary
-    @ConfigurationProperties(ignoreInvalidFields = true, prefix = "supersolr.datasource")
-    public DataSourceProperties dataSourceProperties() {
-        return new DataSourceProperties();
-    }
+//    /**
+//     * Returns default {@link DataSourceProperties} configuration
+//     *
+//     * @return default {@link DataSourceProperties} configuration
+//     */
+//    @Bean
+//    @Primary
+//    @ConditionalOnMissingBean
+//    @ConfigurationProperties(ignoreInvalidFields = true, prefix = "supersolr.datasource")
+//    public DataSourceProperties dataSourceProperties() {
+//        return new DataSourceProperties();
+//    }
 
     /**
      * Returns {@link JpaVendorAdapter} configuration
@@ -237,6 +230,12 @@ public class DBConfig {
         final HibernateTransactionManager txManager = new HibernateTransactionManager();
         txManager.setSessionFactory(sessionFactory);
         return txManager;
+    }
+
+    @Bean
+    @Primary
+    public TransactionTemplate transactionTemplate(final PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
     }
 
     /**

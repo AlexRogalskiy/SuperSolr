@@ -39,7 +39,7 @@ spring:
           use_query_cache: false
           use_second_level_cache: false
         current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
-        dialect: de.pearl.commons.hibernate.dialect.PostgreSQLDialectExtension
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
         ddl-auto: none
         jdbc:
           lob:
@@ -299,9 +299,7 @@ supersolr:
     maxTotal: 200
     testOnBorrow: true
   redis:
-    master:
-      - host: localhost
-        port: 26379
+    master: localhost
     hosts:
       - host: localhost
         port: 26379

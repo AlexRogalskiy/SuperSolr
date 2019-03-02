@@ -25,11 +25,16 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -58,6 +64,42 @@ public class CategoryRepositoryTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Test
+    @DisplayName("Test search all categories")
+    public void testFindAll() {
+        // when
+        final List<Category> categories = getCategoryRepository().findAll();
+
+        // then
+        assertThat(categories, not(empty()));
+        assertThat(categories, hasSize(11));
+    }
+
+    @Test
+    @DisplayName("Test search all categories by page")
+    public void testFindAllByPage() {
+        // when
+        final Page<Category> categoryPage = getCategoryRepository().findAll(PageRequest.of(0, 5));
+
+        // then
+        assertNotNull("Should not be empty or null", categoryPage);
+        assertThat(categoryPage.getContent(), not(empty()));
+        assertThat(categoryPage.getContent(), hasSize(5));
+        assertThat(categoryPage.getTotalElements(), IsEqual.equalTo(11L));
+    }
+
+    @Test
+    @DisplayName("Test search all categories by sort")
+    public void testFindAllBySort() {
+        // when
+        final List<Category> categories = getCategoryRepository().findAll(new Sort(Sort.Direction.DESC, PersistableBaseModel.ID_FIELD_NAME));
+
+        // then
+        assertThat(categories, not(empty()));
+        assertThat(categories, hasSize(11));
+        assertThat(categories.get(0).getId(), IsEqual.equalTo(11L));
+    }
 
     @Test
     @DisplayName("Test search category by id")

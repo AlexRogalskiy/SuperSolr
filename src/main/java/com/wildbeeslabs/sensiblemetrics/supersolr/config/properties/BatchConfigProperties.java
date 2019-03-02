@@ -27,6 +27,10 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * Custom batch configuration properties
@@ -34,16 +38,22 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "supersolr.batch")
+@PropertySource("classpath:application.yml")
+@ConfigurationProperties(ignoreInvalidFields = true, prefix = "supersolr.batch")
+@Validated
 public class BatchConfigProperties {
+
     /**
      * Default path pattern
      */
+    @NotBlank
     private String pathPattern;
+
     /**
      * Default extract path
      */
     private String extractPath;
+    
     /**
      * Default cron scheduling
      */

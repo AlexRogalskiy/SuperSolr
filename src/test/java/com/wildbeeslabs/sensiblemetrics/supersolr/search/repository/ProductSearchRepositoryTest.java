@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
+import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.SolrConfig;
@@ -30,6 +31,8 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.flywaydb.core.internal.util.DateUtils;
+import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,9 +53,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
@@ -104,7 +109,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search product by empty description and max page size")
     public void testFindByEmptyDescriptionAndMaxPageSize() {
-        // terms
+        // expected
         final String searchTerm = Strings.EMPTY;
 
         // given
@@ -127,7 +132,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search product by description")
     public void testFindByDescription() {
-        // terms
+        // expected
         final String searchTerm = "Very";
 
         // given
@@ -149,7 +154,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by name starting with")
     public void testFindByNameStartingWith() {
-        // terms
+        // expected
         final String searchExistingName = "Solr";
         final String searchNonExistingName = "Segment";
 
@@ -187,7 +192,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by name in collection")
     public void testFindByNameIn() {
-        // terms
+        // expected
         final List<String> names = Arrays.asList("Kitchen", "sink");
 
         // given
@@ -210,7 +215,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by non-existing name like")
     public void testFindByNonExistingNameLike() {
-        // terms
+        // expected
         final List<String> names = Arrays.asList("Treasure");
 
         // given
@@ -228,9 +233,76 @@ public class ProductSearchRepositoryTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Test search all products")
+    public void testFindAll() {
+        // given
+        final Product product = createProduct("14", "Product 01", "TestCase 01", "TestCase 01 for product 01", "Price description", "Catalog number", "Page title", 8, 1.0, 2.0, true);
+        product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller"));
+
+        getSolrTemplate().saveBean(SearchableProduct.COLLECTION_ID, product);
+        getSolrTemplate().commit(SearchableProduct.COLLECTION_ID);
+
+        // when
+        final Iterable<Product> productIterable = getProductSearchRepository().findAll();
+        final List<Product> products = Lists.newArrayList(productIterable);
+
+        // then
+        assertThat(products, not(empty()));
+        assertThat(products, hasSize(10));
+    }
+
+    @Test
+    @DisplayName("Test search all products by page")
+    public void testFindAllByPage() {
+        // when
+        final Page<Product> productPage = getProductSearchRepository().findAll(PageRequest.of(0, 5));
+
+        // then
+        assertNotNull("Should not be empty or null", productPage);
+        assertThat(productPage.getContent(), not(empty()));
+        assertThat(productPage.getContent(), hasSize(5));
+        assertThat(productPage.getTotalElements(), IsEqual.equalTo(9L));
+    }
+
+    @Test
+    @DisplayName("Test search all products by sort")
+    public void testFindAllBySort() {
+        // when
+        final Iterable<Product> productIterable = getProductSearchRepository().findAll(new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
+        final List<Product> products = Lists.newArrayList(productIterable);
+
+        // then
+        assertThat(products, not(empty()));
+        assertThat(products, hasSize(9));
+        assertThat(products.get(0).getId(), IsEqual.equalTo("09"));
+    }
+
+    @Test
+    @DisplayName("Test search all products by created date range")
+    public void testFindAllByFuture() throws ExecutionException, InterruptedException {
+        // given
+        final Product product = createProduct("14", "Product 01", "TestCase 01", "TestCase 01 for product 01", "Price description", "Catalog number", "Page title", 8, 1.0, 2.0, true);
+        product.setCreated(DateUtils.toDate(2018, 05, 05));
+        product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller"));
+
+        getSolrTemplate().saveBean(SearchableProduct.COLLECTION_ID, product);
+        getSolrTemplate().commit(SearchableProduct.COLLECTION_ID);
+
+        // when
+        final CompletableFuture<List<? extends Product>> productsFuture = getProductSearchRepository().findByCreatedBetween(DateUtils.toDate(2018, 01, 01), DateUtils.toDate(2018, 12, 01));
+        assertTrue(productsFuture.isDone());
+        final List<? extends Product> products = Lists.newArrayList(productsFuture.get());
+
+        // then
+        assertThat(products, not(empty()));
+        assertThat(products, hasSize(1));
+        assertThat(products.get(0).getId(), IsEqual.equalTo("14"));
+    }
+
+    @Test
     @DisplayName("Test search category by name like")
     public void testFindByNameLike() {
-        // terms
+        // expected
         final List<String> names = Arrays.asList("Product 01", "Product 02");
 
         // given
@@ -251,7 +323,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by price in range")
     public void testFindByPriceInRange() {
-        // terms
+        // expected
         double lowerBound = 10.0;
         double upperBound = 100.0;
 
@@ -274,7 +346,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @Test
     @DisplayName("Test search category by price in range exclusive")
     public void findByPriceInRangeExclusive() {
-        // terms
+        // expected
         double lowerBound = 10.0;
         double upperBound = 100.0;
 
