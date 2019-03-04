@@ -121,6 +121,7 @@
         <location>dev</location>
         <solr.deps>solr/libs</solr.deps>
         <rest-locations>${project.groupId}.${project.artifactId}.web</rest-locations>
+        <skip.findbugs>true</skip.findbugs>
 
         <unit-tests.skip>true</unit-tests.skip>
         <integration-tests.skip>true</integration-tests.skip>
@@ -214,9 +215,9 @@
             <version>${spring-boot-starter.version}</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.springframework.cloud</groupId>-->
-            <!--<artifactId>spring-cloud-starter-feign</artifactId>-->
-            <!--<version>${feign.version}</version>-->
+        <!--<groupId>org.springframework.cloud</groupId>-->
+        <!--<artifactId>spring-cloud-starter-feign</artifactId>-->
+        <!--<version>${feign.version}</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -931,6 +932,7 @@
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>3.0.5</version>
                     <configuration>
+                        <skip>${skip.findbugs}</skip>
                         <effort>Max</effort>
                         <failOnError>false</failOnError>
                         <threshold>Low</threshold>
@@ -941,6 +943,12 @@
                         <execution>
                             <id>analyze-compile</id>
                             <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <phase>process-classes</phase>
                             <goals>
                                 <goal>check</goal>
                             </goals>
