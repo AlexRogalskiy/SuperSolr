@@ -122,6 +122,9 @@
         <solr.deps>solr/libs</solr.deps>
         <rest-locations>${project.groupId}.${project.artifactId}.web</rest-locations>
         <skip.findbugs>true</skip.findbugs>
+        <skip.checkstyle>true</skip.checkstyle>
+
+        <active.profile>dev</active.profile>
 
         <unit-tests.skip>true</unit-tests.skip>
         <integration-tests.skip>true</integration-tests.skip>
@@ -808,10 +811,19 @@
                     <version>3.0.0-M2</version>
                     <configuration>
                         <useSystemClassLoader>false</useSystemClassLoader>
+                        <systemPropertyVariables>
+                            <spring.profiles.active>${active.profile}</spring.profiles.active>
+                        </systemPropertyVariables>
                         <skipTests>${unit-tests.skip}</skipTests>
                         <excludes>
                             <exclude>${integration-tests}</exclude>
                         </excludes>
+                        <systemProperties>
+                            <property>
+                                <name>java.io.tmpdir</name>
+                                <value>${java.io.tmpdir}${file.separator}${user.name}-${project.artifactId}</value>
+                            </property>
+                        </systemProperties>
                     </configuration>
                 </plugin>
 
@@ -949,6 +961,30 @@
                         </execution>
                         <execution>
                             <phase>process-classes</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <executions>
+                        <execution>
+                            <id>checkstyle-java</id>
+                            <phase>validate</phase>
+                            <configuration>
+                                <skip>${skip.checkstyle}</skip>
+                                <configLocation>${project.basedir}/checkstyle.xml</configLocation>
+                                <includeTestResources>true</includeTestResources>
+                                <encoding>UTF-8</encoding>
+                                <consoleOutput>true</consoleOutput>
+                                <maxAllowedViolations>5</maxAllowedViolations>
+                                <failsOnError>true</failsOnError>
+                            </configuration>
                             <goals>
                                 <goal>check</goal>
                             </goals>

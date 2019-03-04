@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+The MIT License
+
+Copyright 2019 WildBees Labs, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<module name="Checker">
+    <property name="severity" value="error"/>
+    <module name="TreeWalker">
+        <module name="ConstantName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="LocalVariableName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="MemberName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="MethodName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="PackageName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="ParameterName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="StaticVariableName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="TypeName">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="IllegalImport"/>
+        <module name="MethodLength">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="EmptyStatement">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="EqualsHashCode">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="IllegalInstantiation">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="InnerAssignment">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="SimplifyBooleanExpression">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="SimplifyBooleanReturn">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="FinalClass">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="HideUtilityClassConstructor">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="InterfaceIsType">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="VisibilityModifier">
+            <property name="severity" value="ignore"/>
+            <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Do not print to System.out!"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="System\.(out|err)\."/>
+            <property name="message" value="Do not print to System.out!"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Get logger by class"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="getLogger\(.*.class\.getName\(\)\)"/>
+            <property name="message" value="use getLogger(*.class) to get logger"/>
+        </module>
+    </module>
+    <module name="FileLength">
+        <property name="severity" value="ignore"/>
+        <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Do not print to System.out!"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="^((?!\/\/).)*System\.(out|err)\."/>
+        <property name="message" value="Do not print to System.out!"/>
+        <property name="fileExtensions" value="jsp"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="JUL usage is deprecated"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="java\.util\.logging"/>
+        <property name="message" value="JUL usage is deprecated"/>
+        <property name="fileExtensions" value="jsp"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="JUL usage is deprecated"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="java\.util\.logging"/>
+        <property name="message" value="JUL usage is deprecated"/>
+        <property name="fileExtensions" value="java"/>
+    </module>
+    <module name="RegexpMultiline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="String concatenation in logger message"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="^.*\.(debug|error|info|trace|warn)\(.*&quot;\s*\+\s*[\w\&quot;]*"/>
+        <property name="message" value="Do not use string concatenation in logger message "/>
+        <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="EL 'empty' operator use with scope ref only"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="^.*\$\{(.*\s|\s{0,})empty\s+[^\.\[\W]+[^\.\[\w]"/>
+        <property name="message" value="EL: Specify exactly scope of variable when you use one with 'empty' operator"/>
+        <property name="fileExtensions" value="jsp, tag"/>
+    </module>
+</module>
