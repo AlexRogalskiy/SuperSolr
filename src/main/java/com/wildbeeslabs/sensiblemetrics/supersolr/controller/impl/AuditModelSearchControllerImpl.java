@@ -55,18 +55,17 @@ public abstract class AuditModelSearchControllerImpl<E extends AuditDocument, T 
     protected HttpHeaders getHeaders(final Page<?> page) {
         final HttpHeaders headers = new HttpHeaders();
         headers.add(DEFAULT_TOTAL_ELEMENTS_HEADER, Long.toString(page.getTotalElements()));
-        return headers;
-    }
-
-    protected HttpHeaders getLimitHeaders() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, String.valueOf(
-            LocalDateTime.from(DateUtils.now().toInstant())
-                .plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD)
-                .toEpochSecond(ZoneOffset.UTC)));
+        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, String.valueOf(LocalDateTime.from(DateUtils.now().toInstant()).plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD).toEpochSecond(ZoneOffset.UTC)));
         headers.add(DEFAULT_RATE_LIMIT_HEADER, String.valueOf(DEFAULT_RATE_LIMIT));
         return headers;
     }
+
+//    protected HttpHeaders getLimitHeaders() {
+//        final HttpHeaders headers = new HttpHeaders();
+//        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, String.valueOf(LocalDateTime.from(DateUtils.now().toInstant()).plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD).toEpochSecond(ZoneOffset.UTC)));
+//        headers.add(DEFAULT_RATE_LIMIT_HEADER, String.valueOf(DEFAULT_RATE_LIMIT));
+//        return headers;
+//    }
 
     protected abstract AuditDocumentSearchService<E, ID> getSearchService();
 }

@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -64,17 +63,24 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(CategorySearchController.CONTROLLER_ID)
-@RequestMapping("/api/category")
-@ApiModel(value = "CategorySearchController", description = "Category search controller documentation")
-@Api(value = "/api/category", description = "Operations on category documents", authorizations = {
-    @Authorization(value = "category_store_auth",
-        scopes = {
-            @AuthorizationScope(scope = "write:documents", description = "modify category documents"),
-            @AuthorizationScope(scope = "read:documents", description = "read category documents")
-        })
-})
+@RequestMapping(value = "/api/category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@Api(
+    value = "/api/category",
+    description = "Endpoint for category search operations",
+    consumes = "application/json, application/xml",
+    produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+    authorizations = {
+        @Authorization(value = "category_store_auth",
+            scopes = {
+                @AuthorizationScope(scope = "write:documents", description = "modify category documents"),
+                @AuthorizationScope(scope = "read:documents", description = "read category documents")
+            })
+    })
 public class CategorySearchControllerImpl extends BaseDocumentSearchControllerImpl<Category, CategoryView, String> implements CategorySearchController {
 
+    /**
+     * Default {@link CategorySearchService} instance
+     */
     @Autowired
     private CategorySearchService categoryService;
 
@@ -86,8 +92,10 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         notes = "Returns list of category documents by search query",
         nickname = "search",
         tags = {"fetchByQuery"},
-        response = List.class,
+        response = CategoryView.class,
         responseContainer = "List",
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         responseHeaders = {
             @ResponseHeader(name = "X-Expires-After", description = "date in UTC when token expires", response = Date.class),
             @ResponseHeader(name = "X-Total-Elements", description = "total number of results in response", response = Integer.class)
@@ -97,10 +105,10 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         @ApiResponse(code = 400, message = "Invalid search query value"),
         @ApiResponse(code = 404, message = "Not found")
     })
-    public ResponseEntity<?> search(final @ApiParam(value = "Search query to fetch by", required = true) @RequestParam(value = "q", required = false) String query,
-                                    final @PageableDefault Pageable pageable,
+    public ResponseEntity<?> search(@ApiParam(value = "Search query query to fetch categories by", allowEmptyValue = true, readOnly = true) @RequestParam(value = "q", required = false) final String query,
+                                    @ApiParam(value = "Page number to filter by") @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageable,
                                     final HttpServletRequest request) {
-        log.info("Fetching categories by query: {}", query);
+        log.info("Fetching categories by search query: {}", query);
         final Page<? extends Category> categoryPage = getSearchService().findByTitle(query, pageable);
         if (Objects.isNull(categoryPage)) {
             throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
@@ -121,8 +129,10 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         nickname = "autoComplete",
         tags = {"fetchByAutocomplete"},
         position = 1,
-        response = List.class,
+        response = CategoryView.class,
         responseContainer = "List",
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         responseHeaders = {
             @ResponseHeader(name = "X-Expires-After", description = "date in UTC when token expires", response = Date.class),
             @ResponseHeader(name = "X-Total-Elements", description = "total number of results in response", response = Integer.class)
@@ -131,8 +141,8 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid search term value")
     })
-    public ResponseEntity<?> autoComplete(final @ApiParam(value = "Search term to fetch by", required = true) @RequestParam("term") String searchTerm,
-                                          final @PageableDefault(size = 1) Pageable pageable) {
+    public ResponseEntity<?> autoComplete(@ApiParam(value = "Search term query to fetch categories by", required = true, readOnly = true) @RequestParam("term") final String searchTerm,
+                                          @ApiParam(value = "Page number to filter by") @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageable) {
         log.info("Fetching categories by autocomplete search term: {}", searchTerm);
         final FacetPage<? extends Category> categoryPage = getSearchService().findByAutoCompleteTitleFragment(searchTerm, pageable);
         return ResponseEntity
@@ -151,8 +161,10 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         nickname = "find",
         tags = {"fetchByTerm"},
         position = 2,
-        response = List.class,
+        response = CategoryView.class,
         responseContainer = "List",
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         responseHeaders = {
             @ResponseHeader(name = "X-Expires-After", description = "date in UTC when token expires", response = Date.class),
             @ResponseHeader(name = "X-Total-Elements", description = "total number of results in response", response = Integer.class)
@@ -162,10 +174,9 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         @ApiResponse(code = 405, message = "Invalid input value")
     })
     @SuppressWarnings("unchecked")
-    public ResponseEntity<?> find(
-        final @ApiParam(value = "Search term to filter by", required = true) @RequestParam String searchTerm,
-        final @RequestParam(defaultValue = DEFAULT_PAGE_OFFSET_VALUE) int offset,
-        final @RequestParam(defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
+    public ResponseEntity<?> find(@ApiParam(value = "Search term query to fetch categories by", required = true, readOnly = true) @RequestParam("term") final String searchTerm,
+                                  @ApiParam(value = "Offset number to filter by", required = true, readOnly = true) @RequestParam(value = "offset", defaultValue = DEFAULT_PAGE_OFFSET_VALUE) int offset,
+                                  @ApiParam(value = "Limit number to filter by", required = true, readOnly = true) @RequestParam(value = "limit", defaultValue = DEFAULT_PAGE_LIMIT_VALUE) int limit) {
         log.info("Fetching categories by search term: {}, offset: {}, limit: {}", searchTerm, offset, limit);
         final HighlightPage<Category> page = (HighlightPage<Category>) findBy(SearchableCategory.COLLECTION_ID, searchTerm, offset, limit);
         return ResponseEntity
@@ -187,8 +198,9 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         nickname = "findAll",
         tags = {"fetchAll"},
         position = 3,
-        response = List.class,
-        responseContainer = "List"
+        response = CategoryView.class,
+        responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "Not found")
@@ -216,17 +228,17 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         nickname = "searchById",
         tags = {"fetchById"},
         position = 4,
-        response = List.class,
-        responseContainer = "List"
+        response = CategoryView.class,
+        responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid category ID value"),
         @ApiResponse(code = 404, message = "Not found"),
         @ApiResponse(code = 405, message = "Validation exception")
     })
-    public ResponseEntity<?> search(
-        final @ApiParam(value = "ID of the order that needs to be fetched", allowableValues = "range[1,infinity]", required = true) @PathVariable("id") String id,
-        final HttpServletRequest request) {
+    public ResponseEntity<?> search(@ApiParam(value = "Category ID to fetch by", required = true, readOnly = true) @PathVariable("id") final String id,
+                                    final HttpServletRequest request) {
         log.info("Fetching category by ID: {}", id);
         return ResponseEntity
             .ok()
@@ -243,15 +255,15 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         nickname = "findBySearchTerm",
         tags = {"fetchByTermAnPage"},
         position = 5,
-        response = List.class,
-        responseContainer = "List"
+        response = CategoryView.class,
+        responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid search term value")
     })
-    public ResponseEntity<?> findBySearchTerm(
-        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable("term") String searchTerm,
-        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
+    public ResponseEntity<?> findBySearchTerm(@ApiParam(value = "Search term query to fetch categories by", required = true, readOnly = true) @PathVariable("term") final String searchTerm,
+                                              @ApiParam(value = "Page number to filter by", allowableValues = "range[1,infinity]", required = true, readOnly = true) @PathVariable("page") int page) {
         log.info("Fetching product by search term: {}, page: {}", searchTerm, page);
         final HighlightPage<? extends Category> categoryPage = getSearchService().find(SearchableCategory.COLLECTION_ID, searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE));
         if (Objects.isNull(categoryPage)) {
@@ -272,15 +284,15 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
         nickname = "findByDescription",
         tags = {"fetchByDesc"},
         position = 6,
-        response = List.class,
-        responseContainer = "List"
+        response = CategoryView.class,
+        responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid description value")
     })
-    public ResponseEntity<?> findByDescription(
-        final @ApiParam(value = "Description to filter by", required = true) @PathVariable("desc") String description,
-        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
+    public ResponseEntity<?> findByDescription(@ApiParam(value = "Search description query to fetch categories by", required = true, readOnly = true) @PathVariable("desc") final String description,
+                                               @ApiParam(value = "Page number to filter by", allowableValues = "range[1,infinity]", required = true, readOnly = true) @PathVariable("page") int page) {
         log.info("Fetching category by description: {}, page: {}", description, page);
         final Page<? extends Category> categoryPage = getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE));
         if (Objects.isNull(categoryPage)) {

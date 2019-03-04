@@ -46,7 +46,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.mapAll;
@@ -59,21 +58,28 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @RestController(OrderSearchController.CONTROLLER_ID)
-@RequestMapping("/api/order")
-@ApiModel(value = "OrderSearchController", description = "Order search controller documentation")
-@Api(value = "/api/order", description = "Operations on order documents", authorizations = {
-    @Authorization(value = "order_store_auth",
-        scopes = {
-            @AuthorizationScope(scope = "write:documents", description = "modify order documents"),
-            @AuthorizationScope(scope = "read:documents", description = "read order documents")
-        })
-})
+@RequestMapping(value = "/api/order", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@Api(
+    value = "/api/order",
+    description = "Endpoint for order search operations",
+    consumes = "application/json, application/xml",
+    produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+    authorizations = {
+        @Authorization(value = "order_store_auth",
+            scopes = {
+                @AuthorizationScope(scope = "write:documents", description = "modify order documents"),
+                @AuthorizationScope(scope = "read:documents", description = "read order documents")
+            })
+    })
 @Secured("ROLE_MANAGER")
 public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<Order, OrderView, String> implements OrderSearchController {
 
     @Autowired
     private HttpServletRequest request;
 
+    /**
+     * Default {@link OrderSearchService} instance
+     */
     @Autowired
     private OrderSearchService orderService;
 
@@ -84,10 +90,11 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         httpMethod = "GET",
         value = "Find all order documents",
         notes = "Returns list of all order documents",
-        nickname = "getAll",
+        nickname = "fetchAll",
         tags = {"fetchAll"},
-        response = List.class,
+        response = OrderView.class,
         responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
@@ -107,7 +114,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("/create")
     @ResponseStatus
     @ApiOperation(
         httpMethod = "POST",
@@ -117,7 +124,8 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         tags = {"newOrder"},
         position = 1,
         response = String.class,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key"),
         responseHeaders = {
             @ResponseHeader(name = "Location", description = "location with newly created order", response = String.class)
@@ -127,7 +135,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         @ApiResponse(code = 400, message = "Invalid order document value"),
         @ApiResponse(code = 405, message = "Validation exception")
     })
-    public ResponseEntity<?> createOrder(final @ApiParam(value = "Order document that needs to be added to the store", required = true) @Valid @RequestBody OrderView order) {
+    public ResponseEntity<?> createOrder(@ApiParam(value = "Order that needs to be added to the store", required = true, readOnly = true) @Valid @RequestBody final OrderView order) {
         log.info("Creating new order by view: {}", order);
         final OrderView orderDtoCreated = map(this.createItem(order, Order.class), OrderView.class);
         final UriComponentsBuilder ucBuilder = UriComponentsBuilder.newInstance();
@@ -150,14 +158,14 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         tags = {"fetchById"},
         position = 2,
         response = OrderView.class,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid order ID value"),
         @ApiResponse(code = 404, message = "Not found")
     })
-    public ResponseEntity<?> getById(final @ApiParam(value = "ID of order document that needs to be fetched", allowableValues = "range[1,infinity]", required = true) @PathVariable String id) {
+    public ResponseEntity<?> getById(@ApiParam(value = "Order ID that needs to be fetched", required = true, readOnly = true) @PathVariable("id") final String id) {
         log.info("Fetching order by ID: {}", id);
         return ResponseEntity
             .ok()
@@ -175,13 +183,13 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         tags = {"updateOrder"},
         position = 3,
         response = OrderView.class,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
         @ApiResponse(code = 405, message = "Invalid input value")
     })
-    public ResponseEntity<?> updateOrder(final @ApiParam(value = "Order document that needs to be updated", required = true) @Valid @RequestBody OrderView order) {
+    public ResponseEntity<?> updateOrder(@ApiParam(value = "Order that needs to be updated", required = true, readOnly = true) @Valid @RequestBody final OrderView order) {
         log.info("Updating order by view: {}", order);
         return ResponseEntity
             .ok()
@@ -199,14 +207,15 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         tags = {"removeOrder"},
         position = 4,
         response = OrderView.class,
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid order ID value")
     })
-    public ResponseEntity<?> deleteOrder(
-        final @ApiParam() String apiKey,
-        final @ApiParam(value = "ID of the order that needs to be deleted", allowableValues = "range[1,infinity]", required = true) @PathVariable String id) {
+    public ResponseEntity<?> deleteOrder(@ApiParam(value = "Security authentication API Key", required = true, readOnly = true) final String apiKey,
+                                         @ApiParam(value = "Order ID that needs to be deleted", required = true) @PathVariable("id") final String id) {
         log.info("Updating order by ID: {}", id);
         return ResponseEntity
             .ok()
@@ -223,12 +232,13 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         nickname = "deleteAll",
         tags = {"removeAll"},
         position = 5,
+        consumes = "application/json, application/xml",
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "Not found")
     })
-    public ResponseEntity<?> deleteAll(final @ApiParam() String apiKey) {
+    public ResponseEntity<?> deleteAll(@ApiParam(value = "Security authentication API Key", required = true, readOnly = true) final String apiKey) {
         log.info("Deleting all orders");
         this.deleteAllItems();
         return ResponseEntity
@@ -236,7 +246,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
             .build();
     }
 
-    @GetMapping("/desc/{description}/{page}")
+    @GetMapping("/desc/{desc}/{page}")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -245,16 +255,16 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         nickname = "findByDescription",
         tags = {"fetchByDesc"},
         position = 6,
-        response = List.class,
+        response = OrderView.class,
         responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid description value")
     })
-    public ResponseEntity<?> findByDescription(
-        final @ApiParam(value = "Description search query to filter by", required = true) @PathVariable String description,
-        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
+    public ResponseEntity<?> findByDescription(@ApiParam(value = "Search description query to filter orders by", required = true) @PathVariable("desc") final String description,
+                                               @ApiParam(value = "Page number to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable("page") int page) {
         log.info("Fetching order by description: {}, page: {}", description, page);
         return ResponseEntity
             .ok()
@@ -262,7 +272,7 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
             .body(mapAll(getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
     }
 
-    @GetMapping("/search/{searchTerm}/{page}")
+    @GetMapping("/search/{term}/{page}")
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
@@ -271,16 +281,16 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
         nickname = "findBySearchTerm",
         tags = {"fetchByTerm"},
         position = 7,
-        response = List.class,
+        response = OrderView.class,
         responseContainer = "List",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
         authorizations = @Authorization(value = "api_key")
     )
     @ApiResponses(value = {
         @ApiResponse(code = 400, message = "Invalid search term value")
     })
-    public ResponseEntity<?> findBySearchTerm(
-        final @ApiParam(value = "Search term to filter by", required = true) @PathVariable String searchTerm,
-        final @ApiParam(value = "Page to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
+    public ResponseEntity<?> findBySearchTerm(@ApiParam(value = "Search term query to fetch orders by", required = true) @PathVariable("term") final String searchTerm,
+                                              @ApiParam(value = "Page number to filter by", allowableValues = "range[1,infinity]", required = true) @PathVariable int page) {
         log.info("Fetching order by term: {}, page: {}", searchTerm, page);
         return ResponseEntity
             .ok()
@@ -288,6 +298,11 @@ public class OrderSearchControllerImpl extends BaseDocumentSearchControllerImpl<
             .body(mapAll(getSearchService().find(SearchableOrder.COLLECTION_ID, searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE)).getContent(), OrderView.class));
     }
 
+    /**
+     * Returns {@link OrderSearchService} instance
+     *
+     * @return @link OrderSearchService} instance
+     */
     @Override
     protected OrderSearchService getSearchService() {
         return this.orderService;

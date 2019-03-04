@@ -59,20 +59,18 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID>, T extends BaseDocumentView<ID>, ID extends Serializable> extends AuditModelSearchControllerImpl<E, T, ID> implements BaseDocumentSearchController<E, T, ID> {
 
     @Override
-    public E updateItem(
-        final ID id,
-        final T itemDto,
-        final Class<? extends E> entityClass) {
+    public E updateItem(final ID id,
+                        final T itemDto,
+                        final Class<? extends E> entityClass) {
         final E currentItem = getSearchService().find(id).orElseThrow(() -> new ResourceNotFoundException(formatMessage(getMessageSource(), "error.no.item.id", id)));
         final E itemEntity = map(itemDto, entityClass);
         getSearchService().saveOrUpdate(itemEntity, entityClass);
         return currentItem;
     }
 
-    protected T getHighLightSearchResult(
-        final E entity,
-        final List<HighlightEntry.Highlight> highlights,
-        final Class<? extends T> dtoClass) {
+    protected T getHighLightSearchResult(final E entity,
+                                         final List<HighlightEntry.Highlight> highlights,
+                                         final Class<? extends T> dtoClass) {
         final Map<String, List<String>> highlightMap = highlights
             .stream()
             .collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
@@ -81,9 +79,8 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
         return updatedDto;
     }
 
-    protected Set<String> getResultSetByTerm(
-        final FacetPage<? extends E> facetPage,
-        final String searchTerm) {
+    protected Set<String> getResultSetByTerm(final FacetPage<? extends E> facetPage,
+                                             final String searchTerm) {
         if (!StringUtils.hasText(searchTerm)) {
             return Collections.emptySet();
         }
@@ -98,9 +95,8 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
         return resultSet;
     }
 
-    protected Map<String, Long> getResultMapByTerm(
-        final FacetPage<? extends E> facetPage,
-        final String searchTerm) {
+    protected Map<String, Long> getResultMapByTerm(final FacetPage<? extends E> facetPage,
+                                                   final String searchTerm) {
         if (!StringUtils.hasText(searchTerm)) {
             return Collections.emptyMap();
         }
@@ -124,11 +120,10 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
         return resultList;
     }
 
-    protected HighlightPage<? extends E> findBy(
-        final String collection,
-        final String searchTerm,
-        int offset,
-        int limit) {
+    protected HighlightPage<? extends E> findBy(final String collection,
+                                                final String searchTerm,
+                                                int offset,
+                                                int limit) {
         return getSearchService().find(collection, searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
     }
 

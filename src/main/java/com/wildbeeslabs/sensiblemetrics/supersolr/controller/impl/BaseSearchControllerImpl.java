@@ -133,6 +133,9 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
     @ToString(callSuper = true)
     protected static class BaseEnumConverter<U extends Enum<U>> extends PropertyEditorSupport {
 
+        /**
+         * Default enum {@link Class} type
+         */
         private final Class<U> type;
 
         /**
