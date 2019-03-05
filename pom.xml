@@ -46,10 +46,6 @@
         </developer>
     </developers>
 
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
-
     <licenses>
         <license>
             <name>MIT License</name>
@@ -87,7 +83,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.7</version>
                 <configuration>
                     <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
@@ -147,6 +143,7 @@
         <spring.version>5.1.3.RELEASE</spring.version>
         <spring-data-commons.version>2.1.3.RELEASE</spring-data-commons.version>
         <spring-data-solr.version>4.0.3.RELEASE</spring-data-solr.version>
+        <spring-data-redis.version>2.1.3.RELEASE</spring-data-redis.version>
         <spring.security.version>5.1.2.RELEASE</spring.security.version>
         <caffeine.version>2.6.2</caffeine.version>
 
@@ -157,6 +154,9 @@
         <mockito.version>2.23.4</mockito.version>
         <zonky-test.version>1.3.4</zonky-test.version>
 
+        <undertow.version>2.0.16.Final</undertow.version>
+        <commons-pool2.version>2.6.0</commons-pool2.version>
+        <jts.version>1.16.0</jts.version>
         <c3p0.version>0.9.1.2</c3p0.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.4</lombok.version>
@@ -166,7 +166,7 @@
         <joda-time.version>2.10.1</joda-time.version>
         <solrj.version>7.7.0</solrj.version>
         <modelmapper.version>1.1.0</modelmapper.version>
-        <jedis.version>3.0.0</jedis.version>
+        <jedis.version>2.10.0</jedis.version>
         <commonmark.version>0.12.1</commonmark.version>
 
         <validation-api.version>2.0.1.Final</validation-api.version>
@@ -252,6 +252,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
+            <version>${spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
             <version>${spring-boot-starter.version}</version>
         </dependency>
         <dependency>
@@ -572,17 +577,17 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>2.10.0</version>
+            <version>${jedis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
-            <version>2.6.0</version>
+            <version>${commons-pool2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
-            <version>2.1.3.RELEASE</version>
+            <version>${spring-data-redis.version}</version>
         </dependency>
 
         <!-- CommonMark library dependencies -->
@@ -601,7 +606,19 @@
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
-            <version>1.16.0</version>
+            <version>${jts.version}</version>
+        </dependency>
+
+        <!--  Undertow library dependencie  -->
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-core</artifactId>
+            <version>${undertow.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-servlet</artifactId>
+            <version>${undertow.version}</version>
         </dependency>
     </dependencies>
 
