@@ -40,7 +40,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Custom base document view {@link AuditDocumentView}
+ * Base document view {@link AuditDocumentView}
  *
  * @param <ID> type of document identifier
  */
@@ -69,7 +69,7 @@ public abstract class BaseDocumentView<ID extends Serializable> extends AuditDoc
     @JsonProperty(SCORE_FIELD_NAME)
     private float score;
 
-    @ApiModelProperty(value = "Document highlights", name = "highlights", example = "highlights")
+    @ApiModelProperty(value = "Document highlights", name = "highlights", example = "highlights", access = "limited")
     @JacksonXmlProperty(localName = HIGHLIGHTS_FIELD_NAME)
     @JsonProperty(HIGHLIGHTS_FIELD_NAME)
     private Map<String, List<String>> highlights;

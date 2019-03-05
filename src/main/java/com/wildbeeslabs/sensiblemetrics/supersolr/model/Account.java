@@ -35,7 +35,7 @@ import javax.persistence.*;
 import java.util.*;
 
 /**
- * Custom account model {@link BaseModel}
+ * Account model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor

@@ -28,20 +28,22 @@ import lombok.*;
 import java.io.Serializable;
 
 /**
- * Custom product key entity
+ * Search key entity
  */
 @Data
 @AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode
 @ToString
-public class ProductKey implements Serializable {
+public class SearchKey implements Serializable {
 
     /**
      * Default explicit serialVersionUID for interoperability
      */
     private static final long serialVersionUID = -2761481783742372926L;
 
-    @NonNull
     @Getter
-    private Long id;
+    private String term;
+
+    @Getter
+    private String description;
 }

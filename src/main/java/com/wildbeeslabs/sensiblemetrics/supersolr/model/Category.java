@@ -35,7 +35,7 @@ import javax.persistence.*;
 import java.util.*;
 
 /**
- * Custom category model {@link BaseModel}
+ * Category model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor

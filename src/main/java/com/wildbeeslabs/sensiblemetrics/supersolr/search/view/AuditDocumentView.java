@@ -42,7 +42,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
 /**
- * Custom audit document view
+ * Audit document view
  */
 @Data
 @NoArgsConstructor

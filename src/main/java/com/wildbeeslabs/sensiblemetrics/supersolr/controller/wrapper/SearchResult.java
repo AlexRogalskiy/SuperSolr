@@ -50,16 +50,16 @@ import java.util.Objects;
 public class SearchResult<T extends Serializable> {
 
     /**
-     * Default search item key {@code T}
+     * Default search item {@code T}
      */
     @NonNull
-    private T key;
+    private T item;
 
     /**
      * Default error message list {@link List}
      */
     @Getter
-    @JsonProperty("errors")
+    @JsonProperty("error")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "errors")
     private final List<String> errors = new ArrayList<>();

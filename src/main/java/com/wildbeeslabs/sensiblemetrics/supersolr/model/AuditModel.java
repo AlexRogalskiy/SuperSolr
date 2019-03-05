@@ -40,7 +40,7 @@ import java.util.Date;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
 
 /**
- * Custom audit model
+ * Audit model
  */
 @Data
 @NoArgsConstructor

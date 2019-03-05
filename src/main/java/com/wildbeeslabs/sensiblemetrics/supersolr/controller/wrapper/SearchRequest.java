@@ -27,17 +27,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Custom search request entity
+ * Search request entity
  */
 @Data
 @EqualsAndHashCode
 @ToString
-public class SearchRequest<T extends Serializable> {
+public class SearchRequest {
 
-    private Map<Long, List<T>> items;
+    private List<SearchKey> items;
+
+    int pageSize;
 }

@@ -45,7 +45,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableCategoryView.*;
 
 /**
- * Custom category document view {@link BaseDocumentView}
+ * Category document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor

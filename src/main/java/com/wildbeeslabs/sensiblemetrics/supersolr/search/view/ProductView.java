@@ -48,7 +48,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableProductView.*;
 
 /**
- * Custom product document view {@link BaseDocumentView}
+ * Product document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor

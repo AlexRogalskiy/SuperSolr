@@ -28,28 +28,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
 /**
- * Custom search response entity
+ * Search response entity
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JacksonXmlRootElement(localName = "results")
 public class SearchResponse {
 
-    @JsonProperty("results")
+    @JsonProperty("result")
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = "result")
+    @JacksonXmlProperty(localName = "results")
     private List<? extends SearchResult<?>> results;
 
     public boolean hasErrors() {

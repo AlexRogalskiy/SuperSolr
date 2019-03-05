@@ -42,7 +42,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableOrderView.TITLE_FIELD_NAME;
 
 /**
- * Custom order document view {@link BaseDocumentView}
+ * Order document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor

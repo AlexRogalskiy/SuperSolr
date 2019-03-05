@@ -27,7 +27,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.CategorySearchRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +105,6 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
 
     @Override
     @Transactional(readOnly = true)
-    //@ApiModelProperty(name = "internal", access = "limited")
     public HighlightPage<? extends Category> find(final String collection, final String searchTerm, final Pageable page) {
         final Criteria fileIdCriteria = new Criteria(SearchableCategory.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria titleCriteria = new Criteria(SearchableCategory.TITLE_FIELD_NAME).fuzzy(searchTerm);

@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
 import java.util.*;
 
 /**
- * Custom order model {@link BaseModel}
+ * Order model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor

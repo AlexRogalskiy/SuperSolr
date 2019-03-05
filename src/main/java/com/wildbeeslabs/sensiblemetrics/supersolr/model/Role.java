@@ -39,7 +39,7 @@ import javax.persistence.*;
 import java.util.*;
 
 /**
- * Custom role model {@link BaseInfoModel}
+ * Role model {@link BaseInfoModel}
  */
 @Data
 @NoArgsConstructor

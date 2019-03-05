@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom base info model
+ * Base info model
  *
  * @param <ID> type of model identifier {@link Serializable}
  */

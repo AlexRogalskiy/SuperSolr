@@ -45,7 +45,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView.SCORE_FIELD_NAME;
 
 /**
- * Custom product document view {@link BaseDocumentView}
+ * Attribute document view {@link BaseDocumentView}
  */
 @Data
 @NoArgsConstructor

@@ -31,7 +31,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Custom product search result entity {@link SearchResult}
+ * Product {@link SearchResult} entity
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

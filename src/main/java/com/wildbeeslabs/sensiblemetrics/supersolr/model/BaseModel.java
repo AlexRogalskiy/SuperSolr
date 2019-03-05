@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom base model {@link AuditModel}
+ * Base model {@link AuditModel}
  *
  * @param <ID> type of model identifier {@link Serializable}
  */

@@ -35,7 +35,7 @@ import javax.persistence.*;
 import java.util.*;
 
 /**
- * Custom attribute model {@link BaseModel}
+ * Attribute model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor

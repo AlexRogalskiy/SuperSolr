@@ -40,7 +40,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.*;
 
 /**
- * Custom product model {@link BaseModel}
+ * Product model {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
