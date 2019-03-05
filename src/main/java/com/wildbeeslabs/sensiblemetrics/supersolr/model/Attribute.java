@@ -74,7 +74,7 @@ public class Attribute extends BaseModel<Long> implements PersistableAttribute {
         this.getProducts().clear();
         Optional.ofNullable(products)
                 .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+                .forEach(this::addProduct);
     }
 
     public void addProduct(final Product product) {

@@ -45,7 +45,7 @@ import java.util.*;
 @BatchSize(size = 10)
 @Table(name = PersistableCategory.TABlE_NAME, catalog = "public")
 @AttributeOverrides({
-        @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableCategory.ID_FIELD_NAME, unique = true, nullable = false))
+    @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableCategory.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Category extends BaseModel<Long> implements PersistableCategory {
@@ -79,8 +79,8 @@ public class Category extends BaseModel<Long> implements PersistableCategory {
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();
         Optional.ofNullable(products)
-                .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+            .orElseGet(Collections::emptyList)
+            .forEach(this::addProduct);
     }
 
     public void addProduct(final Product product) {
@@ -92,8 +92,8 @@ public class Category extends BaseModel<Long> implements PersistableCategory {
     public void setMainProducts(final Collection<? extends Product> mainProducts) {
         this.getMainProducts().clear();
         Optional.ofNullable(mainProducts)
-                .orElseGet(Collections::emptyList)
-                .forEach(mainProduct -> this.addMainProduct(mainProduct));
+            .orElseGet(Collections::emptyList)
+            .forEach(this::addMainProduct);
     }
 
     public void addMainProduct(final Product mainProduct) {

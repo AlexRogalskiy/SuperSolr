@@ -71,7 +71,7 @@ public class Account extends BaseModel<Long> implements PersistableAccount {
         this.getRoles().clear();
         Optional.ofNullable(roles)
             .orElseGet(Collections::emptyList)
-            .forEach(role -> this.addRole(role));
+            .forEach(this::addRole);
     }
 
     public void addRole(final Role role) {

@@ -78,7 +78,7 @@ public class Role extends BaseInfoModel<Long> implements PersistableRole {
         this.getAccounts().clear();
         Optional.ofNullable(accounts)
             .orElseGet(Collections::emptyList)
-            .forEach(account -> this.addAccount(account));
+            .forEach(this::addAccount);
     }
 
     public void addAccount(final Account account) {

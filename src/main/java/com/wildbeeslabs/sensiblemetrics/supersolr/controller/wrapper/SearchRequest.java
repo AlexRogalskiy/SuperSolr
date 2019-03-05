@@ -23,11 +23,11 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.BaseDocumentView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode
 @ToString
-public class SearchRequest {
+public class SearchRequest<T extends Serializable> {
 
-    private Map<Long, List<BaseDocumentView<?>>> items;
+    private Map<Long, List<T>> items;
 }

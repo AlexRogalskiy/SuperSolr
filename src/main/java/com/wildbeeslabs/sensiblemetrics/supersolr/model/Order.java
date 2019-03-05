@@ -47,7 +47,7 @@ import java.util.*;
 @BatchSize(size = 10)
 @Table(name = PersistableOrder.TABlE_NAME, catalog = "public")
 @AttributeOverrides({
-        @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME, unique = true, nullable = false))
+    @AttributeOverride(name = PersistableBaseModel.ID_FIELD_NAME, column = @Column(name = PersistableOrder.ID_FIELD_NAME, unique = true, nullable = false))
 })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Order extends BaseModel<Long> implements PersistableOrder {
@@ -79,8 +79,8 @@ public class Order extends BaseModel<Long> implements PersistableOrder {
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();
         Optional.ofNullable(products)
-                .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+            .orElseGet(Collections::emptyList)
+            .forEach(this::addProduct);
     }
 
     public void addProduct(final Product product) {

@@ -171,7 +171,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
         this.getCategories().clear();
         Optional.ofNullable(categories)
                 .orElseGet(Collections::emptyList)
-                .forEach(category -> this.addCategory(category));
+                .forEach(this::addCategory);
     }
 
     public void addCategory(final Category category) {
@@ -184,7 +184,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
         this.getMainCategories().clear();
         Optional.ofNullable(mainCategories)
                 .orElseGet(Collections::emptyList)
-                .forEach(mainCategory -> this.addMainCategory(mainCategory));
+                .forEach(this::addMainCategory);
     }
 
     public void addMainCategory(final Category mainCategory) {
@@ -197,7 +197,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
         this.getAttributes().clear();
         Optional.ofNullable(attributes)
                 .orElseGet(Collections::emptyList)
-                .forEach(attribute -> this.addAttribute(attribute));
+                .forEach(this::addAttribute);
     }
 
     public void addAttribute(final Attribute attribute) {
@@ -210,7 +210,7 @@ public class Product extends BaseModel<Long> implements PersistableProduct {
         this.getOrders().clear();
         Optional.ofNullable(orders)
                 .orElseGet(Collections::emptyList)
-                .forEach(order -> this.addOrder(order));
+                .forEach(this::addOrder);
     }
 
     public void addOrder(final Order order) {
