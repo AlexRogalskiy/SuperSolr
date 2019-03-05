@@ -30,7 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom solr item reader exception implementation {@link ItemReaderException}
+ * Solr runtime {@link ItemReaderException} implementation
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

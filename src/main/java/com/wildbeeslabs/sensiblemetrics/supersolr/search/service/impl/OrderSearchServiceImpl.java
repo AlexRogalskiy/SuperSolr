@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Custom order search service implementation {@link OrderSearchService}
+ * Order {@link OrderSearchService} implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -102,7 +102,7 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
         return this.findByQueryAndCriteria(collection, queryString, criteria, pageable, Order.class);
     }
 
-    protected Criteria titleOrDescriptionCriteria(final String searchTerm) {
+    protected Criteria titleOrDescSearchCriteria(final String searchTerm) {
         final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {
@@ -113,6 +113,11 @@ public class OrderSearchServiceImpl extends BaseDocumentSearchServiceImpl<Order,
         return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableOrder.CORE_ID));
     }
 
+    /**
+     * Returns {@link OrderSearchRepository} repository
+     *
+     * @return {@link OrderSearchRepository} repository
+     */
     @Override
     protected OrderSearchRepository getRepository() {
         return this.orderSearchRepository;

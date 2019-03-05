@@ -49,15 +49,15 @@ import java.io.IOException;
 public class BaseResourceReader extends MultiResourceItemReader<Resource> {
 
     /**
-     * Default batch configuration properties
+     * Default {@link BatchConfigProperties} properties
      */
     @Autowired
-    private BatchConfigProperties configurationProperties;
+    private BatchConfigProperties batchConfigProperties;
 
     @PostConstruct
     public void initialize() throws IOException {
         final ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-        final Resource[] resources = patternResolver.getResources(getConfigurationProperties().getPathPattern());
+        final Resource[] resources = patternResolver.getResources(getBatchConfigProperties().getPathPattern());
         setResources(resources);
         setDelegate(new BaseResourceAwareReader());
     }

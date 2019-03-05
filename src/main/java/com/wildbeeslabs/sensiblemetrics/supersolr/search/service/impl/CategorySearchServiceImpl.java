@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Custom category search service implementation {@link CategorySearchService}
+ * Category {@link CategorySearchService} implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -140,7 +140,7 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         return this.findByQueryAndCriteria(collection, queryString, criteria, pageable, Category.class);
     }
 
-    protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
+    protected Criteria nameOrDescSearchCriteria(final String searchTerm) {
         final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {
@@ -151,6 +151,11 @@ public class CategorySearchServiceImpl extends BaseDocumentSearchServiceImpl<Cat
         return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableCategory.CORE_ID));
     }
 
+    /**
+     * Returns {@link CategorySearchRepository} repository
+     *
+     * @return {@link CategorySearchRepository} repository
+     */
     @Override
     protected CategorySearchRepository getRepository() {
         return this.categorySearchRepository;

@@ -23,11 +23,16 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Search request entity
@@ -35,9 +40,20 @@ import java.util.List;
 @Data
 @EqualsAndHashCode
 @ToString
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JacksonXmlRootElement(localName = "request")
 public class SearchRequest {
 
-    private List<SearchKey> items;
+    @JsonProperty("item")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = "items")
+    private Collection<SearchKey> items;
 
-    int pageSize;
+    @JacksonXmlProperty(localName = "keywords")
+    @JsonProperty("keywords")
+    private Collection<String> keywords;
+
+    @JacksonXmlProperty(localName = "page")
+    @JsonProperty("page")
+    int page;
 }

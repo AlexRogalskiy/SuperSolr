@@ -21,18 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.product;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 
 /**
- * Custom order search controller declaration
+ * Custom product search controller declaration
  */
-public interface OrderSearchController extends BaseDocumentSearchController<Order, OrderView, String> {
+public interface ProductSearchController extends BaseDocumentSearchController<Product, ProductView, String> {
 
     /**
      * Default service ID
      */
-    String CONTROLLER_ID = "OrderSearchController";
+    String CONTROLLER_ID = "ProductSearchController";
+
+    /**
+     * Default distance distance {@link Distance}
+     */
+    Distance DEFAULT_LOCATION_DISTANCE = new Distance(0.1, Metrics.KILOMETERS);
 }

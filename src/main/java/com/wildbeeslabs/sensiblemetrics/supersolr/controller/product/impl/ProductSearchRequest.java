@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.impl;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

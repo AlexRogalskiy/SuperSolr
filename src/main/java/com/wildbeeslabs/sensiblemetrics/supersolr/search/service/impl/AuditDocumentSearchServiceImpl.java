@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 
 /**
- * Custom audit document search service implementation {@link AuditDocumentSearchService}
+ * Audit {@link AuditDocumentSearchService} implementation
  *
  * @param <E>  type of audit document {@link AuditDocument}
  * @param <ID> type of audit document identifier {@link Serializable}
@@ -54,5 +54,10 @@ public abstract class AuditDocumentSearchServiceImpl<E extends AuditDocument, ID
         return this.solrTemplate;
     }
 
+    /**
+     * Returns {@link AuditDocumentSearchRepository} repository
+     *
+     * @return {@link AuditDocumentSearchRepository} repository
+     */
     protected abstract AuditDocumentSearchRepository<E, ID> getRepository();
 }

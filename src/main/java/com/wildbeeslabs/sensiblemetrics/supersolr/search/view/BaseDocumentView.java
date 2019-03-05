@@ -72,7 +72,7 @@ public abstract class BaseDocumentView<ID extends Serializable> extends AuditDoc
     @ApiModelProperty(value = "Document highlights", name = "highlights", example = "highlights", access = "limited")
     @JacksonXmlProperty(localName = HIGHLIGHTS_FIELD_NAME)
     @JsonProperty(HIGHLIGHTS_FIELD_NAME)
-    private Map<String, List<String>> highlights;
+    private final Map<String, List<String>> highlights = new HashMap<>();
 
     public void setHighlights(final Map<String, List<String>> highlights) {
         this.getHighlights().clear();

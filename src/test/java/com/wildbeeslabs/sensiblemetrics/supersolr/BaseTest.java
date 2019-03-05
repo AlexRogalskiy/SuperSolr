@@ -23,6 +23,8 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -201,6 +203,13 @@ public abstract class BaseTest {
 
     protected Query getQuery(final String queryString, final Pageable page) {
         return new SimpleQuery(new SimpleStringCriteria(queryString)).setPageRequest(page);
+    }
+
+    protected Gson getGsonSerializer() {
+        return new GsonBuilder()
+            .setPrettyPrinting()
+            .setLenient()
+            .create();
     }
 
     protected SolrTemplate getSolrTemplate() {

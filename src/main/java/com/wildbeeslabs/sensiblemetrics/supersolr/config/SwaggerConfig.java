@@ -23,19 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -44,8 +34,6 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-
-import java.util.Locale;
 
 /**
  * Custom swagger configuration
@@ -75,41 +63,6 @@ public class SwaggerConfig {
             .tags(
                 new Tag(TAG_MAIN_FUNCTIONAL, "All apis relating to main service purpose"),
                 new Tag(TAG_RESOURCE_MANAGEMENT, "All apis relating to upload resources"));
-    }
-
-    @Component
-    @Primary
-    public class CustomObjectMapper extends ObjectMapper {
-
-        /**
-         * Default explicit serialVersionUID for interoperability
-         */
-        private static final long serialVersionUID = -5589192375212209265L;
-
-        public CustomObjectMapper() {
-            setDefaultMergeable(Boolean.TRUE);
-            setLocale(Locale.getDefault());
-            setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
-            configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-            configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-            configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-            configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
-
-            disable(SerializationFeature.INDENT_OUTPUT);
-            disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-            disable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-            enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-        }
-
-        public ObjectMapper copy() {
-            _checkInvalidCopy(ObjectMapper.class);
-            return new CustomObjectMapper();
-        }
     }
 
     private ApiInfo apiInfo() {

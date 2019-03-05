@@ -21,41 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.category;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
- * Custom {@link SearchResult} entity
+ * Custom category search controller declaration
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JacksonXmlRootElement(localName = "categories")
-public class CategorySearchResult extends SearchResult<CategoryView> {
+public interface CategorySearchController extends BaseDocumentSearchController<Category, CategoryView, String> {
 
     /**
-     * Default {@link CategorySearchResult} constructor with input {@link CategoryView} key
-     *
-     * @param key - initial input {@link CategoryView} key
+     * Default service ID
      */
-    public CategorySearchResult(final CategoryView key) {
-        super(key);
-    }
-
-    /**
-     * Default {@link CategorySearchResult} constructor with input {@link CategoryView} key and error message {@link String}
-     *
-     * @param key          - initial input {@link CategoryView} key
-     * @param errorMessage - initial input error message {@link String}
-     */
-    public CategorySearchResult(final CategoryView key, final String errorMessage) {
-        super(key, errorMessage);
-    }
+    String CONTROLLER_ID = "CategorySearchController";
 }

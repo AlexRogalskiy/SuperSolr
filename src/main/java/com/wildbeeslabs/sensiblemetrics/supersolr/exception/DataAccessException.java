@@ -53,7 +53,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom "data access" runtime exception implementation {@link RuntimeException}
+ * Data access {@link RuntimeException} implementation
  */
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

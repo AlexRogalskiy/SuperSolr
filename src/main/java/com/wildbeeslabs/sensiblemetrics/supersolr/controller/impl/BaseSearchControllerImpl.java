@@ -47,10 +47,10 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
- * Base search controller implementation
+ * Base {@link BaseSearchController} implementation
  *
- * @param <E>  type of document
- * @param <T>  type of document view
+ * @param <E>  type of document model
+ * @param <T>  type of document view model
  * @param <ID> type of document identifier {@link Serializable}
  */
 @Slf4j
@@ -158,5 +158,10 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
         return this.messageSource;
     }
 
+    /**
+     * Returns {@link BaseSearchService} service
+     *
+     * @return {@link BaseSearchService} service
+     */
     protected abstract BaseSearchService<E, ID> getSearchService();
 }

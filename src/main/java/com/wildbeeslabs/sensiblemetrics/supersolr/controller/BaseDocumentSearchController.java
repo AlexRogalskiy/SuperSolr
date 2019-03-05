@@ -29,10 +29,10 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.BaseDocumentView;
 import java.io.Serializable;
 
 /**
- * Base document search controller declaration
+ * Base {@link BaseSearchController} declaration
  *
- * @param <E>  type of base document {@link BaseDocument}
- * @param <T>  type of base document view {@link BaseDocumentView}
+ * @param <E>  type of base document model {@link BaseDocument}
+ * @param <T>  type of base document view model {@link BaseDocumentView}
  * @param <ID> type of base document identifier {@link Serializable}
  * @author Alex
  * @version 1.0.0

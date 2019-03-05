@@ -24,8 +24,6 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
@@ -239,7 +237,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
             .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(MapperUtils.map(order, OrderView.class))))
-            .andExpect(status().is(201));
+            .andExpect(status().isCreated());
     }
 
     @Test
@@ -310,13 +308,6 @@ public class OrderSearchControllerImplTest extends BaseTest {
         headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.add(HttpHeaders.ORIGIN, this.url);
         return headers;
-    }
-
-    protected Gson getGsonSerializer() {
-        return new GsonBuilder()
-            .setPrettyPrinting()
-            .setLenient()
-            .create();
     }
 
     protected OrderSearchService getOrderService() {

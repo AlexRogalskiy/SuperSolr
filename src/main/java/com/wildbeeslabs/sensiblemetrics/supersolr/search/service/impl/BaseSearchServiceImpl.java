@@ -37,7 +37,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base search service implementation {@link BaseSearchService}
+ * Base {@link BaseSearchService} implementation
  *
  * @param <E>  type of document
  * @param <ID> type of document identifier {@link Serializable}
@@ -111,5 +111,10 @@ public abstract class BaseSearchServiceImpl<E, ID extends Serializable> implemen
         return this.entityManager;
     }
 
+    /**
+     * Returns {@link BaseSearchRepository} repository
+     *
+     * @return {@link BaseSearchRepository} repository
+     */
     protected abstract BaseSearchRepository<E, ID> getRepository();
 }

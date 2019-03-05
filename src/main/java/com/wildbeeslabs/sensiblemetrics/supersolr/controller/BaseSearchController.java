@@ -40,12 +40,12 @@ import java.io.Serializable;
 public interface BaseSearchController<E, T, ID extends Serializable> {
 
     /**
-     * Default not allowed response
+     * Default not allowed {@link ResponseEntity}
      */
     ResponseEntity<?> DEFAULT_NOT_ALLOWED_RESPONSE = new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 
     /**
-     * Returns response entity body {@link ResponseEntity}
+     * Returns {@link ResponseEntity} body with all fetched items
      *
      * @return response body {@link ResponseEntity}
      */
@@ -54,7 +54,7 @@ public interface BaseSearchController<E, T, ID extends Serializable> {
     }
 
     /**
-     * Returns response entity body {@link ResponseEntity} by ID
+     * Returns {@link ResponseEntity} body with item fetched by ID
      *
      * @param id - initial input entity identifier
      * @return response body {@link ResponseEntity}
@@ -64,7 +64,7 @@ public interface BaseSearchController<E, T, ID extends Serializable> {
     }
 
     /**
-     * Returns created response entity body {@link ResponseEntity}
+     * Returns {@link ResponseEntity} body with newly created item
      *
      * @param itemDto - initial input entity dto
      * @return response body {@link ResponseEntity}
@@ -74,7 +74,7 @@ public interface BaseSearchController<E, T, ID extends Serializable> {
     }
 
     /**
-     * Returns updated response entity body {@link ResponseEntity}
+     * Returns {@link ResponseEntity} body with updated item
      *
      * @param id      - initial input entity identifier
      * @param itemDto - initial input entity dto
@@ -85,7 +85,7 @@ public interface BaseSearchController<E, T, ID extends Serializable> {
     }
 
     /**
-     * Returns deleted response entity body {@link ResponseEntity}
+     * Returns {@link ResponseEntity} body with deleted item
      *
      * @param id - initial input entity identifier
      * @return response body {@link ResponseEntity}
@@ -95,7 +95,7 @@ public interface BaseSearchController<E, T, ID extends Serializable> {
     }
 
     /**
-     * Returns deleted response entity body {@link ResponseEntity}
+     * Returns {@link ResponseEntity} with empty body
      *
      * @return response body {@link ResponseEntity}
      */

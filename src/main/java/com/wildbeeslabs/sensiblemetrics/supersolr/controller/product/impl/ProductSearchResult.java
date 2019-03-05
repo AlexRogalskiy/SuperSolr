@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.impl;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchResult;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

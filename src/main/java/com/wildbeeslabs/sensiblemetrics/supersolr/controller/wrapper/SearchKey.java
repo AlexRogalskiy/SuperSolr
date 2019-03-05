@@ -23,6 +23,10 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.*;
 
 import java.io.Serializable;
@@ -34,6 +38,8 @@ import java.io.Serializable;
 @AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode
 @ToString
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JacksonXmlRootElement(localName = "key")
 public class SearchKey implements Serializable {
 
     /**
@@ -42,8 +48,12 @@ public class SearchKey implements Serializable {
     private static final long serialVersionUID = -2761481783742372926L;
 
     @Getter
+    @JacksonXmlProperty(localName = "term")
+    @JsonProperty("term")
     private String term;
 
     @Getter
+    @JacksonXmlProperty(localName = "description")
+    @JsonProperty("description")
     private String description;
 }

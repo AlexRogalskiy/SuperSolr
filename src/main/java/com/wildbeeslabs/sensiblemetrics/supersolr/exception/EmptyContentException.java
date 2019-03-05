@@ -30,7 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom "empty content" exception implementation {@link Exception}
+ * Empty content {@link Exception} implementation
  */
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

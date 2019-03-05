@@ -47,7 +47,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Custom base document search service implementation {@link BaseDocumentSearchService}
+ * Base document {@link BaseDocumentSearchService} implementation
  *
  * @param <E>  type of base document {@link BaseDocument}
  * @param <ID> type of base document identifier {@link Serializable}
@@ -112,5 +112,10 @@ public abstract class BaseDocumentSearchServiceImpl<E extends BaseDocument<ID>, 
         return getSolrTemplate().queryForFacetPage(collection, facetQuery, clazz);
     }
 
+    /**
+     * Returns {@link BaseDocumentSearchRepository} repository
+     *
+     * @return {@link BaseDocumentSearchRepository} repository
+     */
     protected abstract BaseDocumentSearchRepository<E, ID> getRepository();
 }

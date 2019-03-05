@@ -27,23 +27,21 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.AuditDocumentSearch
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.AuditDocumentSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.AuditDocumentView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 /**
- * Audit document search controller implementation
+ * Audit {@link AuditDocumentSearchController} implementation
  *
- * @param <E>  type of audit document {@link AuditDocument}
- * @param <T>  type of audit document view {@link AuditDocumentView}
+ * @param <E>  type of audit document model {@link AuditDocument}
+ * @param <T>  type of audit document view model {@link AuditDocumentView}
  * @param <ID> type of audit document identifier {@link Serializable}
  */
 @Slf4j
@@ -52,20 +50,24 @@ import java.time.ZoneOffset;
 @ToString(callSuper = true)
 public abstract class AuditModelSearchControllerImpl<E extends AuditDocument, T extends AuditDocumentView, ID extends Serializable> extends BaseSearchControllerImpl<E, T, ID> implements AuditDocumentSearchController<E, T, ID> {
 
+    /**
+     * Returns {@link HttpHeaders} response headers by input parameters
+     *
+     * @param page - initial input {@link Page} instance
+     * @return {@link HttpHeaders} response headers
+     */
     protected HttpHeaders getHeaders(final Page<?> page) {
         final HttpHeaders headers = new HttpHeaders();
         headers.add(DEFAULT_TOTAL_ELEMENTS_HEADER, Long.toString(page.getTotalElements()));
-        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, String.valueOf(LocalDateTime.from(DateUtils.now().toInstant()).plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD).toEpochSecond(ZoneOffset.UTC)));
+        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, LocalDate.now().plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD).toString());
         headers.add(DEFAULT_RATE_LIMIT_HEADER, String.valueOf(DEFAULT_RATE_LIMIT));
         return headers;
     }
 
-//    protected HttpHeaders getLimitHeaders() {
-//        final HttpHeaders headers = new HttpHeaders();
-//        headers.add(DEFAULT_EXPIRES_AFTER_HEADER, String.valueOf(LocalDateTime.from(DateUtils.now().toInstant()).plusDays(DEFAULT_TOKEN_EXPIRE_PERIOD).toEpochSecond(ZoneOffset.UTC)));
-//        headers.add(DEFAULT_RATE_LIMIT_HEADER, String.valueOf(DEFAULT_RATE_LIMIT));
-//        return headers;
-//    }
-
+    /**
+     * Returns {@link AuditDocumentSearchService} service
+     *
+     * @return {@link AuditDocumentSearchService} service
+     */
     protected abstract AuditDocumentSearchService<E, ID> getSearchService();
 }

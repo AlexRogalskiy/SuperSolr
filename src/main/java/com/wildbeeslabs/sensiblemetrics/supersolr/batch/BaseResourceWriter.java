@@ -59,9 +59,9 @@ public class BaseResourceWriter implements ItemWriter<BaseResource> {
      */
     private SolrClient solrClient;
     /**
-     * Default solr configuration properties
+     * Default {@link BatchConfigProperties} properties
      */
-    private BatchConfigProperties configurationProperties;
+    private BatchConfigProperties batchConfigProperties;
 
     @Override
     public void write(final List<? extends BaseResource> list) {
@@ -70,7 +70,7 @@ public class BaseResourceWriter implements ItemWriter<BaseResource> {
 
     private ContentStreamUpdateRequest updateRequest(final BaseResource resource) {
         try {
-            final ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getConfigurationProperties().getExtractPath());
+            final ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getBatchConfigProperties().getExtractPath());
             updateRequest.addContentStream(new ContentStreamBase.StringStream(resource.getData(), "text/html;charset=UTF-8"));
             updateRequest.setParam(FILE_ID_LITERAL, resource.getResource().getFile().getAbsolutePath());
             updateRequest.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
@@ -80,7 +80,7 @@ public class BaseResourceWriter implements ItemWriter<BaseResource> {
         }
     }
 
-    private void request(ContentStreamUpdateRequest updateRequest) {
+    private void request(final ContentStreamUpdateRequest updateRequest) {
         try {
             getSolrClient().request(updateRequest, BaseOptimizeTasklet.DEFAULT_COLLECTION_NAME);
             log.info("Updated document in Solr: {}", updateRequest.getParams().get(FILE_ID_LITERAL));

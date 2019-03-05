@@ -46,10 +46,10 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
- * Base document search controller implementation
+ * Base {@link BaseDocumentSearchController} implementation
  *
- * @param <E>  type of base document {@link BaseDocument}
- * @param <T>  type of base document view {@link BaseDocumentView}
+ * @param <E>  type of base document model {@link BaseDocument}
+ * @param <T>  type of base document view model {@link BaseDocumentView}
  * @param <ID> type of base document identifier {@link Serializable}
  */
 @Slf4j
@@ -71,9 +71,7 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
     protected T getHighLightSearchResult(final E entity,
                                          final List<HighlightEntry.Highlight> highlights,
                                          final Class<? extends T> dtoClass) {
-        final Map<String, List<String>> highlightMap = highlights
-            .stream()
-            .collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
+        final Map<String, List<String>> highlightMap = highlights.stream().collect(Collectors.toMap(h -> h.getField().getName(), HighlightEntry.Highlight::getSnipplets));
         final T updatedDto = map(entity, dtoClass);
         updatedDto.setHighlights(highlightMap);
         return updatedDto;
@@ -85,13 +83,7 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
             return Collections.emptySet();
         }
         final Set<String> resultSet = new LinkedHashSet<>();
-        facetPage.getFacetResultPages().stream().forEach(page -> {
-            page.forEach(entry -> {
-                if (entry.getValue().contains(searchTerm)) {
-                    resultSet.add(entry.getValue());
-                }
-            });
-        });
+        facetPage.getFacetResultPages().stream().forEach(page -> page.map(entry -> entry.getValue()).filter(value -> value.contains(searchTerm)).forEach(resultSet::add));
         return resultSet;
     }
 
@@ -101,22 +93,14 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
             return Collections.emptyMap();
         }
         final Map<String, Long> resultMap = new HashMap<>();
-        facetPage.getAllFacets()
-            .stream()
-            .forEach(page -> page.forEach(facetEntry -> {
-                resultMap.put(facetEntry.getValue(), facetEntry.getValueCount());
-            }));
+        facetPage.getAllFacets().stream().forEach(page -> page.forEach(facetEntry -> resultMap.put(facetEntry.getValue(), facetEntry.getValueCount())));
         return resultMap;
     }
 
     protected List<String> getHighLightSearchSnipplets(final HighlightPage<? extends E> highlightPage) {
         final List<String> resultList = new ArrayList<>();
         highlightPage.getContent();
-        highlightPage.getHighlighted().stream().forEach(content -> {
-            content.getHighlights().forEach(highlight -> {
-                resultList.addAll(highlight.getSnipplets());
-            });
-        });
+        highlightPage.getHighlighted().stream().forEach(content -> content.getHighlights().forEach(highlight -> resultList.addAll(highlight.getSnipplets())));
         return resultList;
     }
 
@@ -127,5 +111,10 @@ public abstract class BaseDocumentSearchControllerImpl<E extends BaseDocument<ID
         return getSearchService().find(collection, searchTerm, OffsetPageRequest.builder().offset(offset).limit(limit).build());
     }
 
+    /**
+     * Returns {@link BaseDocumentSearchService} service
+     *
+     * @return {@link BaseDocumentSearchService} service
+     */
     protected abstract BaseDocumentSearchService<E, ID> getSearchService();
 }

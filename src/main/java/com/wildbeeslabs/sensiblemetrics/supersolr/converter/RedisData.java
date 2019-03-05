@@ -21,25 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.converter;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
-import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.Metrics;
+import lombok.*;
+
+import java.io.Serializable;
 
 /**
- * Custom product search controller declaration
+ * Custom redis data model
  */
-public interface ProductSearchController extends BaseDocumentSearchController<Product, ProductView, String> {
+public class RedisData {
 
-    /**
-     * Default service ID
-     */
-    String CONTROLLER_ID = "ProductSearchController";
+    @Data
+    @AllArgsConstructor(staticName = "of")
+    @EqualsAndHashCode
+    @ToString
+    public static class RedisPort implements Serializable {
 
-    /**
-     * Default distance distance {@link Distance}
-     */
-    Distance DEFAULT_LOCATION_DISTANCE = new Distance(0.1, Metrics.KILOMETERS);
+        /**
+         * Default explicit serialVersionUID for interoperability
+         */
+        private static final long serialVersionUID = 8338897962608852437L;
+
+        @NonNull
+        @Getter
+        private Integer port;
+    }
+
+    @Data
+    @AllArgsConstructor(staticName = "of")
+    @EqualsAndHashCode
+    @ToString
+    public static class RedisHost implements Serializable {
+
+        /**
+         * Default explicit serialVersionUID for interoperability
+         */
+        private static final long serialVersionUID = 3605617087361538636L;
+
+        @NonNull
+        @Getter
+        private String host;
+    }
 }

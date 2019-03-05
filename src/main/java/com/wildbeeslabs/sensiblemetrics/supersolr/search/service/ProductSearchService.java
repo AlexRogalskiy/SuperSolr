@@ -59,7 +59,7 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     Page<? extends Product> findByNameOrDescription(final String searchTerm, final Pageable pageable);
 
-    HighlightPage<? extends Product> findByHighlightedNameIn(final Collection<String> names, final Pageable pageable);
+    HighlightPage<? extends Product> findByNameIn(final Collection<String> names, final Pageable pageable);
 
     Page<? extends Product> findByShortDescription(final String description, final Pageable pageable);
 

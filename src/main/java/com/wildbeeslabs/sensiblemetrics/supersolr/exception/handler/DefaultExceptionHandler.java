@@ -42,11 +42,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Custom default exception handler implementation
+ * Default {@link ResponseEntityExceptionHandler} implementation
  */
 @Slf4j
 @RestControllerAdvice
@@ -58,11 +59,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final ResourceAlreadyExistException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.CONFLICT.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.CONFLICT);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.CONFLICT.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({BadRequestException.class})
@@ -71,11 +72,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final BadRequestException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.BAD_REQUEST);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})
@@ -84,11 +85,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final ResourceNotFoundException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.NOT_FOUND.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.NOT_FOUND);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.NOT_FOUND.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({EmptyContentException.class})
@@ -97,11 +98,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final EmptyContentException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.NO_CONTENT.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.NO_CONTENT);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.NO_CONTENT.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler({TypeMismatchException.class})
@@ -110,11 +111,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final TypeMismatchException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class, DataIntegrityViolationException.class})
@@ -123,11 +124,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final MethodArgumentNotValidException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.BAD_REQUEST);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({javax.validation.ConstraintViolationException.class})
@@ -136,11 +137,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final javax.validation.ConstraintViolationException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.BAD_REQUEST);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({MissingPathVariableException.class})
@@ -149,11 +150,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final MissingPathVariableException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.BAD_REQUEST);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
@@ -162,11 +163,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final HttpRequestMethodNotSupportedException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.METHOD_NOT_ALLOWED.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.METHOD_NOT_ALLOWED);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.METHOD_NOT_ALLOWED.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
@@ -175,11 +176,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final HttpMessageNotReadableException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.BAD_REQUEST);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.BAD_REQUEST.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
@@ -188,11 +189,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final HttpMediaTypeNotSupportedException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler({ServiceException.class})
@@ -201,11 +202,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final ServiceException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({AccessDeniedException.class})
@@ -214,11 +215,11 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final AccessDeniedException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.FORBIDDEN.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.FORBIDDEN);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.FORBIDDEN.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
@@ -227,10 +228,10 @@ public class DefaultExceptionHandler {//extends ResponseEntityExceptionHandler {
     protected ResponseEntity<?> handle(final HttpServletRequest req, final HttpMediaTypeNotAcceptableException ex) {
         log.error(ex.getMessage());
         return new ResponseEntity<>(ExceptionView
-                .builder()
-                .path(req.getRequestURI().substring(req.getContextPath().length()))
-                .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
-                .message(ex.getLocalizedMessage())
-                .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+            .builder()
+            .path(req.getRequestURI().substring(req.getContextPath().length()))
+            .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
+            .message(ex.getLocalizedMessage())
+            .build(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 }

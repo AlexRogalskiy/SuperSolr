@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.order.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.OrderSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.BaseDocumentSearchControllerImpl;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.order.OrderSearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableOrder;
@@ -51,7 +52,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.mapAll;
 
 /**
- * Custom order search controller implementation {@link BaseDocumentSearchControllerImpl}
+ * Order {@link OrderSearchController} implementation
  */
 @Slf4j
 @NoArgsConstructor

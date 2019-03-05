@@ -542,7 +542,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
         final List<String> searchTerms = Arrays.asList("New", "09");
 
         // when
-        final HighlightPage<? extends Product> productHighlightPage = getProductService().findByHighlightedNameIn(searchTerms, PageRequest.of(0, 10));
+        final HighlightPage<? extends Product> productHighlightPage = getProductService().findByNameIn(searchTerms, PageRequest.of(0, 10));
         productHighlightPage.getContent();
 
         // then

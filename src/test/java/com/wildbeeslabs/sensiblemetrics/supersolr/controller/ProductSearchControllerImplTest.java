@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,16 +48,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -214,6 +213,52 @@ public class ProductSearchControllerImplTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Test search products by non-existing names")
+    @WithMockUser(roles = "USER")
+    public void testSearchByNonExistingTitles() throws Exception {
+        // given
+        final String urlTemplate = "/api/product/search/name";
+        final String responseText = "[]";
+
+        // when
+        final SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setKeywords(Arrays.asList("Small", "Huge"));
+
+        // then
+        this.mockMvc.perform(post(urlTemplate)
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
+            .headers(getHeaders())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(getGsonSerializer().toJson(searchRequest)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(responseText));
+    }
+
+    @Test
+    @DisplayName("Test search products by names")
+    @WithMockUser(roles = "USER")
+    public void testSearchByTitles() throws Exception {
+        // given
+        final String urlTemplate = "/api/product/search/name";
+        final String responseText = "[{\"id\":\"06\",\"score\":2.5651255,\"name\":\"Small and tiny handkerchief\",\"catalogNumber\":\"Catalog number\",\"inStock\":false,\"price\":0.0,\"recommendedPrice\":0.0,\"rating\":9,\"highlights\":{\"name\":[\"<highlight>Small</highlight> and tiny <highlight>handkerchief</highlight>\"]}}]";
+
+        // when
+        final SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setKeywords(Arrays.asList("Small", "handkerchief"));
+
+        // then
+        this.mockMvc.perform(post(urlTemplate)
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
+            .headers(getHeaders())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(getGsonSerializer().toJson(searchRequest)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(responseText));
+    }
+
+    @Test
     @DisplayName("Test unauthorized access")
     public void testForbiddenAccess() throws Exception {
         // given
@@ -249,15 +294,15 @@ public class ProductSearchControllerImplTest extends BaseTest {
         product.addCategory(createCategory("03", 3, "Solr for dummies", "Get started with solr"));
         products.add(product);
 
-        product = createProduct("04", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 4, 18.0, 2.0, true);
+        product = createProduct("04", "Simple name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 4, 18.0, 2.0, true);
         product.addCategory(createCategory("04", 4, "Moon landing", "All facts about Apollo 11, a best seller"));
         products.add(product);
 
-        product = createProduct("05", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true);
+        product = createProduct("05", "Complex name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 7, 1.0, 2.0, true);
         product.addCategory(createCategory("05", 5, "Spring Island", "The perfect island romance.."));
         products.add(product);
 
-        product = createProduct("06", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 9, 8.0, 2.0, true);
+        product = createProduct("06", "Small and tiny handkerchief", "Short description", "Long description", "Price description", "Catalog number", "Page title", 9, 8.0, 2.0, true);
         product.addCategory(createCategory("06", 6, "Refactoring", "It's about improving the design of existing code."));
         products.add(product);
 
@@ -273,7 +318,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         product.addCategory(createCategory("09", 9, "Blackbeard", "It's the pirate Edward Teach!"));
         products.add(product);
 
-        product = createProduct("09", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 13, 120.0, 2.0, true);
+        product = createProduct("09", "Name without specialities", "Short description", "Long description", "Price description", "Catalog number", "Page title", 13, 120.0, 2.0, true);
         product.addCategory(createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications"));
         products.add(product);
         return products;
@@ -287,6 +332,11 @@ public class ProductSearchControllerImplTest extends BaseTest {
         return headers;
     }
 
+    /**
+     * Default
+     *
+     * @return
+     */
     protected ProductSearchService getProductService() {
         return this.productService;
     }

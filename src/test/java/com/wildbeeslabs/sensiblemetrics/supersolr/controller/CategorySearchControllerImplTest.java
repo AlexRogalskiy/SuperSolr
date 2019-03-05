@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +48,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
 import static org.hamcrest.CoreMatchers.is;
@@ -58,6 +56,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -200,6 +199,52 @@ public class CategorySearchControllerImplTest extends BaseTest {
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
             .headers(getHeaders())
             .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(responseText));
+    }
+
+    @Test
+    @DisplayName("Test search categories by non-existing titles")
+    @WithMockUser(roles = "USER")
+    public void testSearchByNonExistingTitles() throws Exception {
+        // given
+        final String urlTemplate = "/api/category/search/title";
+        final String responseText = "[]";
+
+        // when
+        final SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setKeywords(Arrays.asList("Black", "Yellow"));
+
+        // then
+        this.mockMvc.perform(post(urlTemplate)
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
+            .headers(getHeaders())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(getGsonSerializer().toJson(searchRequest)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().json(responseText));
+    }
+
+    @Test
+    @DisplayName("Test search categories by titles")
+    @WithMockUser(roles = "USER")
+    public void testSearchByTitles() throws Exception {
+        // given
+        final String urlTemplate = "/api/category/search/title";
+        final String responseText = "[{\"id\":\"07\",\"score\":3.02416,\"title\":\"Baking for dummies\",\"description\":\"Bake your own cookies, on a secret island!\",\"highlights\":{\"title\":[\"<highlight>Baking</highlight> for <highlight>dummies</highlight>\"]}}]";
+
+        // when
+        final SearchRequest searchRequest = new SearchRequest();
+        searchRequest.setKeywords(Arrays.asList("Baking", "dummies"));
+
+        // then
+        this.mockMvc.perform(post(urlTemplate)
+            .session(getSession(userDetailsService, DEFAULT_USERNAME))
+            .headers(getHeaders())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(getGsonSerializer().toJson(searchRequest)))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(responseText));

@@ -21,46 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.config.converter;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.category.impl;
 
-import lombok.*;
-
-import java.io.Serializable;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * Custom redis data model
+ * Category search request entity
  */
-public class RedisData {
-
-    @Data
-    @AllArgsConstructor(staticName = "of")
-    @EqualsAndHashCode
-    @ToString
-    public static class RedisPort implements Serializable {
-
-        /**
-         * Default explicit serialVersionUID for interoperability
-         */
-        private static final long serialVersionUID = 8338897962608852437L;
-
-        @NonNull
-        @Getter
-        private Integer port;
-    }
-
-    @Data
-    @AllArgsConstructor(staticName = "of")
-    @EqualsAndHashCode
-    @ToString
-    public static class RedisHost implements Serializable {
-
-        /**
-         * Default explicit serialVersionUID for interoperability
-         */
-        private static final long serialVersionUID = 3605617087361538636L;
-
-        @NonNull
-        @Getter
-        private String host;
-    }
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class CategorySearchRequest extends SearchRequest {
 }

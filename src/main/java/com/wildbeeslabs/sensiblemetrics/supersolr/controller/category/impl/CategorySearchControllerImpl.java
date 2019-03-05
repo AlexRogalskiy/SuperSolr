@@ -21,9 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.category.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.CategorySearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.category.CategorySearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.BaseDocumentSearchControllerImpl;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.BadRequestException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
@@ -35,6 +37,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +50,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -56,7 +60,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
- * Custom category search controller implementation {@link BaseDocumentSearchControllerImpl}
+ * Category {@link CategorySearchController} implementation
  */
 @Slf4j
 @NoArgsConstructor
@@ -239,7 +243,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
     })
     public ResponseEntity<?> search(@ApiParam(value = "Category ID to fetch by", required = true, readOnly = true) @PathVariable("id") final String id,
                                     final HttpServletRequest request) {
-        log.info("Fetching category by ID: {}", id);
+        log.info("Fetching categories by ID: {}", id);
         return ResponseEntity
             .ok()
             .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -264,7 +268,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
     })
     public ResponseEntity<?> findBySearchTerm(@ApiParam(value = "Search term query to fetch categories by", required = true, readOnly = true) @PathVariable("term") final String searchTerm,
                                               @ApiParam(value = "Page number to filter by", allowableValues = "range[1,infinity]", required = true, readOnly = true) @PathVariable("page") int page) {
-        log.info("Fetching product by search term: {}, page: {}", searchTerm, page);
+        log.info("Fetching products by search term: {}, page: {}", searchTerm, page);
         final HighlightPage<? extends Category> categoryPage = getSearchService().find(SearchableCategory.COLLECTION_ID, searchTerm, PageRequest.of(page, DEFAULT_PAGE_SIZE));
         if (Objects.isNull(categoryPage)) {
             throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
@@ -293,7 +297,7 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
     })
     public ResponseEntity<?> findByDescription(@ApiParam(value = "Search description query to fetch categories by", required = true, readOnly = true) @PathVariable("desc") final String description,
                                                @ApiParam(value = "Page number to filter by", allowableValues = "range[1,infinity]", required = true, readOnly = true) @PathVariable("page") int page) {
-        log.info("Fetching category by description: {}, page: {}", description, page);
+        log.info("Fetching categories by description: {}, page: {}", description, page);
         final Page<? extends Category> categoryPage = getSearchService().findByDescription(description, PageRequest.of(page, DEFAULT_PAGE_SIZE));
         if (Objects.isNull(categoryPage)) {
             throw new BadRequestException(formatMessage(getMessageSource(), "error.bad.request"));
@@ -304,6 +308,47 @@ public class CategorySearchControllerImpl extends BaseDocumentSearchControllerIm
             .body(mapAll(categoryPage.getContent(), CategoryView.class));
     }
 
+    @PostMapping("/search/title")
+    @ResponseBody
+    @ApiOperation(
+        httpMethod = "POST",
+        value = "Finds category documents by title",
+        notes = "Returns list of category documents by title",
+        nickname = "findByTitles",
+        tags = {"fetchByTitles"},
+        position = 7,
+        response = CategoryView.class,
+        responseContainer = "List",
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        responseHeaders = {
+            @ResponseHeader(name = "X-Expires-After", description = "date in UTC when token expires", response = Date.class),
+            @ResponseHeader(name = "X-Total-Elements", description = "total number of results in response", response = Integer.class)
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 405, message = "Invalid input value")
+    })
+    @SuppressWarnings("unchecked")
+    public ResponseEntity<?> findByTitles(@ApiParam(value = "Search request to fetch categories by title", required = true, readOnly = true) @Valid @RequestBody final SearchRequest searchRequest,
+                                          @ApiParam(value = "Page number to filter by") @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageable) {
+        log.info("Fetching categories by title: {}", StringUtils.join(searchRequest.getKeywords(), "|"));
+        final HighlightPage<Category> page = (HighlightPage<Category>) getSearchService().findByTitleIn(searchRequest.getKeywords(), pageable);
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .headers(getHeaders(page))
+            .body(page
+                .stream()
+                .map(document -> getHighLightSearchResult(document, page.getHighlights(document), CategoryView.class))
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns {@link CategorySearchService} service
+     *
+     * @return {@link CategorySearchService} service
+     */
     protected CategorySearchService getSearchService() {
         return this.categoryService;
     }

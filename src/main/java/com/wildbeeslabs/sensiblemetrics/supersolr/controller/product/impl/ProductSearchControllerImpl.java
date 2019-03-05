@@ -21,20 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.ProductSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.BaseDocumentSearchControllerImpl;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.ProductSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.BadRequestException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
 import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +53,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,7 +64,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.formatMessage;
 
 /**
- * Custom product search controller implementation {@link BaseDocumentSearchControllerImpl}
+ * Product {@link ProductSearchController} implementation
  */
 @Slf4j
 @NoArgsConstructor
@@ -310,11 +315,11 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
     @ResponseBody
     @ApiOperation(
         httpMethod = "GET",
-        value = "Finds category documents by location",
-        notes = "Returns list of category documents by location",
+        value = "Finds product documents by location",
+        notes = "Returns list of product documents by location",
         nickname = "findByLocation",
-        tags = {"fetchByLoc"},
-        position = 6,
+        tags = {"fetchByLocation"},
+        position = 7,
         response = ProductView.class,
         responseContainer = "List",
         consumes = "application/json, application/xml",
@@ -333,6 +338,42 @@ public class ProductSearchControllerImpl extends BaseDocumentSearchControllerImp
             .ok()
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .body(getSearchService().findByLocationNear(point, distance.orElse(DEFAULT_LOCATION_DISTANCE), pageable));
+    }
+
+    @PostMapping("/search/name")
+    @ResponseBody
+    @ApiOperation(
+        httpMethod = "POST",
+        value = "Finds product documents by name",
+        notes = "Returns list of product documents by name",
+        nickname = "findByNames",
+        tags = {"fetchByNames"},
+        position = 8,
+        response = CategoryView.class,
+        responseContainer = "List",
+        consumes = "application/json, application/xml",
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        responseHeaders = {
+            @ResponseHeader(name = "X-Expires-After", description = "date in UTC when token expires", response = Date.class),
+            @ResponseHeader(name = "X-Total-Elements", description = "total number of results in response", response = Integer.class)
+        }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(code = 405, message = "Invalid input value")
+    })
+    @SuppressWarnings("unchecked")
+    public ResponseEntity<?> findByNames(@ApiParam(value = "Search request to fetch products by names", required = true, readOnly = true) @Valid @RequestBody final SearchRequest searchRequest,
+                                         @ApiParam(value = "Page number to filter by") @PageableDefault(size = DEFAULT_PAGE_SIZE) final Pageable pageable) {
+        log.info("Fetching products by name: {}", StringUtils.join(searchRequest.getKeywords(), "|"));
+        final HighlightPage<Product> page = (HighlightPage<Product>) getSearchService().findByNameIn(searchRequest.getKeywords(), pageable);
+        return ResponseEntity
+            .ok()
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .headers(getHeaders(page))
+            .body(page
+                .stream()
+                .map(document -> getHighLightSearchResult(document, page.getHighlights(document), ProductView.class))
+                .collect(Collectors.toList()));
     }
 
     /**

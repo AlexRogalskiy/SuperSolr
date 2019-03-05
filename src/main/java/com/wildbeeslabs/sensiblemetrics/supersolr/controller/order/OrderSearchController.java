@@ -21,18 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.order;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
 
 /**
- * Custom category search controller declaration
+ * Custom order search controller declaration
  */
-public interface CategorySearchController extends BaseDocumentSearchController<Category, CategoryView, String> {
+public interface OrderSearchController extends BaseDocumentSearchController<Order, OrderView, String> {
 
     /**
      * Default service ID
      */
-    String CONTROLLER_ID = "CategorySearchController";
+    String CONTROLLER_ID = "OrderSearchController";
 }

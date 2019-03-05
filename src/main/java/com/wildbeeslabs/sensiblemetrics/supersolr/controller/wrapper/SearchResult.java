@@ -33,11 +33,12 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Custom search result entity
+ * Search result entity
  *
  * @param <T> type of search item key
  */
@@ -53,6 +54,8 @@ public class SearchResult<T extends Serializable> {
      * Default search item {@code T}
      */
     @NonNull
+    @JacksonXmlProperty(localName = "item")
+    @JsonProperty("item")
     private T item;
 
     /**
@@ -62,7 +65,7 @@ public class SearchResult<T extends Serializable> {
     @JsonProperty("error")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "errors")
-    private final List<String> errors = new ArrayList<>();
+    private final Collection<String> errors = new ArrayList<>();
 
     /**
      * Default {@link SearchResult} constructor by input parameters

@@ -32,14 +32,13 @@ import org.springframework.data.solr.core.SolrOperations;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.repository.support.SimpleSolrRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base simple search service implementation {@link BaseSimpleSearchService}
+ * Base simple {@link BaseSimpleSearchService} implementation
  *
  * @param <E>  type of document model
  * @param <ID> type of document identifier {@link Serializable}

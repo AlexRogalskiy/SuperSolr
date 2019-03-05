@@ -31,6 +31,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.*;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -42,15 +43,20 @@ import java.util.List;
 @EqualsAndHashCode
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JacksonXmlRootElement(localName = "results")
+@JacksonXmlRootElement(localName = "response")
 public class SearchResponse {
 
-    @JsonProperty("result")
+    @JsonProperty("item")
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JacksonXmlProperty(localName = "results")
-    private List<? extends SearchResult<?>> results;
+    @JacksonXmlProperty(localName = "items")
+    private Collection<? extends SearchResult<?>> items;
 
+    /**
+     * Returns binary flag based on errors in items {@link List}
+     *
+     * @return true - if items {@link List} contains errors, false - otherwise
+     */
     public boolean hasErrors() {
-        return CollectionUtils.isEmpty(getResults()) || getResults().stream().anyMatch(r -> !r.isSuccess());
+        return CollectionUtils.isEmpty(getItems()) || getItems().stream().anyMatch(r -> !r.isSuccess());
     }
 }

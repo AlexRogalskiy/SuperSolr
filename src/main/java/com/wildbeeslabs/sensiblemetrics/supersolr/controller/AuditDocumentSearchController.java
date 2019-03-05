@@ -29,10 +29,10 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.AuditDocumentView;
 import java.io.Serializable;
 
 /**
- * Audit document search controller declaration
+ * Audit {@link BaseSearchController} declaration
  *
- * @param <E>  type of audit document {@link AuditDocument}
- * @param <T>  type of audit document view {@link AuditDocumentView}
+ * @param <E>  type of audit document model {@link AuditDocument}
+ * @param <T>  type of audit document view model {@link AuditDocumentView}
  * @param <ID> type of audit document identifier {@link Serializable}
  * @author Alex
  * @version 1.0.0

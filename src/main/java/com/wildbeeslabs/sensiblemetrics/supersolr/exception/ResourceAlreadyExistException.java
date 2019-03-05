@@ -23,7 +23,6 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -31,7 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Custom "resource exists" runtime exception implementation {@link RuntimeException}
+ * Resource exist {@link RuntimeException} implementation
  */
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)

@@ -55,7 +55,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Custom product search service implementation {@link ProductSearchService}
+ * Product {@link ProductSearchService} implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -96,7 +96,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public HighlightPage<? extends Product> findByHighlightedNameIn(final Collection<String> names, final Pageable pageable) {
+    public HighlightPage<? extends Product> findByNameIn(final Collection<String> names, final Pageable pageable) {
         if (CollectionUtils.isEmpty(names)) {
             return new SolrResultPage<>(Collections.emptyList());
         }
@@ -262,7 +262,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         return this.findByQueryAndCriteria(collection, queryString, criteria, pageable, Product.class);
     }
 
-    protected Criteria nameOrDescriptionCriteria(final String searchTerm) {
+    protected Criteria nameOrDescSearchCriteria(final String searchTerm) {
         final String[] searchTerms = StringUtils.split(searchTerm, DEFAULT_SEARСH_TERM_DELIMITER);
         Criteria criteria = new Criteria();
         for (final String term : searchTerms) {
@@ -276,6 +276,11 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         return criteria.and(new Criteria(DEFAULT_DOCTYPE).is(SearchableProduct.CORE_ID));
     }
 
+    /**
+     * Returns {@link ProductSearchRepository} repository
+     *
+     * @return {@link ProductSearchRepository} repository
+     */
     protected ProductSearchRepository getRepository() {
         return this.productSearchRepository;
     }
