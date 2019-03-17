@@ -35,6 +35,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -110,7 +111,7 @@ public class SolrConfig {
     }
 
     @Bean
-    public SolrClientFactory solrClientFactory(final SolrClient solrClient, final Credentials credentials) {
+    public SolrClientFactory solrClientFactory(@Qualifier("solrClient") final SolrClient solrClient, final Credentials credentials) {
         return new HttpSolrClientFactory(solrClient, credentials, "BASIC");
         //return new MulticoreSolrClientFactory(solrClient());
     }
@@ -126,7 +127,7 @@ public class SolrConfig {
     public HttpSolrClientFactoryBean httpSolrClientFactoryBean(final @Value("${supersolr.solr.server.url}") String baseUrl,
                                                                final @Value("${supersolr.solr.timeout}") Integer timeout,
                                                                final @Value("${supersolr.solr.maxConnections}") Integer maxConnections,
-                                                               final SolrClient solrClient) {
+                                                               final @Qualifier("solrClient") SolrClient solrClient) {
         final HttpSolrClientFactoryBean factory = new HttpSolrClientFactoryBean();
         factory.setUrl(baseUrl);
         factory.setTimeout(timeout);
@@ -151,7 +152,7 @@ public class SolrConfig {
     }
 
     @Bean
-    public SolrTemplate solrTemplate(final SolrClient solrClient) {
+    public SolrTemplate solrTemplate(final @Qualifier("solrClient") SolrClient solrClient) {
         final SolrTemplate solrTemplate = new SolrTemplate(solrClient);
         solrTemplate.setSolrConverter(solrConverter());
         return solrTemplate;

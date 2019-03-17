@@ -23,7 +23,14 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.config;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.wildbeeslabs.sensiblemetrics.supersolr.config.properties.RedisConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -43,6 +50,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PreDestroy;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Custom redis configuration
@@ -56,8 +66,29 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Autowired
     private Environment env;
 
-    @Autowired
-    private ObjectMapper customObjectMapper;
+    @Bean
+    public ObjectMapper redisObjectMapper() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setDefaultMergeable(Boolean.TRUE);
+        objectMapper.setLocale(Locale.getDefault());
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+        objectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+
+        objectMapper.disable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.disable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+        objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        //objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        return objectMapper;
+    }
 
     @Bean
     @Override
@@ -66,9 +97,7 @@ public class RedisConfig extends CachingConfigurerSupport {
             final StringBuilder sb = new StringBuilder();
             sb.append(target.getClass().getName());
             sb.append(method.getName());
-            for (final Object obj : params) {
-                sb.append(obj.toString());
-            }
+            Arrays.stream(Optional.ofNullable(params).orElseGet(() -> new Object[0])).forEach(sb::append);
             return sb.toString();
         };
     }
@@ -77,7 +106,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     public StringRedisTemplate redisTemplate() {
         final StringRedisTemplate template = new StringRedisTemplate(jedisConnectionFactory());
         final Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
-        jackson2JsonRedisSerializer.setObjectMapper(customObjectMapper);
+        jackson2JsonRedisSerializer.setObjectMapper(redisObjectMapper());
         template.setEnableTransactionSupport(true);
         template.setValueSerializer(jackson2JsonRedisSerializer);
         template.afterPropertiesSet();
