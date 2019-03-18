@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Search response entity
+ * Search response model
  */
 @Data
 @AllArgsConstructor

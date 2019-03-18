@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.impl;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.SwaggerAPI;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.BaseDocumentSearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.ProductSearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
@@ -72,6 +73,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 @ToString(callSuper = true)
 @RestController(ProductSearchController.CONTROLLER_ID)
 @RequestMapping(value = "/api/product", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@SwaggerAPI
 @Api(
     value = "/api/product",
     description = "Endpoint for product search operations",

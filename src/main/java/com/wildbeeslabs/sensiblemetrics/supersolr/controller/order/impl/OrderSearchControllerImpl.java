@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.order.impl;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.SwaggerAPI;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.BaseDocumentSearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.order.OrderSearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
@@ -60,6 +61,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils.map
 @ToString(callSuper = true)
 @RestController(OrderSearchController.CONTROLLER_ID)
 @RequestMapping(value = "/api/order", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@SwaggerAPI
 @Api(
     value = "/api/order",
     description = "Endpoint for order search operations",

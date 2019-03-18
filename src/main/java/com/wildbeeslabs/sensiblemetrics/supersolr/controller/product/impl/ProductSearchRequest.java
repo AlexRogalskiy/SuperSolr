@@ -29,7 +29,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Product search request entity
+ * Product search request model
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

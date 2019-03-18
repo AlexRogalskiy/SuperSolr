@@ -38,7 +38,7 @@ import java.lang.annotation.*;
 @SwaggerDefinition(
     info = @Info(
         description = "SuperSolr",
-        version = "V01012",
+        version = "1.0.0-RELEASE",
         title = "SuperSolr Resource API",
         contact = @Contact(
             name = "ARogalskiy",
@@ -54,7 +54,7 @@ import java.lang.annotation.*;
     consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
     schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
-    externalDocs = @ExternalDocs(value = "Read This For Sure", url = "http://supersolr.com")
+    externalDocs = @ExternalDocs(value = "Document info", url = "http://supersolr.com")
 )
 public @interface SwaggerAPI {
 }

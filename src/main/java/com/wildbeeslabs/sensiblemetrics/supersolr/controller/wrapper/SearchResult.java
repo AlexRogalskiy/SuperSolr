@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Search result entity
+ * Search result model
  *
  * @param <T> type of search item key
  */

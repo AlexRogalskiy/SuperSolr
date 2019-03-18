@@ -23,6 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.category.impl;
 
+import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.SwaggerAPI;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.category.CategorySearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl.BaseDocumentSearchControllerImpl;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
@@ -68,6 +69,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
 @ToString(callSuper = true)
 @RestController(CategorySearchController.CONTROLLER_ID)
 @RequestMapping(value = "/api/category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@SwaggerAPI
 @Api(
     value = "/api/category",
     description = "Endpoint for category search operations",

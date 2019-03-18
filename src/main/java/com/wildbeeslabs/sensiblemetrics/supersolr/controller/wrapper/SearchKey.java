@@ -32,7 +32,7 @@ import lombok.*;
 import java.io.Serializable;
 
 /**
- * Search key entity
+ * Search key model
  */
 @Data
 @AllArgsConstructor(staticName = "of")

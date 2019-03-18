@@ -32,7 +32,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * Product {@link SearchResult} entity
+ * Product {@link SearchResult} model
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

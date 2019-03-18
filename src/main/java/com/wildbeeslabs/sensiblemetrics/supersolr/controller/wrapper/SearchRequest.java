@@ -35,7 +35,7 @@ import lombok.ToString;
 import java.util.Collection;
 
 /**
- * Search request entity
+ * Search request model
  */
 @Data
 @EqualsAndHashCode
@@ -44,9 +44,9 @@ import java.util.Collection;
 @JacksonXmlRootElement(localName = "request")
 public class SearchRequest {
 
-    @JsonProperty("item")
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "items")
+    @JsonProperty("item")
     private Collection<SearchKey> items;
 
     @JacksonXmlProperty(localName = "keywords")
