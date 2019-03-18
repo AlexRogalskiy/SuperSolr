@@ -36,7 +36,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.util.*;
 
 /**
- * Custom full-text search product document {@link BaseDocument}
+ * Full-text search product document {@link BaseDocument}
  */
 @Data
 @NoArgsConstructor

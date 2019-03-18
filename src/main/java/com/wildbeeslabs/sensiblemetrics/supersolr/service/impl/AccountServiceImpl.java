@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 /**
- * Custom account service implementation {@link AccountService}
+ * {@link Account} service implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

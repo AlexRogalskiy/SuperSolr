@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 
 /**
- * Audit {@link AuditDocumentSearchService} implementation
+ * {@link AuditDocument} search service implementation
  *
  * @param <E>  type of audit document {@link AuditDocument}
  * @param <ID> type of audit document identifier {@link Serializable}

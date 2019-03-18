@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Custom full-text search audit document {@link Serializable}
+ * Full-text search audit document {@link Serializable}
  */
 @Data
 @NoArgsConstructor

@@ -28,7 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Custom order document search service declaration {@link BaseDocumentSearchService}
+ * {@link Order} document search service declaration {@link BaseDocumentSearchService}
  */
 public interface OrderSearchService extends BaseDocumentSearchService<Order, String> {
 

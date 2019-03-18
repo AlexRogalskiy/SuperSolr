@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Custom audit document service declaration
+ * {@link AuditModel} service declaration
  *
  * @param <E>  type of audit document {@link AuditModel}
  * @param <ID> type of audit document identifier {@link Serializable}

@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom full-text search base document {@link AuditDocument}
+ * Full-text search base document {@link AuditDocument}
  *
  * @param <ID> type of document identifier {@link Serializable}
  */

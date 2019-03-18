@@ -36,7 +36,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.util.*;
 
 /**
- * Custom full-text search attribute document {@link BaseModel}
+ * Full-text search attribute document {@link BaseModel}
  */
 @Data
 @NoArgsConstructor
@@ -68,8 +68,8 @@ public class Attribute extends BaseModel<String> implements SearchableAttribute 
     public void setProducts(final Collection<? extends Product> products) {
         this.getProducts().clear();
         Optional.ofNullable(products)
-                .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+            .orElseGet(Collections::emptyList)
+            .forEach(product -> this.addProduct(product));
     }
 
     public void addProduct(final Product product) {

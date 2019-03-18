@@ -26,7 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
- * Custom authentication user service declaration {@link UserDetailsService}
+ * {@link UserDetailsService} service declaration
  */
 public interface AuthUserService extends UserDetailsService {
 

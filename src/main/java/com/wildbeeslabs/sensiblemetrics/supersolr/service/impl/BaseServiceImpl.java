@@ -37,7 +37,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base service implementation {@link BaseService}
+ * Base service implementation
  *
  * @param <E>  type of model
  * @param <ID> type of model identifier {@link Serializable}

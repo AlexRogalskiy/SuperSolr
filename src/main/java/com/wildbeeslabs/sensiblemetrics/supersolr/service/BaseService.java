@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Custom base service declaration
+ * Base service declaration
  *
  * @param <E>  type of document
  * @param <ID> type of document identifier {@link Serializable}

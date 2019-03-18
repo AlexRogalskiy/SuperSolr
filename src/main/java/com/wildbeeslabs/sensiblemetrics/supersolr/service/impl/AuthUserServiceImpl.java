@@ -46,14 +46,14 @@ import java.util.Objects;
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getStringByDelimiter;
 
 /**
- * Custom authentication user details service implementation {@link AuthUserService}
+ * {@link User} service implementation
  */
 @Slf4j
 @EqualsAndHashCode
 @ToString
 @Service(AuthUserService.SERVICE_ID)
 @Transactional
-public class AuthUserDetailsServiceImpl implements AuthUserService {
+public class AuthUserServiceImpl implements AuthUserService {
 
     @Autowired
     private AccountService userService;

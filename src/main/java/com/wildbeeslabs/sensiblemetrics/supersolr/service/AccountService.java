@@ -28,7 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
 import java.util.Optional;
 
 /**
- * Custom account service declaration {@link BaseService}
+ * {@link Account} service declaration {@link BaseService}
  */
 public interface AccountService extends BaseService<Account, Long> {
 

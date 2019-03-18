@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Order {@link OrderSearchService} implementation
+ * {@link Order} search service implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

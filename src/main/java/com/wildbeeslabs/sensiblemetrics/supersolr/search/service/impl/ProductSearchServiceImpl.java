@@ -55,7 +55,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Product {@link ProductSearchService} implementation
+ * {@link Product} search service implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

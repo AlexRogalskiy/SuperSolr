@@ -32,7 +32,7 @@ import org.springframework.data.solr.core.query.result.HighlightPage;
 import java.util.Collection;
 
 /**
- * Custom category document search service declaration {@link BaseDocumentSearchService}
+ * {@link Category} document search service declaration {@link BaseDocumentSearchService}
  */
 public interface CategorySearchService extends BaseDocumentSearchService<Category, String> {
 

@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Category {@link CategorySearchService} implementation
+ * {@link Category} search service implementation
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

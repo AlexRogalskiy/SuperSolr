@@ -37,7 +37,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Base {@link BaseSearchService} implementation
+ * Base search service implementation
  *
  * @param <E>  type of document
  * @param <ID> type of document identifier {@link Serializable}

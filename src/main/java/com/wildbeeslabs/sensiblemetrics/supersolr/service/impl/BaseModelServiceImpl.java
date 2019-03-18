@@ -25,7 +25,6 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.BaseModelRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseModelService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -36,10 +35,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Custom base model service implementation {@link BaseDocumentSearchService}
+ * {@link BaseModel} service implementation
  *
- * @param <E>  type of base model {@link BaseModel}
- * @param <ID> type of base model identifier {@link Serializable}
+ * @param <E>  type of {@link BaseModel}
+ * @param <ID> type of model identifier {@link Serializable}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

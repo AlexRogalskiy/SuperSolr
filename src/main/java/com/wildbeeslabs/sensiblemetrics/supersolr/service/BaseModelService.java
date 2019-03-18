@@ -35,7 +35,7 @@ import org.springframework.data.solr.core.query.result.HighlightPage;
 import java.io.Serializable;
 
 /**
- * Custom base document service declaration
+ * {@link BaseModel} service declaration
  *
  * @param <E>  type of base model {@link BaseModel}
  * @param <ID> type of base document identifier {@link Serializable}

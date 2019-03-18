@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Custom product document search service declaration {@link BaseDocumentSearchService}
+ * {@link Product} document search service declaration {@link BaseDocumentSearchService}
  */
 public interface ProductSearchService extends BaseDocumentSearchService<Product, String> {
 

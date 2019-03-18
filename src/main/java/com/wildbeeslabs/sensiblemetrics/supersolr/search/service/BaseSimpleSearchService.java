@@ -28,7 +28,7 @@ import org.springframework.data.solr.core.query.Criteria;
 import java.io.Serializable;
 
 /**
- * Custom base simple search service declaration
+ * Base simple search service declaration
  *
  * @param <E>  type of document
  * @param <ID> type of document identifier {@link Serializable}

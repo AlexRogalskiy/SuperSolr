@@ -34,10 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 
 /**
- * Custom audit model service implementation {@link AuditModelService}
+ * {@link AuditModel} service implementation
  *
- * @param <E>  type of audit model {@link AuditModel}
- * @param <ID> type of audit model identifier {@link Serializable}
+ * @param <E>  type of {@link AuditModel}
+ * @param <ID> type of model identifier {@link Serializable}
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)

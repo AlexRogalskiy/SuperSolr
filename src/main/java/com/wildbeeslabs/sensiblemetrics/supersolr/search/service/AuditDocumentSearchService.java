@@ -28,7 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
 import java.io.Serializable;
 
 /**
- * Custom audit document search service declaration
+ * {@link AuditDocument} search service declaration
  *
  * @param <E>  type of audit document {@link AuditDocument}
  * @param <ID> type of audit document identifier {@link Serializable}

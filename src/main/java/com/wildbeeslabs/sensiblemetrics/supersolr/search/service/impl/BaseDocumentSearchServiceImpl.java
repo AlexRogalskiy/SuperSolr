@@ -47,7 +47,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Base document {@link BaseDocumentSearchService} implementation
+ * @link BaseDocument} search service implementation
  *
  * @param <E>  type of base document {@link BaseDocument}
  * @param <ID> type of base document identifier {@link Serializable}

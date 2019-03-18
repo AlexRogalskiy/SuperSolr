@@ -54,7 +54,6 @@ public class MapperUtils {
     static {
         modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.getConfiguration().setSourceNamingConvention()
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.getConfiguration().setFieldMatchingEnabled(true);

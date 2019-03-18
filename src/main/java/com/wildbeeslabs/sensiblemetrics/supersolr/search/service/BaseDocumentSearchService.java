@@ -37,7 +37,7 @@ import java.io.Serializable;
 import java.util.regex.Pattern;
 
 /**
- * Custom base document search service declaration
+ * {@link BaseDocument} search service declaration
  *
  * @param <E>  type of base document {@link BaseDocument}
  * @param <ID> type of base document identifier {@link Serializable}
