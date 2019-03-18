@@ -70,7 +70,7 @@ public class Order extends BaseDocument<String> implements SearchableOrder {
         this.getProducts().clear();
         Optional.ofNullable(products)
             .orElseGet(Collections::emptyList)
-            .forEach(product -> this.addProduct(product));
+            .forEach(this::addProduct);
     }
 
     public void addProduct(final Product product) {

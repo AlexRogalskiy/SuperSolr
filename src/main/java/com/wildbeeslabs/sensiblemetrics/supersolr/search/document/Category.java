@@ -70,7 +70,7 @@ public class Category extends BaseDocument<String> implements SearchableCategory
         this.getProducts().clear();
         Optional.ofNullable(products)
                 .orElseGet(Collections::emptyList)
-                .forEach(product -> this.addProduct(product));
+                .forEach(this::addProduct);
     }
 
     public void addProduct(final Product product) {
@@ -83,7 +83,7 @@ public class Category extends BaseDocument<String> implements SearchableCategory
         this.getMainProducts().clear();
         Optional.ofNullable(mainProducts)
                 .orElseGet(Collections::emptyList)
-                .forEach(mainProduct -> this.addMainProduct(mainProduct));
+                .forEach(this::addMainProduct);
     }
 
     public void addMainProduct(final Product mainProduct) {
