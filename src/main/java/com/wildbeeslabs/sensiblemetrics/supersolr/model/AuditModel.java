@@ -25,7 +25,10 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.model;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.ChronologicalDates;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableAuditModel;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -34,7 +37,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.util.Date;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAULT_DATE_FORMAT_PATTERN_EXT;
@@ -51,7 +53,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
 @MappedSuperclass
 @ChronologicalDates
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AuditModel implements PersistableAuditModel, Serializable {
+public abstract class AuditModel implements PersistableAuditModel {
 
     /**
      * Default explicit serialVersionUID for interoperability

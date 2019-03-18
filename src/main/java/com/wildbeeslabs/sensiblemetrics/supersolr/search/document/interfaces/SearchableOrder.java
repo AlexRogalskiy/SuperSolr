@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Searchable order document definition
  */
-public interface SearchableOrder {
+public interface SearchableOrder extends Serializable {
 
     /**
      * Default core ID

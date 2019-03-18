@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Searchable base document definition
  */
-public interface SearchableBaseDocument {
+public interface SearchableBaseDocument extends Serializable {
 
     /**
      * Default core ID

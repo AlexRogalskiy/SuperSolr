@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Persistable base info model definition
  */
-public interface PersistableBaseInfoModel {
+public interface PersistableBaseInfoModel extends Serializable {
 
     /**
      * Default document ID

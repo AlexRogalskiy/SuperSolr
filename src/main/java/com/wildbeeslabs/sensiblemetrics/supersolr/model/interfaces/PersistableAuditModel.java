@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Persistable audit model definition
  */
-public interface PersistableAuditModel {
+public interface PersistableAuditModel extends Serializable {
 
     /**
      * Default document ID

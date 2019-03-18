@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Searchable category document definition
  */
-public interface SearchableCategory {
+public interface SearchableCategory extends Serializable {
 
     /**
      * Default document ID

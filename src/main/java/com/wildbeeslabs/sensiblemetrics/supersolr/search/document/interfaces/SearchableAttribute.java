@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Searchable attribute document definition
  */
-public interface SearchableAttribute {
+public interface SearchableAttribute extends Serializable {
 
     /**
      * Default core ID

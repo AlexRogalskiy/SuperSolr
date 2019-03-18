@@ -42,7 +42,7 @@ import java.util.Date;
 @EqualsAndHashCode
 @ToString
 @ChronologicalDates
-public abstract class AuditDocument implements SearchableAuditDocument, Serializable {
+public abstract class AuditDocument implements SearchableAuditDocument {
 
     /**
      * Default explicit serialVersionUID for interoperability

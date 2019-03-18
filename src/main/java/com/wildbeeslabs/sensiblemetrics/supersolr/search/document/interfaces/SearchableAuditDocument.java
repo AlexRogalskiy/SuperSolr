@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Searchable audit document definition
  */
-public interface SearchableAuditDocument {
+public interface SearchableAuditDocument extends Serializable {
 
     /**
      * Default core ID

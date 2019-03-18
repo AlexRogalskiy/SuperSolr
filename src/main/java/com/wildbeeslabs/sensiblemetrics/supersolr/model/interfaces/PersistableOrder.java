@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Persistable order model definition
  */
-public interface PersistableOrder {
+public interface PersistableOrder extends Serializable {
 
     /**
      * Default document ID

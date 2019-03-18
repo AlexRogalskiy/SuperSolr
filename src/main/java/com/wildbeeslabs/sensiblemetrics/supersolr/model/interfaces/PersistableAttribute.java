@@ -23,10 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces;
 
+import java.io.Serializable;
+
 /**
  * Persistable attribute document definition
  */
-public interface PersistableAttribute {
+public interface PersistableAttribute extends Serializable {
 
     /**
      * Default document ID
