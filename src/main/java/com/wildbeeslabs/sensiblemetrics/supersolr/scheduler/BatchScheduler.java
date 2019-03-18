@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- * Custom batch scheduler
+ * Batch scheduler implementation
  */
 @Data
 @NoArgsConstructor

@@ -29,7 +29,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.io.Serializable;
 
 /**
- * Custom base jpa repository declaration {@link JpaRepository}
+ * Base jpa repository declaration {@link JpaRepository}
  *
  * @param <E>  type of model
  * @param <ID> type of model identifier

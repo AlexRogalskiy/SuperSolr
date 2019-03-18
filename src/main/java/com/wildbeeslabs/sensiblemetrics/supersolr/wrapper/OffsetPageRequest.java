@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.search.utils;
+package com.wildbeeslabs.sensiblemetrics.supersolr.wrapper;
 
 import lombok.*;
 import org.springframework.data.domain.Pageable;

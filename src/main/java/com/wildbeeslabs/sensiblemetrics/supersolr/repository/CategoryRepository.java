@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Custom category repository declaration {@link BaseModelRepository}
+ * {@link Category} repository declaration {@link BaseModelRepository}
  */
 @Repository
 public interface CategoryRepository extends BaseModelRepository<Category, Long> {

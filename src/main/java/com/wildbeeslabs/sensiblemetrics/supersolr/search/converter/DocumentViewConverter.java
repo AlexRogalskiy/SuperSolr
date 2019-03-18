@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Custom document view converter implementation
+ * Document view converter implementation
  */
 @Slf4j
 @Component

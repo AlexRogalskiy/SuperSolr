@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Custom audit model repository declaration {@link BaseJpaRepository}
+ * {@link AuditModel} repository declaration {@link BaseJpaRepository}
  *
  * @param <E>  type of audit model
  * @param <ID> type of audit model identifier

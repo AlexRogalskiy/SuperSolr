@@ -29,7 +29,7 @@ import org.springframework.http.MediaType;
 import java.lang.annotation.*;
 
 /**
- * Swagger API annotation
+ * Swagger API definition annotation
  */
 @Documented
 @Inherited
@@ -39,11 +39,11 @@ import java.lang.annotation.*;
     info = @Info(
         description = "SuperSolr",
         version = "1.0.0-RELEASE",
-        title = "SuperSolr Resource API",
+        title = "SuperSolr REST API",
         contact = @Contact(
             name = "ARogalskiy",
             email = "alexander.rogalskiy@supersolr.com",
-            url = "http://www.supersolr.oi"
+            url = "http://www.supersolr.com"
         ),
         license = @License(
             name = "MIT",
@@ -51,10 +51,21 @@ import java.lang.annotation.*;
         )
     ),
     basePath = "/api/*",
-    consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-    produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-    schemes = {SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
-    externalDocs = @ExternalDocs(value = "Document info", url = "http://supersolr.com")
+    consumes = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_XML_VALUE
+    },
+    produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_XML_VALUE
+    },
+    schemes = {
+        SwaggerDefinition.Scheme.HTTP,
+        SwaggerDefinition.Scheme.HTTPS
+    },
+    externalDocs = @ExternalDocs(
+        value = "SuperSolr Document Info",
+        url = "http://supersolr.com")
 )
 public @interface SwaggerAPI {
 }

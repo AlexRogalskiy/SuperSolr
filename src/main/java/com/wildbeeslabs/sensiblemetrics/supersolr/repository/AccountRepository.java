@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Custom account repository declaration {@link BaseModelRepository}
+ * {@link Account} repository declaration {@link BaseModelRepository}
  */
 @Repository
 public interface AccountRepository extends BaseModelRepository<Account, Long> {

@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.utils.OffsetPageRequest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.wrapper.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;

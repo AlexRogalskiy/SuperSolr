@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Custom order repository declaration {@link BaseModelRepository}
+ * {@link Order} repository declaration {@link BaseModelRepository}
  */
 @Repository
 public interface OrderRepository extends BaseModelRepository<Order, Long> {
