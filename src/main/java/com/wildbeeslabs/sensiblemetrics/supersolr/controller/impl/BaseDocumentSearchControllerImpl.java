@@ -27,7 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchC
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.wrapper.OffsetPageRequest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.BaseDocumentView;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

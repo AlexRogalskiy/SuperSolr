@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.wrapper;
+package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
 
 import lombok.*;
 import org.springframework.data.domain.Pageable;
@@ -89,31 +89,31 @@ public class OffsetPageRequest implements Pageable {
     @Override
     public Pageable next() {
         return OffsetPageRequest
-                .builder()
-                .offset(getOffset() + getPageSize())
-                .limit(getPageSize())
-                .sort(getSort())
-                .build();
+            .builder()
+            .offset(getOffset() + getPageSize())
+            .limit(getPageSize())
+            .sort(getSort())
+            .build();
     }
 
     @Override
     public Pageable previousOrFirst() {
         return OffsetPageRequest
-                .builder()
-                .offset(Math.max(0, getOffset() - getPageSize()))
-                .limit(getPageSize())
-                .sort(getSort())
-                .build();
+            .builder()
+            .offset(Math.max(0, getOffset() - getPageSize()))
+            .limit(getPageSize())
+            .sort(getSort())
+            .build();
     }
 
     @Override
     public Pageable first() {
         return OffsetPageRequest
-                .builder()
-                .offset(0)
-                .limit(getPageSize())
-                .sort(getSort())
-                .build();
+            .builder()
+            .offset(0)
+            .limit(getPageSize())
+            .sort(getSort())
+            .build();
     }
 
     @Override
