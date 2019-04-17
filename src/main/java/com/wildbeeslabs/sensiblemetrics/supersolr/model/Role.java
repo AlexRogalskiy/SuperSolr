@@ -54,6 +54,11 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Role extends BaseInfoModel<Long> implements PersistableRole {
 
+    /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = 1369721666618973751L;
+
     @Column(name = CODE_FIELD_NAME)
     private String code;
 

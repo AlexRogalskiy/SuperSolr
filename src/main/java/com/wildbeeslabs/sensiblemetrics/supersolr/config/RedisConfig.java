@@ -84,6 +84,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.disable(DeserializationFeature.UNWRAP_ROOT_VALUE);
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
         objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         //objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);

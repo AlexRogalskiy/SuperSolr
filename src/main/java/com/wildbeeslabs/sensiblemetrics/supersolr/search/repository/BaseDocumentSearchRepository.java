@@ -42,7 +42,7 @@ import java.util.Optional;
 @NoRepositoryBean
 public interface BaseDocumentSearchRepository<E extends BaseDocument<ID>, ID extends Serializable> extends AuditDocumentSearchRepository<E, ID> {
 
-    @RestResource(rel = "by-id", description = @Description(value = "find documents by id"))
+    @RestResource(rel = "fetch-by-id", description = @Description(value = "find documents by id"))
     @Query(name = "BaseDocument.findById")
     Optional<E> findById(@Boost(2) final ID id);
 }

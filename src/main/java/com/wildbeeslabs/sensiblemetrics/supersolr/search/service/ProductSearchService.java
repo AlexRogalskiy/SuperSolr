@@ -35,7 +35,6 @@ import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * {@link Product} document search service declaration {@link BaseDocumentSearchService}
@@ -69,17 +68,17 @@ public interface ProductSearchService extends BaseDocumentSearchService<Product,
 
     Page<? extends Product> findByRating(final Integer rating, final Pageable pageable);
 
-    List<? extends Product> findByLockType(final Integer lockType, final Sort sort);
+    Iterable<? extends Product> findByLockType(final Integer lockType, final Sort sort);
 
     Page<? extends Product> findByLocation(final Point location, final Distance distance, final Pageable pageable);
 
-    List<? extends Product> findByLocationWithin(final Point location, final Distance distance);
+    Iterable<? extends Product> findByLocationWithin(final Point location, final Distance distance);
 
-    List<? extends Product> findByGeoLocationWithin(final Shape shape);
+    Iterable<? extends Product> findByGeoLocationWithin(final Shape shape);
 
-    List<? extends Product> findByLocationNear(final Point location, final Distance distance);
+    Iterable<? extends Product> findByLocationNear(final Point location, final Distance distance);
 
-    List<? extends Product> findByLocationWithin(final String location, final Distance distance);
+    Iterable<? extends Product> findByLocationWithin(final String location, final Distance distance);
 
     Page<? extends Product> findByLocationNear(final Point location, final Distance distance, final Pageable pageable);
 

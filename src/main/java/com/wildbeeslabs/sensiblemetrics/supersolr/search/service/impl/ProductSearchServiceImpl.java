@@ -52,7 +52,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.ServiceUtils.getResultAsync;
 
 /**
  * {@link Product} search service implementation
@@ -132,8 +133,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByLockType(final Integer lockType, final Sort sort) {
-        return getRepository().findByLockType(lockType, sort);
+    public Iterable<? extends Product> findByLockType(final Integer lockType, final Sort sort) {
+        return getResultAsync(getRepository().findByLockType(lockType, sort));
     }
 
     @Override
@@ -143,14 +144,14 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
     }
 
     @Override
-    public List<? extends Product> findByLocationWithin(final Point location, final Distance distance) {
-        return getRepository().findByLocationWithin(location, distance);
+    public Iterable<? extends Product> findByLocationWithin(final Point location, final Distance distance) {
+        return getResultAsync(getRepository().findByLocationWithin(location, distance));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByLocationNear(final Point location, final Distance distance) {
-        return getRepository().findByLocationNear(location, distance);
+    public Iterable<? extends Product> findByLocationNear(final Point location, final Distance distance) {
+        return getResultAsync(getRepository().findByLocationNear(location, distance));
     }
 
     @Override
@@ -161,9 +162,9 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByLocationWithin(final String location, final Distance distance) {
+    public Iterable<? extends Product> findByLocationWithin(final String location, final Distance distance) {
         final Point point = GeoConverters.StringToPointConverter.INSTANCE.convert(location);
-        return getRepository().findByLocationWithin(new Point(point.getX(), point.getY()), distance);
+        return getResultAsync(getRepository().findByLocationWithin(new Point(point.getX(), point.getY()), distance));
     }
 
     @Override
@@ -174,8 +175,8 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
 
     @Override
     @Transactional(readOnly = true)
-    public List<? extends Product> findByGeoLocationWithin(final Shape shape) {
-        return getRepository().findByGeoLocationWithin(shape);
+    public Iterable<? extends Product> findByGeoLocationWithin(final Shape shape) {
+        return getResultAsync(getRepository().findByGeoLocationWithin(shape));
     }
 
     @Override

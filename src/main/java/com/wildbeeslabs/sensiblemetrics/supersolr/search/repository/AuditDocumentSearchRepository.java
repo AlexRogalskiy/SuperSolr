@@ -31,7 +31,6 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -44,18 +43,18 @@ import java.util.concurrent.CompletableFuture;
 public interface AuditDocumentSearchRepository<E extends AuditDocument, ID extends Serializable> extends BaseSearchRepository<E, ID> {
 
     @Async
-    @RestResource(rel = "by-created-date-less-than-equal", description = @Description(value = "find documents by created date less than or equal"))
-    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date createdDate);
+    @RestResource(rel = "fetch-by-created-date-less-than-equal", description = @Description(value = "find documents by created date less than or equal"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedLessThanEqual(final Date createdDate);
 
     @Async
-    @RestResource(rel = "by-created-date-greater-than", description = @Description(value = "find documents by created date greater than"))
-    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date createdDate);
+    @RestResource(rel = "fetch--by-created-date-greater-than", description = @Description(value = "find documents by created date greater than"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedGreaterThan(final Date createdDate);
 
     @Async
-    @RestResource(rel = "by-created-date-between", description = @Description(value = "find documents by created date between"))
-    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date createdDateFrom, final Date createdDateTo);
+    @RestResource(rel = "fetch-by-created-date-between", description = @Description(value = "find documents by created date between"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedBetween(final Date createdDateFrom, final Date createdDateTo);
 
     @Async
-    @RestResource(rel = "by-changed-date-between", description = @Description(value = "find documents by changed date between"))
-    CompletableFuture<List<? extends E>> findByChangedBetween(final Date changedDateFrom, final Date changedDateTo);
+    @RestResource(rel = "fetch-by-changed-date-between", description = @Description(value = "find documents by changed date between"))
+    CompletableFuture<Iterable<? extends E>> findByChangedBetween(final Date changedDateFrom, final Date changedDateTo);
 }
