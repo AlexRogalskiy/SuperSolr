@@ -24,9 +24,15 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.solr.repository.SolrCrudRepository;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 /**
  * Custom base search repository declaration {@link SolrCrudRepository}
@@ -36,4 +42,8 @@ import java.io.Serializable;
  */
 @NoRepositoryBean
 public interface BaseSearchRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {
+
+    @Async
+    @RestResource(rel = "by-predicate", description = @Description(value = "find documents by predicate"))
+    CompletableFuture<List<? extends E>> findAll(final Predicate<E> predicate);
 }
