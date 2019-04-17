@@ -24,19 +24,30 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@link Category} repository declaration {@link BaseModelRepository}
  */
 @Repository
+@RepositoryRestResource(collectionResourceRel = "category-repo", itemResourceDescription = @Description(value = "CRUD operations on category"))
 public interface CategoryRepository extends BaseModelRepository<Category, Long> {
 
-    List<? extends Category> findByTitle(final String title);
+    @Async
+    @RestResource(rel = "fetch-by-title", description = @Description(value = "find models by title"))
+    CompletableFuture<Iterable<? extends Category>> findByTitle(final String title);
 
-    List<? extends Category> findByIndex(final Integer index);
+    @Async
+    @RestResource(rel = "fetch-by-index", description = @Description(value = "find models by index"))
+    CompletableFuture<Iterable<? extends Category>> findByIndex(final Integer index);
 
-    List<? extends Category> findByDescription(final String description);
+    @Async
+    @RestResource(rel = "fetch-by-description", description = @Description(value = "find models by description"))
+    CompletableFuture<Iterable<? extends Category>> findByDescription(final String description);
 }

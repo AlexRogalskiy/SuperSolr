@@ -21,22 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.validator;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.ChronologicalDates;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint.ChronologicalDates;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 /**
- * Chronological dates constraint validation implementation {@link ConstraintValidator}
+ * {@link ChronologicalDates} validation implementation
  *
  * @version 1.0.0
  * @since 2017-08-08
  */
-public class ChronologicalDatesConstraint implements ConstraintValidator<ChronologicalDates, BaseModel<?>> {
+public class ChronologicalDatesValidator implements ConstraintValidator<ChronologicalDates, BaseModel<?>> {
 
     @Override
     public void initialize(final ChronologicalDates constraintAnnotation) {
@@ -44,14 +44,12 @@ public class ChronologicalDatesConstraint implements ConstraintValidator<Chronol
 
     @Override
     public boolean isValid(final BaseModel<?> baseEntity, final ConstraintValidatorContext context) {
-        if (Objects.isNull(baseEntity.getChanged())) {
-            return true;
-        }
+        if (Objects.isNull(baseEntity.getChanged())) return true;
         boolean isValid = baseEntity.getCreated().getTime() <= baseEntity.getChanged().getTime();
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(String.format("ERROR: incorrect entity chronological dates: created={%s}, changed={%s} (expected dates: created <= changed)", baseEntity.getCreated(), baseEntity.getChanged())).addConstraintViolation();
         }
-        return isValid;
+        return true;
     }
 }

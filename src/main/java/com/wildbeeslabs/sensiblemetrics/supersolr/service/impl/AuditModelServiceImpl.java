@@ -45,5 +45,6 @@ import java.io.Serializable;
 @Transactional
 public abstract class AuditModelServiceImpl<E extends AuditModel, ID extends Serializable> extends BaseServiceImpl<E, ID> implements AuditModelService<E, ID> {
 
+    @Override
     protected abstract AuditModelRepository<E, ID> getRepository();
 }

@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.AccountRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.AccountService;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +42,13 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@RequiredArgsConstructor
 @Service(AccountService.SERVICE_ID)
 @Transactional
 public class AccountServiceImpl extends BaseServiceImpl<Account, Long> implements AccountService {
 
     @Autowired
-    private AccountRepository userRepository;
+    private final AccountRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,6 +56,7 @@ public class AccountServiceImpl extends BaseServiceImpl<Account, Long> implement
         return getRepository().findByUsername(username);
     }
 
+    @Override
     protected AccountRepository getRepository() {
         return this.userRepository;
     }

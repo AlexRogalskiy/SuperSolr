@@ -25,7 +25,9 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.BaseJpaRepository;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.BaseService;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +46,7 @@ import java.util.Optional;
  */
 @Slf4j
 @EqualsAndHashCode
+@Getter(AccessLevel.PROTECTED)
 @ToString
 @Transactional
 public abstract class BaseServiceImpl<E, ID extends Serializable> implements BaseService<E, ID> {
@@ -105,10 +108,6 @@ public abstract class BaseServiceImpl<E, ID extends Serializable> implements Bas
     @Transactional(readOnly = true)
     public boolean exists(final ID id) {
         return find(id).isPresent();
-    }
-
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
     }
 
     protected abstract BaseJpaRepository<E, ID> getRepository();

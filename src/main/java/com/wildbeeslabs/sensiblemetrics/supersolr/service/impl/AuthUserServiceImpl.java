@@ -28,6 +28,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.Role;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.AccountService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.service.AuthUserService;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,12 +52,13 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.get
 @Slf4j
 @EqualsAndHashCode
 @ToString
+@RequiredArgsConstructor
 @Service(AuthUserService.SERVICE_ID)
 @Transactional
 public class AuthUserServiceImpl implements AuthUserService {
 
     @Autowired
-    private AccountService userService;
+    private final AccountService userService;
 
     @Override
     @Transactional(readOnly = true)

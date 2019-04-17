@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.document;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.ChronologicalDates;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint.ChronologicalDates;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableAuditDocument;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -25,6 +25,8 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -38,5 +40,6 @@ import java.util.Optional;
 @NoRepositoryBean
 public interface BaseModelRepository<E extends BaseModel<ID>, ID extends Serializable> extends AuditModelRepository<E, ID> {
 
+    @RestResource(rel = "fetch-by-id", description = @Description(value = "find model by id"))
     Optional<E> findById(final ID id);
 }

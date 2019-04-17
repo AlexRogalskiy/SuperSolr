@@ -24,17 +24,26 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@link Product} repository declaration {@link BaseModelRepository}
  */
 @Repository
+@RepositoryRestResource(collectionResourceRel = "product-repo", itemResourceDescription = @Description(value = "CRUD operations on product"))
 public interface ProductRepository extends BaseModelRepository<Product, Long> {
 
-    List<? extends Product> findByName(final String name);
+    @Async
+    @RestResource(rel = "fetch-by-title", description = @Description(value = "find models by name"))
+    CompletableFuture<Iterable<? extends Product>> findByName(final String name);
 
-    List<? extends Product> findByRating(final Integer rating);
+    @Async
+    @RestResource(rel = "fetch-by-title", description = @Description(value = "find models by rating"))
+    CompletableFuture<Iterable<? extends Product>> findByRating(final Integer rating);
 }

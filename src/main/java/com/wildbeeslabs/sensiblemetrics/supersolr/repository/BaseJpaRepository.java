@@ -25,8 +25,14 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 /**
  * Base jpa repository declaration {@link JpaRepository}
@@ -36,4 +42,8 @@ import java.io.Serializable;
  */
 @NoRepositoryBean
 public interface BaseJpaRepository<E, ID extends Serializable> extends JpaRepository<E, ID> {
+
+    @Async
+    @RestResource(rel = "fetch-by-predicate", description = @Description(value = "find models by predicate"))
+    CompletableFuture<Iterable<? extends E>> findAll(final Predicate<E> predicate);
 }

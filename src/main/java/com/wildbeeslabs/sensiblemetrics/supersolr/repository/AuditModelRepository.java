@@ -25,11 +25,12 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -43,25 +44,31 @@ public interface AuditModelRepository<E extends AuditModel, ID extends Serializa
 
     //@Query("SELECT e FROM #{#entityName} e WHERE e.created <= ?1")
     @Async
-    CompletableFuture<List<? extends E>> findByCreatedLessThanEqual(final Date date);
+    @RestResource(rel = "fetch-by-created-less-than-equal", description = @Description(value = "find models by created less than equal"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedLessThanEqual(final Date date);
 
     //@Query("SELECT e FROM #{#entityName} e WHERE e.created > ?1")
     @Async
-    CompletableFuture<List<? extends E>> findByCreatedGreaterThan(final Date date);
+    @RestResource(rel = "fetch-by-created-greater-than", description = @Description(value = "find models by created greater than equal"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedGreaterThan(final Date date);
 
     //@Query("SELECT e FROM #{#entityName} e WHERE e.created > ?1 AND e.created <= ?2")
     @Async
-    CompletableFuture<List<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
+    @RestResource(rel = "fetch-by-created-between", description = @Description(value = "find models by created between"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedBetween(final Date dateFrom, final Date dateTo);
 
     //@Query("SELECT e FROM #{#entityName} e WHERE e.createdBy = ?1")
     @Async
-    CompletableFuture<List<? extends E>> findByCreatedByIgnoreCase(final String createdBy);
+    @RestResource(rel = "fetch-by-createdBy", description = @Description(value = "find models by createdBy"))
+    CompletableFuture<Iterable<? extends E>> findByCreatedByIgnoreCase(final String createdBy);
 
     //@Query("SELECT e FROM #{#entityName} e WHERE e.changedBy = ?1")
     @Async
-    CompletableFuture<List<? extends E>> findByChangedByIgnoreCase(final String changedBy);
+    @RestResource(rel = "fetch-by-changedBy", description = @Description(value = "find models by changedBy"))
+    CompletableFuture<Iterable<? extends E>> findByChangedByIgnoreCase(final String changedBy);
 
     //@Query("SELECT e FROM #{#entityName} e WHERE e.changed > ?1 AND e.changed <= ?2")
     @Async
-    CompletableFuture<List<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
+    @RestResource(rel = "fetch-by-changed-between", description = @Description(value = "find models by changed between"))
+    CompletableFuture<Iterable<? extends E>> findByChangedBetween(final Date dateFrom, final Date dateTo);
 }

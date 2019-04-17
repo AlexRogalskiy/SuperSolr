@@ -24,6 +24,9 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -32,7 +35,9 @@ import java.util.Optional;
  * {@link Account} repository declaration {@link BaseModelRepository}
  */
 @Repository
+@RepositoryRestResource(collectionResourceRel = "account-repo", itemResourceDescription = @Description(value = "CRUD operations on account"))
 public interface AccountRepository extends BaseModelRepository<Account, Long> {
 
+    @RestResource(rel = "fetch-by-username", description = @Description(value = "find model by username"))
     Optional<Account> findByUsername(final String username);
 }

@@ -50,16 +50,17 @@ public abstract class BaseModelServiceImpl<E extends BaseModel<ID>, ID extends S
     public void saveOrUpdate(final E target, final Class<? extends E> clazz) {
         log.info("Saving or updating target entity: {}", target);
         if (target.isNew()) {
-            getEntityManager().persist(target);
+            this.getEntityManager().persist(target);
         } else {
-            final E targetEntity = getEntityManager().find(clazz, target.getId());
+            final E targetEntity = this.getEntityManager().find(clazz, target.getId());
             if (Objects.isNull(targetEntity)) {
-                getEntityManager().persist(target);
+                this.getEntityManager().persist(target);
             } else {
-                getEntityManager().merge(target);
+                this.getEntityManager().merge(target);
             }
         }
     }
 
+    @Override
     protected abstract BaseModelRepository<E, ID> getRepository();
 }

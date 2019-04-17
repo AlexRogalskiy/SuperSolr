@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation;
+package com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint.ChronologicalDatesConstraint;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.validator.ChronologicalDatesValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -37,10 +37,10 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @ReportAsSingleViolation
-@Constraint(validatedBy = {ChronologicalDatesConstraint.class})
+@Constraint(validatedBy = {ChronologicalDatesValidator.class})
 public @interface ChronologicalDates {
 
-    String message() default "{com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.ChronologicalDates.message}";
+    String message() default "{com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint.ChronologicalDates.message}";
 
     Class<?>[] groups() default {};
 

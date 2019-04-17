@@ -24,17 +24,26 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Order;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * {@link Order} repository declaration {@link BaseModelRepository}
  */
 @Repository
+@RepositoryRestResource(collectionResourceRel = "order-repo", itemResourceDescription = @Description(value = "CRUD operations on order"))
 public interface OrderRepository extends BaseModelRepository<Order, Long> {
 
-    List<? extends Order> findByTitle(final String title);
+    @Async
+    @RestResource(rel = "fetch-by-title", description = @Description(value = "find models by title"))
+    CompletableFuture<Iterable<? extends Order>> findByTitle(final String title);
 
-    List<? extends Order> findByDescription(final String description);
+    @Async
+    @RestResource(rel = "fetch-by-description", description = @Description(value = "find models by description"))
+    CompletableFuture<Iterable<? extends Order>> findByDescription(final String description);
 }
