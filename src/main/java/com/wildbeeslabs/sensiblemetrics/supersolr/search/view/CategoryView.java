@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -52,15 +53,18 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonPropertyOrder(value = {
-    ID_FIELD_NAME,
-    SCORE_FIELD_NAME,
-    INDEX_FIELD_NAME,
-    TITLE_FIELD_NAME,
-    DESCRIPTION_FIELD_NAME,
-    PRODUCTS_FIELD_NAME,
-    MAIN_PRODUCTS_FIELD_NAME
-}, alphabetic = true)
+@JsonPropertyOrder(
+    value = {
+        ID_FIELD_NAME,
+        SCORE_FIELD_NAME,
+        INDEX_FIELD_NAME,
+        TITLE_FIELD_NAME,
+        DESCRIPTION_FIELD_NAME,
+        PRODUCTS_FIELD_NAME,
+        MAIN_PRODUCTS_FIELD_NAME
+    },
+    alphabetic = true)
+@JsonRootName(ExposableCategoryView.VIEW_ID)
 @JacksonXmlRootElement(localName = ExposableCategoryView.VIEW_ID)
 @ApiModel(value = ExposableCategoryView.VIEW_ID, description = "All details about category document")
 public class CategoryView extends BaseDocumentView<String> implements ExposableCategoryView {

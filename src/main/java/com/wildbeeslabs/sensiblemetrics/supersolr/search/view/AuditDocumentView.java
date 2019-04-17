@@ -60,6 +60,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.DateUtils.DEFAU
     allowGetters = true,
     ignoreUnknown = true
 )
+@JsonRootName(ExposableAuditDocumentView.VIEW_ID)
 @JacksonXmlRootElement(localName = ExposableAuditDocumentView.VIEW_ID)
 @ApiModel(value = ExposableAuditDocumentView.VIEW_ID, description = "All audit details about document")
 public abstract class AuditDocumentView implements ExposableAuditDocumentView, Serializable {

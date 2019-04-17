@@ -66,21 +66,21 @@ public interface BaseSearchController<E, T, ID extends Serializable> {
     /**
      * Returns {@link ResponseEntity} body with newly created item
      *
-     * @param itemDto - initial input entity dto
+     * @param target - initial input entity dto
      * @return response body {@link ResponseEntity}
      */
-    default ResponseEntity<?> create(final T itemDto) {
+    default ResponseEntity<?> create(final T target) {
         return DEFAULT_NOT_ALLOWED_RESPONSE;
     }
 
     /**
      * Returns {@link ResponseEntity} body with updated item
      *
-     * @param id      - initial input entity identifier
-     * @param itemDto - initial input entity dto
+     * @param id     - initial input entity identifier
+     * @param target - initial input entity dto
      * @return response body {@link ResponseEntity}
      */
-    default ResponseEntity<?> update(final ID id, final T itemDto) {
+    default ResponseEntity<?> update(final ID id, final T target) {
         return DEFAULT_NOT_ALLOWED_RESPONSE;
     }
 

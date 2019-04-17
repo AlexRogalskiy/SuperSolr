@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.view;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.interfaces.ExposableBaseDocumentView;
@@ -50,6 +51,7 @@ import java.util.*;
 @ToString(callSuper = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonRootName(ExposableBaseDocumentView.VIEW_ID)
 @JacksonXmlRootElement(localName = ExposableBaseDocumentView.VIEW_ID)
 @ApiModel(value = ExposableBaseDocumentView.VIEW_ID, description = "All details about document")
 public abstract class BaseDocumentView<ID extends Serializable> extends AuditDocumentView implements ExposableBaseDocumentView {
