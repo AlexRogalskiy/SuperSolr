@@ -55,6 +55,7 @@ public abstract class BaseDocument<ID extends Serializable> extends AuditDocumen
     @Setter(AccessLevel.PROTECTED)
     private float score;
 
+    @Override
     public boolean isNew() {
         return Objects.isNull(this.getId());
     }
