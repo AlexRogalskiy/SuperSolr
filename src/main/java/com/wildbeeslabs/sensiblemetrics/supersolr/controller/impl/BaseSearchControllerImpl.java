@@ -26,6 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseSearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
+import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceAlreadyExistException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseSearchService;
 import lombok.Data;
@@ -36,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Example;
 
 import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
@@ -84,9 +86,9 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
                            final Class<? extends E> entityClass) {
         log.debug("Creating new item: {}", itemDto);
         final E itemEntity = map(itemDto, entityClass);
-//        if (getSearchService().exists(itemEntity)) {
-//            throw new ResourceAlreadyExistException(formatMessage(getMessageSource(), "error.already.exist.item"));
-//        }
+        if (getSearchService().exists(Example.of(itemEntity))) {
+            throw new ResourceAlreadyExistException(formatMessage(getMessageSource(), "error.already.exist.item"));
+        }
         getSearchService().save(itemEntity);
         return itemEntity;
     }

@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
 import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.data.rest.core.annotation.Description;
 import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.data.solr.repository.SolrCrudRepository;
@@ -40,7 +41,7 @@ import java.util.function.Predicate;
  * @param <ID> type of document identifier {@link Serializable}
  */
 @NoRepositoryBean
-public interface BaseSearchRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID> {
+public interface BaseSearchRepository<E, ID extends Serializable> extends SolrCrudRepository<E, ID>, QueryByExampleExecutor<E> {
 
     @Async
     @RestResource(rel = "fetch-by-predicate", description = @Description(value = "find documents by predicate"))

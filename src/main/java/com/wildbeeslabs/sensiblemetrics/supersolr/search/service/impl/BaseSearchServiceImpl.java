@@ -29,6 +29,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Example;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -104,7 +105,12 @@ public abstract class BaseSearchServiceImpl<E, ID extends Serializable> implemen
     @Override
     @Transactional(readOnly = true)
     public boolean exists(final ID id) {
-        return find(id).isPresent();
+        return getRepository().existsById(id);
+    }
+
+    @Override
+    public <S extends E> boolean exists(final Example<S> example) {
+        return getRepository().exists(example);
     }
 
     protected EntityManager getEntityManager() {

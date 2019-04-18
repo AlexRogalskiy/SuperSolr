@@ -23,6 +23,8 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
+import org.springframework.data.domain.Example;
+
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -45,6 +47,8 @@ public interface BaseSearchService<E, ID extends Serializable> {
     //void saveAll(final Iterable<? extends E> target);
 
     boolean exists(final ID id);
+
+    <S extends E> boolean exists(final Example<S> example);
 
     <S extends E> Iterable<S> save(final Iterable<S> entities);
 
