@@ -28,13 +28,13 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.CategorySearchService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,6 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Category controller implementation unit test {@link BaseTest}
  */
 @Slf4j
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -84,17 +85,10 @@ public class CategorySearchControllerImplTest extends BaseTest {
     @Value("${supersolr.solr.server.url}")
     private String url;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private CategorySearchService categoryService;
+    private final MockMvc mockMvc;
+    private final TestRestTemplate restTemplate;
+    private final UserDetailsService userDetailsService;
+    private final CategorySearchService categoryService;
 
     @Before
     public void before() {
