@@ -56,8 +56,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.ServiceUtils.getResultAsync;
 import static junit.framework.TestCase.*;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
@@ -98,6 +99,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByName(product.getName(), PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
         final List<? extends Product> products = productPage.getContent();
 
         // then
@@ -121,6 +123,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
         final List<? extends Product> products = productPage.getContent();
 
         // then
@@ -144,6 +147,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductSearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
         final List<? extends Product> products = productPage.getContent();
 
         // then
@@ -174,6 +178,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         FacetPage<? extends Product> productFacetPage = getProductSearchRepository().findByNameStartingWith(searchExistingName, PageRequest.of(0, 10));
+        assertThat(productFacetPage, notNullValue());
         List<? extends Product> products = productFacetPage.getContent();
 
         // then
@@ -183,6 +188,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         productFacetPage = getProductSearchRepository().findByNameStartingWith(searchNonExistingName, PageRequest.of(0, 10));
+        assertThat(productFacetPage, notNullValue());
         products = productFacetPage.getContent();
 
         // then
@@ -204,6 +210,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         final HighlightPage<? extends Product> productHighlightPage = getProductSearchRepository().findByNameIn(names, PageRequest.of(0, 15));
+        assertThat(productHighlightPage, notNullValue());
         final List<? extends Product> products = productHighlightPage.getContent();
 
         // then
@@ -226,10 +233,12 @@ public class ProductSearchRepositoryTest extends BaseTest {
         getSolrTemplate().commit(SearchableProduct.COLLECTION_ID);
 
         // when
-        final List<? extends Product> products = getProductSearchRepository().findByNameLike(names);
+        final Iterable<? extends Product> products = getResultAsync(getProductSearchRepository().findByNameLike(names));
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, empty());
+        assertThat(productList, is(empty()));
     }
 
     @Test
@@ -243,12 +252,13 @@ public class ProductSearchRepositoryTest extends BaseTest {
         getSolrTemplate().commit(SearchableProduct.COLLECTION_ID);
 
         // when
-        final Iterable<Product> productIterable = getProductSearchRepository().findAll();
-        final List<Product> products = Lists.newArrayList(productIterable);
+        final Iterable<Product> products = getProductSearchRepository().findAll();
+        assertThat(products, notNullValue());
+        final List<Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertThat(products, hasSize(10));
+        assertThat(productList, not(empty()));
+        assertThat(productList, hasSize(10));
     }
 
     @Test
@@ -268,13 +278,14 @@ public class ProductSearchRepositoryTest extends BaseTest {
     @DisplayName("Test search all products by sort")
     public void testFindAllBySort() {
         // when
-        final Iterable<Product> productIterable = getProductSearchRepository().findAll(new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
-        final List<Product> products = Lists.newArrayList(productIterable);
+        final Iterable<Product> products = getProductSearchRepository().findAll(new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
+        assertThat(products, notNullValue());
+        final List<Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertThat(products, hasSize(9));
-        assertThat(products.get(0).getId(), IsEqual.equalTo("09"));
+        assertThat(productList, not(empty()));
+        assertThat(productList, hasSize(9));
+        assertThat(productList.get(0).getId(), IsEqual.equalTo("09"));
     }
 
     @Test
@@ -289,9 +300,9 @@ public class ProductSearchRepositoryTest extends BaseTest {
         getSolrTemplate().commit(SearchableProduct.COLLECTION_ID);
 
         // when
-        final CompletableFuture<List<? extends Product>> productsFuture = getProductSearchRepository().findByCreatedBetween(DateUtils.toDate(2018, 01, 01), DateUtils.toDate(2018, 12, 01));
+        final CompletableFuture<Iterable<? extends Product>> productsFuture = getProductSearchRepository().findByCreatedBetween(DateUtils.toDate(2018, 01, 01), DateUtils.toDate(2018, 12, 01));
         assertTrue(productsFuture.isDone());
-        final List<? extends Product> products = Lists.newArrayList(productsFuture.get());
+        final List<? extends Product> products = Lists.newArrayList(getResultAsync(productsFuture));
 
         // then
         assertThat(products, not(empty()));
@@ -313,11 +324,13 @@ public class ProductSearchRepositoryTest extends BaseTest {
         getSolrTemplate().commit(SearchableProduct.COLLECTION_ID);
 
         // when
-        final List<? extends Product> products = getProductSearchRepository().findByNameLike(names);
+        final Iterable<? extends Product> products = getResultAsync(getProductSearchRepository().findByNameLike(names));
+        assertThat(products, notNullValue());
+        final List<Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertThat(products, hasSize(1));
+        assertThat(productList, not(empty()));
+        assertThat(productList, hasSize(1));
     }
 
     @Test
@@ -336,6 +349,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Product> productsPage = getProductSearchRepository().findByPriceInRange(lowerBound, upperBound, PageRequest.of(0, 10));
+        assertThat(productsPage, notNullValue());
         final List<? extends Product> products = productsPage.getContent();
 
         // then
@@ -359,6 +373,7 @@ public class ProductSearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Product> productsPage = getProductSearchRepository().findByPriceInRangeExclusive(lowerBound, upperBound, PageRequest.of(0, 10));
+        assertThat(productsPage, notNullValue());
         final List<? extends Product> products = productsPage.getContent();
 
         // then

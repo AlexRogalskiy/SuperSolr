@@ -231,6 +231,7 @@ public class ProductSearchServiceImpl extends BaseDocumentSearchServiceImpl<Prod
         final Criteria fileIdCriteria = new Criteria(SearchableProduct.ID_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria pageTitleCriteria = new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).boost(2).is(searchTerm);
         final Criteria nameCriteria = new Criteria(SearchableProduct.NAME_FIELD_NAME).fuzzy(searchTerm);
+
         final SimpleHighlightQuery query = new SimpleHighlightQuery(fileIdCriteria.or(pageTitleCriteria).or(nameCriteria), page);
         query.setHighlightOptions(new HighlightOptions()
             .setSimplePrefix("<highlight>")

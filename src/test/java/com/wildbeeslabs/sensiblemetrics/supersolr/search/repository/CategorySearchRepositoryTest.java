@@ -55,8 +55,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.ServiceUtils.getResultAsync;
 import static junit.framework.TestCase.*;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
@@ -97,6 +99,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByTitle(category.getTitle(), PageRequest.of(0, 2));
+        assertThat(categoryPage, notNullValue());
         final List<? extends Category> categories = categoryPage.getContent();
 
         // then
@@ -120,6 +123,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // when
         final Page<? extends Category> categoryPage = getCategorySearchRepository().findByDescription(searchTerm, PageRequest.of(0, 2));
+        assertThat(categoryPage, notNullValue());
         final List<? extends Category> categories = categoryPage.getContent();
 
         // then
@@ -139,12 +143,13 @@ public class CategorySearchRepositoryTest extends BaseTest {
         getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
-        final Iterable<Category> categoryIterable = getCategorySearchRepository().findAll();
-        final List<Category> categories = Lists.newArrayList(categoryIterable);
+        final Iterable<Category> categories = getCategorySearchRepository().findAll();
+        assertThat(categories, notNullValue());
+        final List<Category> categoryList = Lists.newArrayList(categories);
 
         // then
-        assertThat(categories, not(empty()));
-        assertThat(categories, hasSize(11));
+        assertThat(categoryList, not(empty()));
+        assertThat(categoryList, hasSize(11));
     }
 
     @Test
@@ -164,13 +169,14 @@ public class CategorySearchRepositoryTest extends BaseTest {
     @DisplayName("Test search all categories by sort")
     public void testFindAllBySort() {
         // when
-        final Iterable<Category> categoryIterable = getCategorySearchRepository().findAll(new Sort(Sort.Direction.DESC, SearchableCategory.ID_FIELD_NAME));
-        final List<Category> categories = Lists.newArrayList(categoryIterable);
+        final Iterable<Category> categories = getCategorySearchRepository().findAll(new Sort(Sort.Direction.DESC, SearchableCategory.ID_FIELD_NAME));
+        assertThat(categories, notNullValue());
+        final List<Category> categoryList = Lists.newArrayList(categories);
 
         // then
-        assertThat(categories, not(empty()));
-        assertThat(categories, hasSize(10));
-        assertThat(categories.get(0).getId(), IsEqual.equalTo("10"));
+        assertThat(categoryList, not(empty()));
+        assertThat(categoryList, hasSize(10));
+        assertThat(categoryList.get(0).getId(), IsEqual.equalTo("10"));
     }
 
     @Test
@@ -185,9 +191,9 @@ public class CategorySearchRepositoryTest extends BaseTest {
         getSolrTemplate().commit(SearchableCategory.COLLECTION_ID);
 
         // when
-        final CompletableFuture<List<? extends Category>> categoriesFuture = getCategorySearchRepository().findByCreatedBetween(DateUtils.toDate(2018, 01, 01), DateUtils.toDate(2018, 12, 01));
+        final CompletableFuture<Iterable<? extends Category>> categoriesFuture = getCategorySearchRepository().findByCreatedBetween(DateUtils.toDate(2018, 01, 01), DateUtils.toDate(2018, 12, 01));
         assertTrue(categoriesFuture.isDone());
-        final List<? extends Category> products = Lists.newArrayList(categoriesFuture.get());
+        final List<? extends Category> products = Lists.newArrayList(getResultAsync(categoriesFuture));
 
         // then
         assertThat(products, not(empty()));
@@ -218,6 +224,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // when
         FacetPage<? extends Category> categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(searchExistingTitle, PageRequest.of(0, 10));
+        assertThat(categoryFacetPage, notNullValue());
         List<? extends Category> categories = categoryFacetPage.getContent();
 
         // then
@@ -227,6 +234,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // when
         categoryFacetPage = getCategorySearchRepository().findByTitleStartingWith(searchNonExistingTitle, PageRequest.of(0, 10));
+        assertThat(categoryFacetPage, notNullValue());
         categories = categoryFacetPage.getContent();
 
         // then
@@ -269,6 +277,7 @@ public class CategorySearchRepositoryTest extends BaseTest {
 
         // when
         final HighlightPage<? extends Category> categoryHighlightPage = getCategorySearchRepository().findByTitleIn(titles, PageRequest.of(0, 15));
+        assertThat(categoryHighlightPage, notNullValue());
         final List<? extends Category> categories = categoryHighlightPage.getContent();
 
         // then

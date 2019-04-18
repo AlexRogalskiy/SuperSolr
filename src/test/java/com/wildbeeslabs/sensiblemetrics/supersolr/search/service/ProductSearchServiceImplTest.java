@@ -25,9 +25,9 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -54,6 +54,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocu
 import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_SEARСH_TERM_DELIMITER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -84,12 +85,13 @@ public class ProductSearchServiceImplTest extends BaseTest {
     @DisplayName("Test search all products")
     public void testFindAll() {
         // when
-        final Iterable<? extends Product> productIterable = getProductService().findAll();
-        final List<? extends Product> products = Lists.newArrayList(productIterable);
+        final Iterable<? extends Product> products = getProductService().findAll();
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertThat(products, hasSize(10));
+        assertThat(productList, not(empty()));
+        assertThat(productList, hasSize(10));
     }
 
     @Test
@@ -99,12 +101,13 @@ public class ProductSearchServiceImplTest extends BaseTest {
         final List<String> productIds = Arrays.asList("01", "02", "03");
 
         // when
-        final Iterable<? extends Product> productIterable = getProductService().findAll(productIds);
-        final List<? extends Product> products = Lists.newArrayList(productIterable);
+        final Iterable<? extends Product> products = getProductService().findAll(productIds);
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertThat(products, hasSize(productIds.size()));
+        assertThat(productList, not(empty()));
+        assertThat(productList, hasSize(productIds.size()));
     }
 
     @Test
@@ -125,6 +128,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByName("New", PageRequest.of(0, 10));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(2, productPage.getTotalElements());
@@ -151,6 +155,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, nameAndDescriptionCriteria(searchTerms), PageRequest.of(0, 10));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(1, productPage.getTotalElements());
@@ -171,6 +176,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, new Criteria(SearchableProduct.PAGE_TITLE_FIELD_NAME).is(searhTerms), PageRequest.of(0, 10));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(1, productPage.getTotalElements());
@@ -191,6 +197,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByDescription("Island", PageRequest.of(0, 10));
+        assertThat(productPage, notNullValue());
         final List<? extends Product> products = productPage.getContent();
 
         // then
@@ -207,6 +214,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByNames(searchTerm, PageRequest.of(0, 10));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(1, productPage.getTotalElements());
@@ -227,6 +235,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final FacetPage<? extends Product> productFacetPage = getProductService().findByAutoCompleteNameFragment(searchTerms, PageRequest.of(0, 2));
+        assertThat(productFacetPage, notNullValue());
 
         // then
         assertThat(productFacetPage.getContent(), is(empty()));
@@ -240,6 +249,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final FacetPage<? extends Product> productFacetPage = getProductService().findByAutoCompleteNameFragment(searchTerms, PageRequest.of(0, 2));
+        assertThat(productFacetPage, notNullValue());
 
         // then
         assertEquals(2, productFacetPage.getNumberOfElements());
@@ -268,12 +278,14 @@ public class ProductSearchServiceImplTest extends BaseTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLocationWithin(locationString, distance);
+        final Iterable<? extends Product> products = getProductService().findByLocationWithin(locationString, distance);
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, hasSize(1));
-        assertThat(location.getX() - products.iterator().next().getLocation().getX(), is(lessThan(distance.getValue())));
-        assertThat(location.getY() - products.iterator().next().getLocation().getY(), is(lessThan(distance.getValue())));
+        assertThat(productList, hasSize(1));
+        assertThat(location.getX() - productList.get(0).getLocation().getX(), is(lessThan(distance.getValue())));
+        assertThat(location.getY() - productList.get(1).getLocation().getY(), is(lessThan(distance.getValue())));
     }
 
     @Test
@@ -290,10 +302,12 @@ public class ProductSearchServiceImplTest extends BaseTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLocationNear(point, distance);
+        final Iterable<? extends Product> products = getProductService().findByLocationNear(point, distance);
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, is(empty()));
+        assertThat(productList, is(empty()));
     }
 
     @Test
@@ -311,6 +325,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, criteria, PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
         productPage.getContent();
 
         // then;
@@ -330,7 +345,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
         final GeoResults<? extends Product> products = getProductService().findByGeoLocationNear(location, distance);
 
         // then
-        assertNotNull(products);
+        assertThat(products, notNullValue());
         assertThat(products.getContent(), hasSize(1));
 
         final Distance distanceResult = products.getContent().get(0).getDistance();
@@ -346,6 +361,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByRating(rating, PageRequest.of(0, 5));
+        assertThat(productPage, notNullValue());
 
         // then
         assertThat(productPage.getContent(), is(empty()));
@@ -363,6 +379,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByRating(rating, PageRequest.of(0, 5));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(2, productPage.getTotalElements());
@@ -381,10 +398,11 @@ public class ProductSearchServiceImplTest extends BaseTest {
         getProductService().save(product);
 
         // when
-        final List<? extends Product> products = getProductService().findByLockType(lockType, new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
-
+        final Iterable<? extends Product> products = getProductService().findByLockType(lockType, new Sort(Sort.Direction.DESC, SearchableProduct.ID_FIELD_NAME));
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
         // then
-        assertThat(products, hasSize(1));
+        assertThat(productList, hasSize(1));
     }
 
     @Test
@@ -397,6 +415,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByNameOrDescription(searchTerm, PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
 
         // then
         assertThat(productPage.getContent(), is(empty()));
@@ -413,6 +432,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByNameOrDescription(searchTerm, PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(10, productPage.getTotalElements());
@@ -432,6 +452,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByNameOrCategory(searchTerm, PageRequest.of(0, 10));
+        assertThat(productPage, notNullValue());
 
         // then
         assertEquals(1, productPage.getTotalElements());
@@ -451,6 +472,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByQuery(SearchableProduct.COLLECTION_ID, new SimpleQuery(criteria));
+        assertThat(productPage, notNullValue());
         productPage.getContent();
 
         // then
@@ -473,6 +495,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Product> productPage = getProductService().findByCriteria(SearchableProduct.COLLECTION_ID, criteria, PageRequest.of(0, 2));
+        assertThat(productPage, notNullValue());
         productPage.getContent();
 
         // then
@@ -491,13 +514,14 @@ public class ProductSearchServiceImplTest extends BaseTest {
                 .setFacetLimit(5));
 
         // when
-        final FacetPage<? extends Product> productPage = getProductService().findByFacetQuery(SearchableProduct.COLLECTION_ID, facetQuery);
+        final FacetPage<? extends Product> productFacetPage = getProductService().findByFacetQuery(SearchableProduct.COLLECTION_ID, facetQuery);
+        assertThat(productFacetPage, notNullValue());
 
         // then
-        assertThat(productPage.getContent(), hasSize(10));
+        assertThat(productFacetPage.getContent(), hasSize(10));
 
         // when
-        final Map<String, Long> categoryFacetCounts = getFacetCounts(productPage);
+        final Map<String, Long> categoryFacetCounts = getFacetCounts(productFacetPage);
 
         // then
         assertNull(categoryFacetCounts.get("Test"));
@@ -513,6 +537,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final HighlightPage<? extends Product> productHighlightPage = getProductService().find(SearchableProduct.COLLECTION_ID, searchTerm, PageRequest.of(0, 10));
+        assertThat(productHighlightPage, notNullValue());
 
         // then
         assertThat(productHighlightPage.getContent(), is(empty()));
@@ -526,6 +551,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final HighlightPage<? extends Product> productHighlightPage = getProductService().find(SearchableProduct.COLLECTION_ID, searchTerm, PageRequest.of(0, 10));
+        assertThat(productHighlightPage, notNullValue());
         productHighlightPage.getContent();
 
         // then
@@ -543,6 +569,7 @@ public class ProductSearchServiceImplTest extends BaseTest {
 
         // when
         final HighlightPage<? extends Product> productHighlightPage = getProductService().findByNameIn(searchTerms, PageRequest.of(0, 10));
+        assertThat(productHighlightPage, notNullValue());
         productHighlightPage.getContent();
 
         // then

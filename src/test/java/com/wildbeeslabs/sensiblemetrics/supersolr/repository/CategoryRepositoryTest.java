@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -43,9 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.ServiceUtils.getResultAsync;
 import static junit.framework.TestCase.assertNotNull;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
@@ -122,10 +123,12 @@ public class CategoryRepositoryTest {
         final String title = "Test";
 
         // when
-        final List<? extends Category> categories = getCategoryRepository().findByTitle(title);
+        final Iterable<? extends Category> categories = getResultAsync(getCategoryRepository().findByTitle(title));
+        assertThat(categories, notNullValue());
+        final List<? extends Category> categoryList = Lists.newArrayList(categories);
 
         // then
-        assertThat(categories, is(empty()));
+        assertThat(categoryList, is(empty()));
     }
 
     @Test
@@ -135,12 +138,14 @@ public class CategoryRepositoryTest {
         final String title = "Category 01";
 
         // when
-        final List<? extends Category> categories = getCategoryRepository().findByTitle(title);
+        final Iterable<? extends Category> categories = getResultAsync(getCategoryRepository().findByTitle(title));
+        assertThat(categories, notNullValue());
+        final List<? extends Category> categoryList = Lists.newArrayList(categories);
 
         // then
-        assertThat(categories, not(empty()));
-        assertThat(categories, hasSize(1));
-        assertEquals(title, categories.get(0).getTitle());
+        assertThat(categoryList, not(empty()));
+        assertThat(categoryList, hasSize(1));
+        assertEquals(title, categoryList.get(0).getTitle());
     }
 
     protected CategoryRepository getCategoryRepository() {

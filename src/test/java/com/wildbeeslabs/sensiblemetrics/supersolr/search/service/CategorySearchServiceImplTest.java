@@ -25,9 +25,9 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -53,6 +53,7 @@ import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -86,12 +87,13 @@ public class CategorySearchServiceImplTest extends BaseTest {
         final int totalElements = 10;
 
         // when
-        final Iterable<? extends Category> categoryIterable = getCategoryService().findAll();
-        final List<? extends Category> categories = Lists.newArrayList(categoryIterable);
+        final Iterable<? extends Category> categories = getCategoryService().findAll();
+        assertThat(categories, notNullValue());
+        final List<? extends Category> categoryList = Lists.newArrayList(categories);
 
         // then
-        assertThat(categories, not(empty()));
-        assertThat(categories, hasSize(totalElements));
+        assertThat(categoryList, not(empty()));
+        assertThat(categoryList, hasSize(totalElements));
     }
 
     @Test
@@ -101,12 +103,13 @@ public class CategorySearchServiceImplTest extends BaseTest {
         final List<String> categoryIds = Arrays.asList("01", "02", "03");
 
         // when
-        final Iterable<? extends Category> categoryIterable = getCategoryService().findAll(categoryIds);
-        final List<? extends Category> categories = Lists.newArrayList(categoryIterable);
+        final Iterable<? extends Category> categories = getCategoryService().findAll(categoryIds);
+        assertThat(categories, notNullValue());
+        final List<? extends Category> categoryList = Lists.newArrayList(categories);
 
         // then
-        assertThat(categories, not(empty()));
-        assertThat(categories, hasSize(categoryIds.size()));
+        assertThat(categoryList, not(empty()));
+        assertThat(categoryList, hasSize(categoryIds.size()));
     }
 
     @Test
@@ -119,6 +122,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Category> categoryPage = getCategoryService().findByTitle(titleTerm, OffsetPageRequest.builder().offset(0).limit(10).build());
+        assertThat(categoryPage, notNullValue());
 
         // then
         assertEquals(totalElements, categoryPage.getTotalElements());
@@ -141,11 +145,12 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Category> categoryPage = getCategoryService().findByDescription(descriptionTerm, PageRequest.of(0, 10));
-        final List<? extends Category> categories = categoryPage.getContent();
+        assertThat(categoryPage, notNullValue());
+        final List<? extends Category> categoryList = categoryPage.getContent();
 
         // then
-        assertThat(categories, hasSize(totalElements));
-        assertTrue(containsIds(categories, idsToCheck));
+        assertThat(categoryList, hasSize(totalElements));
+        assertTrue(containsIds(categoryList, idsToCheck));
     }
 
     @Test
@@ -156,7 +161,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         Page<? extends Category> categoryPage = getCategoryService().findByTitles(titleTerms, PageRequest.of(0, 10));
-
+        assertThat(categoryPage, notNullValue());
         assertThat(categoryPage.getContent(), is(empty()));
 
         // given
@@ -186,6 +191,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         final FacetPage<? extends Category> categoryFacetPage = getCategoryService().findByAutoCompleteTitleFragment(titleTerms, PageRequest.of(0, 5));
+        assertThat(categoryFacetPage, notNullValue());
 
         // then
         assertEquals(4, categoryFacetPage.getNumberOfElements());
@@ -207,6 +213,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         final Page<? extends Category> productPage = getCategoryService().findByQuery(SearchableCategory.COLLECTION_ID, getQuery(queryString));
+        assertThat(productPage, notNullValue());
         productPage.getContent();
 
         // then
@@ -225,6 +232,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         final FacetPage<? extends Category> productPage = getCategoryService().findByFacetQuery(SearchableCategory.COLLECTION_ID, facetQuery);
+        assertThat(productPage, notNullValue());
 
         // then
         assertThat(productPage.getContent(), hasSize(10));
@@ -246,6 +254,7 @@ public class CategorySearchServiceImplTest extends BaseTest {
 
         // when
         final HighlightPage<? extends Category> categoryHighlightPage = getCategoryService().find(Category.COLLECTION_ID, searchTerm, PageRequest.of(0, 10));
+        assertThat(categoryHighlightPage, notNullValue());
         categoryHighlightPage.getContent();
 
         // then

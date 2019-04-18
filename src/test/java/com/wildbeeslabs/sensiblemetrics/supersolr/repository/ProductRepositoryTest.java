@@ -27,6 +27,7 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -43,9 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.ServiceUtils.getResultAsync;
 import static junit.framework.TestCase.assertNotNull;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
@@ -122,10 +123,12 @@ public class ProductRepositoryTest {
         final String name = "Test";
 
         // when
-        final List<? extends Product> products = getProductRepository().findByName(name);
+        final Iterable<? extends Product> products = getResultAsync(getProductRepository().findByName(name));
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, is(empty()));
+        assertThat(productList, is(empty()));
     }
 
     @Test
@@ -135,12 +138,14 @@ public class ProductRepositoryTest {
         final String name = "Product 01";
 
         // when
-        final List<? extends Product> products = getProductRepository().findByName(name);
+        final Iterable<? extends Product> products = getResultAsync(getProductRepository().findByName(name));
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertThat(products, hasSize(1));
-        assertEquals(name, products.get(0).getName());
+        assertThat(productList, not(empty()));
+        assertThat(productList, hasSize(1));
+        assertEquals(name, productList.get(0).getName());
     }
 
     @Test
@@ -150,12 +155,14 @@ public class ProductRepositoryTest {
         final Integer rating = 10;
 
         // when
-        final List<? extends Product> products = getProductRepository().findByRating(rating);
+        final Iterable<? extends Product> products = getResultAsync(getProductRepository().findByRating(rating));
+        assertThat(products, notNullValue());
+        final List<? extends Product> productList = Lists.newArrayList(products);
 
         // then
-        assertThat(products, not(empty()));
-        assertEquals(1, products.size());
-        assertEquals(rating, products.get(0).getRating());
+        assertThat(productList, not(empty()));
+        assertEquals(1, productList.size());
+        assertEquals(rating, productList.get(0).getRating());
     }
 
     protected ProductRepository getProductRepository() {

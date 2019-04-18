@@ -24,10 +24,13 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableBaseDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseSimpleSearchService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
 import org.springframework.data.solr.core.SolrOperations;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -127,18 +130,6 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
     }
 
     /**
-     * Returns iterable collection of searchable entities {@link Iterable} by input collection of entity IDs {@link Iterable}
-     *
-     * @param ids - initial input collection of entity IDs {@link Iterable}
-     * @return iterable collection of searchable entities {@link Iterable}
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Iterable<E> findAllById(final Iterable<ID> ids) {
-        return super.findAllById(ids);
-    }
-
-    /**
      * Removes entity by input ID
      *
      * @param id - initial input entity ID to be removed by
@@ -153,8 +144,9 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
     }
 
     @Override
-    public Iterable<? extends E> findAll(Iterable<ID> ids) {
-        return null;
+//    @Transactional(readOnly = true)
+    public Iterable<? extends E> findAll(final Iterable<ID> ids) {
+        return super.findAllById(ids);
     }
 
     /**
@@ -170,13 +162,23 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
     }
 
     @Override
-    public boolean exists(ID id) {
-        return false;
+    public boolean exists(final ID id) {
+        return super.existsById(id);
     }
 
     @Override
-    public <S extends E> Iterable<S> save(Iterable<S> entities) {
-        return null;
+    public <S extends E> boolean exists(final Example<S> example) {
+        ID baseModelId = null;
+        if (example.getProbe() instanceof BaseModel<?>) {
+            baseModelId = (ID) ((BaseModel) example.getProbe()).getId();
+        }
+        long count = super.count(new SimpleQuery(new Criteria(SearchableBaseDocument.CORE_ID).is(baseModelId)));
+        return (0 != count);
+    }
+
+    @Override
+    public <S extends E> Iterable<S> save(final Iterable<S> entities) {
+        return super.saveAll(entities);
     }
 
     /**
@@ -185,8 +187,7 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
      * @param entities - initial input collection of entities {@link Iterable}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void deleteAll(final Iterable<? extends E> entities) {
-        super.delete((E) entities);
+        super.deleteAll(entities);
     }
 }
