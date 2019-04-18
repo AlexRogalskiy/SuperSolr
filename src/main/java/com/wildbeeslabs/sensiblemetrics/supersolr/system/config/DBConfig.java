@@ -27,7 +27,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
@@ -59,6 +58,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
+import static org.hibernate.cfg.AvailableSettings.*;
 
 /**
  * Custom database configuration
@@ -271,43 +271,46 @@ public class DBConfig {
     public Properties jpaProperties() {
         final Properties jpaProperties = new Properties();
         // connection properties
-        //jpaProperties.put("hibernate.connection.provider_class", env.getRequiredProperty("supersolr.datasource.hibernate.connection.providerClass"));
-        jpaProperties.put("hibernate.connection.pool_size", env.getRequiredProperty("supersolr.datasource.hibernate.connection.poolSize"));
-        jpaProperties.put("hibernate.connection.autocommit", env.getRequiredProperty("supersolr.datasource.hibernate.connection.autocommit"));
-        jpaProperties.put("hibernate.connection.release_mode", env.getRequiredProperty("supersolr.datasource.hibernate.connection.releaseMode"));
-        jpaProperties.put("hibernate.connection.useUnicode", env.getRequiredProperty("supersolr.datasource.hibernate.connection.useUnicode"));
-        jpaProperties.put("hibernate.connection.charSet", env.getRequiredProperty("supersolr.datasource.hibernate.connection.charSet"));
-        jpaProperties.put("hibernate.connection.characterEncoding", env.getRequiredProperty("supersolr.datasource.hibernate.connection.characterEncoding"));
+        //jpaProperties.put(CONNECTION_PROVIDER, env.getRequiredProperty("supersolr.datasource.hibernate.connection.providerClass"));
+        jpaProperties.put(POOL_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.connection.poolSize"));
+        jpaProperties.put(AUTOCOMMIT, env.getRequiredProperty("supersolr.datasource.hibernate.connection.autocommit"));
+        jpaProperties.put(RELEASE_CONNECTIONS, env.getRequiredProperty("supersolr.datasource.hibernate.connection.releaseMode"));
+        jpaProperties.put(USE_UNICODE, env.getRequiredProperty("supersolr.datasource.hibernate.connection.useUnicode"));
+        jpaProperties.put(CHARSET, env.getRequiredProperty("supersolr.datasource.hibernate.connection.charSet"));
+        jpaProperties.put(CHARACTER_ENCODING, env.getRequiredProperty("supersolr.datasource.hibernate.connection.characterEncoding"));
 
         // general properties
-        jpaProperties.put("hibernate.dialect", env.getRequiredProperty("supersolr.datasource.hibernate.dialect"));
-        jpaProperties.put("hibernate.current_session_context_class", env.getRequiredProperty("supersolr.datasource.hibernate.currentSessionContextClass"));
-        jpaProperties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.auto"));
-        jpaProperties.put("hibernate.hbm2ddl.import_files", env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.importFiles"));
-        jpaProperties.put("hibernate.ejb.naming_strategy", env.getRequiredProperty("supersolr.datasource.hibernate.ejb.namingStrategy"));
-        jpaProperties.put("hibernate.show_sql", env.getRequiredProperty("supersolr.datasource.hibernate.showSql"));
-        jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("supersolr.datasource.hibernate.formatSql"));
-        jpaProperties.put("hibernate.use_sql_comments", env.getRequiredProperty("supersolr.datasource.hibernate.useSqlComments"));
-        jpaProperties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("supersolr.datasource.hibernate.enableLazyLoadNoTrans"));
-        jpaProperties.put("hibernate.max_fetch_depth", env.getRequiredProperty("supersolr.datasource.hibernate.maxFetchDepth"));
-        jpaProperties.put("hibernate.default_batch_fetch_size", env.getRequiredProperty("supersolr.datasource.hibernate.defaultBatchFetchSize"));
-        jpaProperties.put("hibernate.generate_statistics", env.getRequiredProperty("supersolr.datasource.hibernate.generateStatistics"));
-        jpaProperties.put("hibernate.globally_quoted_identifiers", env.getRequiredProperty("supersolr.datasource.hibernate.globallyQuotedIdentifiers"));
-        jpaProperties.put("hibernate.id.new_generator_mappings", env.getRequiredProperty("supersolr.datasource.hibernate.id.newGeneratorMappings"));
-        jpaProperties.put("hibernate.transaction.flush_before_completion", env.getRequiredProperty("supersolr.datasource.hibernate.transaction.flushBeforeCompletion"));
-        jpaProperties.put("hibernate.transaction.auto_close_session", env.getRequiredProperty("supersolr.datasource.hibernate.transaction.autoCloseSession"));
-        jpaProperties.put("hibernate.getString.merge.entity_copy_observer", env.getRequiredProperty("supersolr.datasource.hibernate.event.merge.entityCopyObserver"));
-        jpaProperties.put("hibernate.bytecode.use_reflection_optimizer", env.getRequiredProperty("supersolr.datasource.hibernate.bytecode.useReflectionOptimizer"));
-        jpaProperties.put("hibernate.temp.use_jdbc_metadata_defaults", env.getRequiredProperty("supersolr.datasource.hibernate.temp.useJdbcMetadataDefaults"));
-        //jpaProperties.put("hibernate.multi_tenant_connection_provider", env.getRequiredProperty("supersolr.datasource.hibernate.multiTenantConnectionProvider"));
-        //jpaProperties.put("hibernate.multiTenancy", env.getRequiredProperty("supersolr.datasource.hibernate.multiTenancy"));
+        jpaProperties.put(DIALECT, env.getRequiredProperty("supersolr.datasource.hibernate.dialect"));
+        jpaProperties.put(CURRENT_SESSION_CONTEXT_CLASS, env.getRequiredProperty("supersolr.datasource.hibernate.currentSessionContextClass"));
+        jpaProperties.put(HBM2DDL_AUTO, env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.auto"));
+        jpaProperties.put(DEFAULT_SCHEMA, env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.defaultSchema"));
+        jpaProperties.put(HBM2DDL_IMPORT_FILES, env.getRequiredProperty("supersolr.datasource.hibernate.hbm2ddl.importFiles"));
+        jpaProperties.put(EJB_NAMING_STRATEGY, env.getRequiredProperty("supersolr.datasource.hibernate.ejb.namingStrategy"));
+        jpaProperties.put(SHOW_SQL, env.getRequiredProperty("supersolr.datasource.hibernate.showSql"));
+        jpaProperties.put(FORMAT_SQL, env.getRequiredProperty("supersolr.datasource.hibernate.formatSql"));
+        jpaProperties.put(USE_SQL_COMMENTS, env.getRequiredProperty("supersolr.datasource.hibernate.useSqlComments"));
+        jpaProperties.put(ENABLE_LAZY_LOAD_NO_TRANS, env.getRequiredProperty("supersolr.datasource.hibernate.enableLazyLoadNoTrans"));
+        jpaProperties.put(MAX_FETCH_DEPTH, env.getRequiredProperty("supersolr.datasource.hibernate.maxFetchDepth"));
+        jpaProperties.put(DEFAULT_BATCH_FETCH_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.defaultBatchFetchSize"));
+        jpaProperties.put(GENERATE_STATISTICS, env.getRequiredProperty("supersolr.datasource.hibernate.generateStatistics"));
+        jpaProperties.put(GLOBALLY_QUOTED_IDENTIFIERS, env.getRequiredProperty("supersolr.datasource.hibernate.globallyQuotedIdentifiers"));
+        jpaProperties.put(USE_NEW_ID_GENERATOR_MAPPINGS, env.getRequiredProperty("supersolr.datasource.hibernate.id.newGeneratorMappings"));
+        jpaProperties.put(FLUSH_BEFORE_COMPLETION, env.getRequiredProperty("supersolr.datasource.hibernate.transaction.flushBeforeCompletion"));
+        jpaProperties.put(AUTO_CLOSE_SESSION, env.getRequiredProperty("supersolr.datasource.hibernate.transaction.autoCloseSession"));
+        jpaProperties.put(MERGE_ENTITY_COPY_OBSERVER, env.getRequiredProperty("supersolr.datasource.hibernate.event.merge.entityCopyObserver"));
+        jpaProperties.put(USE_REFLECTION_OPTIMIZER, env.getRequiredProperty("supersolr.datasource.hibernate.bytecode.useReflectionOptimizer"));
+        jpaProperties.put(TEMP_USE_JDBC_METADATA_DEFAULTS, env.getRequiredProperty("supersolr.datasource.hibernate.temp.useJdbcMetadataDefaults"));
+        //jpaProperties.put(MULTI_TENANT_CONNECTION_PROVIDER, env.getRequiredProperty("supersolr.datasource.hibernate.multiTenantConnectionProvider"));
+        //jpaProperties.put(MULTI_TENANT, env.getRequiredProperty("supersolr.datasource.hibernate.multiTenancy"));
 
         // cache properties
         //jpaProperties.put("hibernate.cache.ehcache.missing_cache_strategy", env.getRequiredProperty("supersolr.datasource.hibernate.cache.ehcache.missingCacheStrategy"));
-        //jpaProperties.put("hibernate.cache.region.factory_class", env.getRequiredProperty("supersolr.datasource.hibernate.cache.region.factoryClass"));
-        //jpaProperties.put("hibernate.cache.use_second_level_cache", env.getRequiredProperty("supersolr.datasource.hibernate.cache.useSecondLevelCache"));
-        //jpaProperties.put("hibernate.cache.use_structured_entries", env.getRequiredProperty("supersolr.datasource.hibernate.cache.useStructuredEntries"));
-        //jpaProperties.put("hibernate.cache.use_query_cache", env.getRequiredProperty("supersolr.datasource.hibernate.cache.useQueryCache"));
+        //jpaProperties.put(CACHE_REGION_FACTORY, env.getRequiredProperty("supersolr.datasource.hibernate.cache.region.factoryClass"));
+        //jpaProperties.put(USE_SECOND_LEVEL_CACHE, env.getRequiredProperty("supersolr.datasource.hibernate.cache.useSecondLevelCache"));
+        //jpaProperties.put(USE_STRUCTURED_CACHE, env.getRequiredProperty("supersolr.datasource.hibernate.cache.useStructuredEntries"));
+        //jpaProperties.put("hibernate.javax.cache.provider", env.getRequiredProperty("pem.datasource.hibernate.cache.providerClass"));
+        //jpaProperties.put(USE_QUERY_CACHE, env.getRequiredProperty("supersolr.datasource.hibernate.cache.useQueryCache"));
+        //jpaProperties.put(DEFAULT_CACHE_CONCURRENCY_STRATEGY, env.getRequiredProperty("pem.datasource.hibernate.cache.defaultCacheConcurrencyStrategy"));
         //jpaProperties.put("net.sf.ehcache.configurationResourceName", env.getRequiredProperty("supersolr.datasource.hibernate.cache.configurationResourceName"));
 
         // search properties
@@ -326,18 +329,18 @@ public class DBConfig {
         //jpaProperties.put("hibernate.search.default.batch.max_buffered_docs", env.getRequiredProperty("supersolr.datasource.hibernate.search.default.batch.maxBufferedDocs"));
 
         // fetch/batch properties
-        jpaProperties.put("hibernate.jdbc.fetch_size", env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.fetchSize"));
-        jpaProperties.put("hibernate.jdbc.batch_size", env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.batchSize"));
-        jpaProperties.put("hibernate.jdbc.batch_versioned_data", env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.batchVersionedData"));
-        jpaProperties.put("hibernate.order_inserts", env.getRequiredProperty("supersolr.datasource.hibernate.orderInserts"));
-        jpaProperties.put("hibernate.order_updates", env.getRequiredProperty("supersolr.datasource.hibernate.orderUpdates"));
+        jpaProperties.put(STATEMENT_FETCH_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.fetchSize"));
+        jpaProperties.put(STATEMENT_BATCH_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.batchSize"));
+        jpaProperties.put(BATCH_VERSIONED_DATA, env.getRequiredProperty("supersolr.datasource.hibernate.jdbc.batchVersionedData"));
+        jpaProperties.put(ORDER_INSERTS, env.getRequiredProperty("supersolr.datasource.hibernate.orderInserts"));
+        jpaProperties.put(ORDER_UPDATES, env.getRequiredProperty("supersolr.datasource.hibernate.orderUpdates"));
 
         // connection pool properties
-        jpaProperties.put("hibernate.c3p0.min_size", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.minSize"));
-        jpaProperties.put("hibernate.c3p0.max_size", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.maxSize"));
-        jpaProperties.put("hibernate.c3p0.timeout", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.timeout"));
-        jpaProperties.put("hibernate.c3p0.max_statements", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.maxStatements"));
-        jpaProperties.put("hibernate.c3p0.idle_test_period", env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.idleTestPeriod"));
+        jpaProperties.put(C3P0_MIN_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.minSize"));
+        jpaProperties.put(C3P0_MAX_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.maxSize"));
+        jpaProperties.put(C3P0_TIMEOUT, env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.timeout"));
+        jpaProperties.put(C3P0_MAX_STATEMENTS, env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.maxStatements"));
+        jpaProperties.put(C3P0_ACQUIRE_INCREMENT, env.getRequiredProperty("supersolr.datasource.hibernate.c3p0.idleTestPeriod"));
 
         // native properties
         jpaProperties.setProperty("org.hibernate.SQL", "true");

@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 @NoRepositoryBean
 public interface BaseJpaRepository<E, ID extends Serializable> extends JpaRepository<E, ID> {
 
-    @Async
-    @RestResource(rel = "fetch-by-predicate", description = @Description(value = "find models by predicate"))
-    CompletableFuture<Iterable<? extends E>> findAll(final Predicate<E> predicate);
+//    @Async
+//    @RestResource(rel = "fetch-by-predicate", description = @Description(value = "find models by predicate"))
+//    CompletableFuture<Iterable<? extends E>> findAll(final Predicate<E> predicate);
 }
