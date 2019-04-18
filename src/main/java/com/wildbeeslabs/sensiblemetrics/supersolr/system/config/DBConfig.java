@@ -93,6 +93,14 @@ public class DBConfig {
      * Default domain name prefix
      */
     public static final String DEFAULT_DOMAIN_NAME_PREFIX = "domain_";
+    /**
+     * Default hibernate property names
+     */
+    public static final String EJB_NAMING_STRATEGY = "hibernate.ejb.naming_strategy";
+    public static final String TEMP_USE_JDBC_METADATA_DEFAULTS = "hibernate.temp.use_jdbc_metadata_defaults";
+    public static final String USE_UNICODE = "hibernate.connection.useUnicode";
+    public static final String CHARSET = "hibernate.connection.charSet";
+    public static final String CHARACTER_ENCODING = "hibernate.connection.characterEncoding";
 
     private final Environment env;
 
