@@ -23,12 +23,13 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.converter;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -42,7 +43,8 @@ import static org.junit.Assert.assertNotNull;
  * Redis data converter unit test
  */
 @Slf4j
-@Data
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -50,11 +52,8 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext
 public class RedisDataConverterTest {
 
-    @Autowired
-    private RedisDataConverter.Int2Port int2Port;
-
-    @Autowired
-    private RedisDataConverter.Str2Host str2Host;
+    private final RedisDataConverter.Int2Port int2Port;
+    private final RedisDataConverter.Str2Host str2Host;
 
     @Test
     public void testStr2HostConverter() {

@@ -26,9 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,6 +54,7 @@ import java.util.*;
  * Base test implementation
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
 public abstract class BaseTest {
 
     /**
@@ -210,9 +209,5 @@ public abstract class BaseTest {
             .setPrettyPrinting()
             .setLenient()
             .create();
-    }
-
-    protected SolrTemplate getSolrTemplate() {
-        return this.solrTemplate;
     }
 }

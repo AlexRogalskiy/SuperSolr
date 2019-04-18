@@ -26,9 +26,12 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
-import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.SolrConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
+import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.SolrConfig;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.internal.util.DateUtils;
 import org.hamcrest.core.IsEqual;
@@ -37,7 +40,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -67,6 +69,8 @@ import static org.hamcrest.Matchers.hasSize;
  * Category search repository implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SolrConfig.class)
 @PostgresDataJpaTest
@@ -74,8 +78,7 @@ import static org.hamcrest.Matchers.hasSize;
 @Transactional
 public class CategorySearchRepositoryTest extends BaseTest {
 
-    @Autowired
-    private CategorySearchRepository categorySearchRepository;
+    private final CategorySearchRepository categorySearchRepository;
 
     @Before
     public void before() {

@@ -28,6 +28,8 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.CategorySearchService;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
@@ -35,19 +37,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.security.Principal;
 import java.util.*;
 
 import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
@@ -64,30 +64,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Category controller implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
 @RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "file:src/test/resources/application.properties")
 @DirtiesContext
-public class CategorySearchControllerImplTest extends BaseTest {
+public class CategorySearchControllerImplTest extends AbstractBaseSearchControllerTest {
 
-    /**
-     * Default authentication user name
-     */
-    public static final String DEFAULT_USERNAME = "USER";
-
-    /**
-     * Default authentication principal instance {@link Principal}
-     */
-    public static final Principal DEFAULT_PRINCIPAL = () -> DEFAULT_USERNAME;
-
-    @Value("${supersolr.solr.server.url}")
-    private String url;
-
-    private final MockMvc mockMvc;
-    private final TestRestTemplate restTemplate;
-    private final UserDetailsService userDetailsService;
     private final CategorySearchService categoryService;
 
     @Before
@@ -135,7 +120,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -152,7 +137,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -172,7 +157,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate, "test", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             //.principal(principal))
@@ -191,7 +176,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate, "Black", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -213,7 +198,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(post(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(searchRequest)))
             .andExpect(status().isOk())
@@ -236,7 +221,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(post(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(searchRequest)))
             .andExpect(status().isOk())
@@ -251,7 +236,7 @@ public class CategorySearchControllerImplTest extends BaseTest {
         final String urlTemplate = "/api/category/all";
 
         this.mockMvc.perform(get(urlTemplate)
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isUnauthorized());
     }
@@ -303,16 +288,5 @@ public class CategorySearchControllerImplTest extends BaseTest {
         category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 0, 1.0, 2.0, true));
         categories.add(category);
         return categories;
-    }
-
-    protected HttpHeaders getHeaders() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-        return headers;
-    }
-
-    protected CategorySearchService getCategoryService() {
-        return this.categoryService;
     }
 }

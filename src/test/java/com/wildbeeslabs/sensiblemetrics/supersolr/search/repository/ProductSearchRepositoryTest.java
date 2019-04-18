@@ -26,9 +26,12 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.annotation.PostgresDataJpaTest;
-import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.SolrConfig;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
+import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.SolrConfig;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.flywaydb.core.internal.util.DateUtils;
@@ -38,7 +41,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -67,6 +69,8 @@ import static org.hamcrest.Matchers.hasSize;
  * Product search repository implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SolrConfig.class)
 @PostgresDataJpaTest
@@ -74,8 +78,7 @@ import static org.hamcrest.Matchers.hasSize;
 @Transactional
 public class ProductSearchRepositoryTest extends BaseTest {
 
-    @Autowired
-    private ProductSearchRepository productSearchRepository;
+    private final ProductSearchRepository productSearchRepository;
 
     @Before
     public void before() {
@@ -428,9 +431,5 @@ public class ProductSearchRepositoryTest extends BaseTest {
         product.addCategory(createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications"));
         products.add(product);
         return products;
-    }
-
-    protected ProductSearchRepository getProductSearchRepository() {
-        return this.productSearchRepository;
     }
 }

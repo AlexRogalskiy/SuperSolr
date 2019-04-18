@@ -28,17 +28,17 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.ProductSearchService;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -46,7 +46,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 
@@ -63,46 +62,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Product controller implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "file:src/test/resources/application.properties")
 @DirtiesContext
-public class ProductSearchControllerImplTest extends BaseTest {
+public class ProductSearchControllerImplTest extends AbstractBaseSearchControllerTest {
 
-    /**
-     * Default authentication user name
-     */
-    public static final String DEFAULT_USERNAME = "USER";
-
-    @Value("${supersolr.solr.server.url}")
-    private String url;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-//    @Autowired
-//    private WebApplicationContext webApplicationContext;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    //@Resource
-    //private FilterChainProxy springSecurityFilterChain;
-
-    @Autowired
-    private ProductSearchService productService;
-
-//    @Before
-//    public void before() {
-//        this.mockMvc = MockMvcBuilders
-//            .webAppContextSetup(this.webApplicationContext)
-//            //.addFilters(this.springSecurityFilterChain)
-//            .build();
-//    }
+    private final UserDetailsService userDetailsService;
+    private final ProductSearchService productService;
 
     @Before
     public void before() {
@@ -150,7 +120,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -167,7 +137,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -185,7 +155,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate, "test", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -205,7 +175,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate, "local", 1)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -227,7 +197,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(post(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(searchRequest)))
             .andExpect(status().isOk())
@@ -250,7 +220,7 @@ public class ProductSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(post(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(searchRequest)))
             .andExpect(status().isOk())
@@ -322,22 +292,5 @@ public class ProductSearchControllerImplTest extends BaseTest {
         product.addCategory(createCategory("10", 10, "Handling Cookies", "How to handle cookies in web applications"));
         products.add(product);
         return products;
-    }
-
-    protected HttpHeaders getHeaders() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-        //headers.add(HttpHeaders.AUTHORIZATION, "Basic " + new String(Base64.encode(("greg:turnquist").getBytes())));
-        return headers;
-    }
-
-    /**
-     * Default
-     *
-     * @return
-     */
-    protected ProductSearchService getProductService() {
-        return this.productService;
     }
 }

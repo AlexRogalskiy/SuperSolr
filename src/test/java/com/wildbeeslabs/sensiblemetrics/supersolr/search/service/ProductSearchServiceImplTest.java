@@ -29,6 +29,9 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageR
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.ProductSearchService;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +39,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -64,13 +66,14 @@ import static org.junit.Assert.*;
  * Product service implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureTestEntityManager
 public class ProductSearchServiceImplTest extends BaseTest {
 
-    @Autowired
-    private ProductSearchService productService;
+    private final ProductSearchService productService;
 
     @Before
     public void before() {
@@ -640,9 +643,5 @@ public class ProductSearchServiceImplTest extends BaseTest {
                 .or(SearchableProduct.PRICE_DESCRIPTION_FIELD_NAME).contains(word));
         }
         return criteria;
-    }
-
-    protected ProductSearchService getProductService() {
-        return this.productService;
     }
 }

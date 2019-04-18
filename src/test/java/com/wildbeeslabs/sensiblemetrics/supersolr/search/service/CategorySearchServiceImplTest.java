@@ -29,13 +29,15 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageR
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.CategorySearchService;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -63,13 +65,14 @@ import static org.junit.Assert.*;
  * Category service implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @AutoConfigureTestEntityManager
 public class CategorySearchServiceImplTest extends BaseTest {
 
-    @Autowired
-    private CategorySearchService categoryService;
+    private final CategorySearchService categoryService;
 
     @Before
     public void before() {
@@ -313,9 +316,5 @@ public class CategorySearchServiceImplTest extends BaseTest {
         category.addProduct(createProduct("10", "Name", "Short description", "Long description", "Price description", "Catalog number", "Page title", 10, 1.0, 2.0, true));
         categories.add(category);
         return categories;
-    }
-
-    protected CategorySearchService getCategoryService() {
-        return this.categoryService;
     }
 }

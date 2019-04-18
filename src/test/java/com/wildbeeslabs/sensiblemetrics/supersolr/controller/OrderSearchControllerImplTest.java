@@ -30,24 +30,22 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.OrderSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.OrderView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,32 +66,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Order controller implementation unit test {@link BaseTest}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "file:src/test/resources/application.properties")
 @DirtiesContext
-public class OrderSearchControllerImplTest extends BaseTest {
+public class OrderSearchControllerImplTest extends AbstractBaseSearchControllerTest {
 
-    /**
-     * Default authentication user name
-     */
-    public static final String DEFAULT_USERNAME = "USER";
-
-    @Value("${supersolr.solr.server.url}")
-    private String url;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private OrderSearchService orderService;
+    private final OrderSearchService orderService;
 
     @Before
     public void before() {
@@ -113,7 +95,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // given
         final String urlTemplate = "/api/order/all";
 
-        final HttpEntity<String> requestEntity = new HttpEntity<>(org.springframework.http.HttpHeaders.EMPTY);
+        final HttpEntity<String> requestEntity = new HttpEntity<>(HttpHeaders.EMPTY);
         final Map<String, String> params = new ImmutableMap.Builder<String, String>()
             .put("page", "0")
             .put("size", "5")
@@ -140,7 +122,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -157,7 +139,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -177,7 +159,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate, "01")
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -197,7 +179,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(get(urlTemplate, 100)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
@@ -213,7 +195,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(delete(urlTemplate, "01")
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
@@ -234,7 +216,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(post(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(MapperUtils.map(order, OrderView.class))))
             .andExpect(status().isCreated());
@@ -255,7 +237,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         // then
         this.mockMvc.perform(put(urlTemplate)
             .session(getSession(userDetailsService, DEFAULT_USERNAME))
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON)
             .content(getGsonSerializer().toJson(orderView)))
             .andExpect(status().is(204));
@@ -268,7 +250,7 @@ public class OrderSearchControllerImplTest extends BaseTest {
         final String urlTemplate = "/api/order/all";
 
         this.mockMvc.perform(get(urlTemplate)
-            .headers(getHeaders())
+            .headers(getHeaders(this.url))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isUnauthorized());
     }
@@ -301,16 +283,5 @@ public class OrderSearchControllerImplTest extends BaseTest {
         orders.add(order);
 
         return orders;
-    }
-
-    protected HttpHeaders getHeaders() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        headers.add(HttpHeaders.ORIGIN, this.url);
-        return headers;
-    }
-
-    protected OrderSearchService getOrderService() {
-        return this.orderService;
     }
 }
