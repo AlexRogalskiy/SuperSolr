@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.wildbeeslabs.sensiblemetrics.supersolr.system.props.RedisConfigProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -58,13 +59,13 @@ import java.util.Optional;
  * Custom redis configuration
  */
 @Configuration
+@RequiredArgsConstructor
 @EnableAutoConfiguration
 @EnableRedisRepositories
 @EnableConfigurationProperties(RedisConfigProperties.class)
 public class RedisConfig extends CachingConfigurerSupport {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     @Bean
     public ObjectMapper redisObjectMapper() {

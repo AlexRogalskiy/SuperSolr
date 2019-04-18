@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.system.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -63,6 +64,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.get
  * Custom database configuration
  */
 @Configuration
+@RequiredArgsConstructor
 @EnableAsync
 @EnableJpaAuditing
 @EnableTransactionManagement
@@ -92,8 +94,7 @@ public class DBConfig {
      */
     public static final String DEFAULT_DOMAIN_NAME_PREFIX = "domain_";
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     /**
      * Returns {@link LocalContainerEntityManagerFactoryBean} configuration

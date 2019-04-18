@@ -24,6 +24,7 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.system.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,7 @@ import java.util.Objects;
 @Configuration
 public class SecurityContextConfig {
 
+    @Bean
     public UserDetails getPrincipal() {
         log.debug("Getting principal from the security context");
         UserDetails principal = null;

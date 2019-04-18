@@ -25,6 +25,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.system.config;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.batch.*;
 import com.wildbeeslabs.sensiblemetrics.supersolr.system.props.BatchConfigProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -42,16 +43,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Custom batch configuration
  */
 @Configuration
+@RequiredArgsConstructor
 @EnableBatchProcessing
 @EnableScheduling
 @EnableConfigurationProperties(BatchConfigProperties.class)
 public class BatchConfig {
 
-    @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    private final JobBuilderFactory jobBuilderFactory;
 
-    @Autowired
-    private StepBuilderFactory stepBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
     public Job indexBaseDocumentsJob(final Step indexingStep, final Step optimizeStep) {
