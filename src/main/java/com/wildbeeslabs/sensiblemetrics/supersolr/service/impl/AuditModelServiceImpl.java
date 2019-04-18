@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.AuditModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.AuditModelRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.AuditModelService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.iface.AuditModelService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

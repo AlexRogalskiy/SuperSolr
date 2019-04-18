@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.validator;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.BaseModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.model.annotation.constraint.ChronologicalDates;
 
 import javax.validation.ConstraintValidator;

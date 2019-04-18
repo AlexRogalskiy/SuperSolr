@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

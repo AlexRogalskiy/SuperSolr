@@ -29,11 +29,11 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.product.ProductSear
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchRequest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.BadRequestException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.ProductSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.CategoryView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.ProductView;
 import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

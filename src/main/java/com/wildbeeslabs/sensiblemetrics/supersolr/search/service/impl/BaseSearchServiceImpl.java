@@ -24,8 +24,11 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.BaseSearchRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.iface.BaseQueryService;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,16 +41,17 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * Base search service implementation
+ * {@link BaseSearchService} implementation
  *
  * @param <E>  type of document
  * @param <ID> type of document identifier {@link Serializable}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
 @EqualsAndHashCode
 @ToString
 @Transactional
-public abstract class BaseSearchServiceImpl<E, ID extends Serializable> implements BaseSearchService<E, ID> {
+public abstract class BaseSearchServiceImpl<E, ID extends Serializable> implements BaseSearchService<E, ID>, BaseQueryService<E> {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -111,10 +115,6 @@ public abstract class BaseSearchServiceImpl<E, ID extends Serializable> implemen
     @Override
     public <S extends E> boolean exists(final Example<S> example) {
         return getRepository().exists(example);
-    }
-
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
     }
 
     /**

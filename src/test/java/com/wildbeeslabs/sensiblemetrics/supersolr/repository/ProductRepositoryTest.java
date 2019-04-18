@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.config.DBConfig;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.interfaces.PersistableBaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.DBConfig;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.iface.PersistableBaseModel;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.hamcrest.core.IsEqual;

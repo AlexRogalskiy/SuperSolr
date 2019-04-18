@@ -23,10 +23,10 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.AuditDocumentSearchController;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.AuditDocument;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.AuditDocumentSearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.AuditDocumentView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.iface.AuditDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.AuditDocument;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.AuditDocumentSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.AuditDocumentView;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

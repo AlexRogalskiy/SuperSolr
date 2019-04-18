@@ -24,13 +24,10 @@
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl;
 
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableBaseDocument;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseSimpleSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseSimpleSearchService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
 import org.springframework.data.solr.core.SolrOperations;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -166,15 +163,15 @@ public class BaseSimpleSearchServiceImpl<E, ID extends Serializable> extends Sim
         return super.existsById(id);
     }
 
-    @Override
-    public <S extends E> boolean exists(final Example<S> example) {
-        ID baseModelId = null;
-        if (example.getProbe() instanceof BaseModel<?>) {
-            baseModelId = (ID) ((BaseModel) example.getProbe()).getId();
-        }
-        long count = super.count(new SimpleQuery(new Criteria(SearchableBaseDocument.CORE_ID).is(baseModelId)));
-        return (0 != count);
-    }
+//    @Override
+//    public <S extends E> boolean exists(final Example<S> example) {
+//        ID baseModelId = null;
+//        if (example.getProbe() instanceof BaseModel<?>) {
+//            baseModelId = (ID) ((BaseModel) example.getProbe()).getId();
+//        }
+//        long count = super.count(new SimpleQuery(new Criteria(SearchableBaseDocument.CORE_ID).is(baseModelId)));
+//        return (0 != count);
+//    }
 
     @Override
     public <S extends E> Iterable<S> save(final Iterable<S> entities) {

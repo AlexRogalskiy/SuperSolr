@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.product;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.ProductView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.iface.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.ProductView;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 

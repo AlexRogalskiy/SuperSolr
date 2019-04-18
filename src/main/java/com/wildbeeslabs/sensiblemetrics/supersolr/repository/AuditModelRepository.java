@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.AuditModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.AuditModel;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.rest.core.annotation.Description;
 import org.springframework.data.rest.core.annotation.RestResource;

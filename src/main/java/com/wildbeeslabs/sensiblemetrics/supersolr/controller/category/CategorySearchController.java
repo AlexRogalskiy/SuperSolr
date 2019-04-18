@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.category;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.iface.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.CategoryView;
 
 /**
  * Custom category search controller declaration

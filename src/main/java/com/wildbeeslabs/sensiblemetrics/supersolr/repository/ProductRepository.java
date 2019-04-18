@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.repository;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.Product;
 import org.springframework.data.rest.core.annotation.Description;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;

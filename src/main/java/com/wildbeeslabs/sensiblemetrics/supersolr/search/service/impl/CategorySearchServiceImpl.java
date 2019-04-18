@@ -23,10 +23,10 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Category;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Category;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableCategory;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.CategorySearchRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.CategorySearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.CategorySearchService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

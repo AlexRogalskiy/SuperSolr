@@ -26,8 +26,9 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.search.service;
 import com.google.common.collect.Lists;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.ProductSearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -50,8 +51,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 
-import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_DOCTYPE;
-import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService.DEFAULT_SEARСH_TERM_DELIMITER;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseDocumentSearchService.DEFAULT_DOCTYPE;
+import static com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseDocumentSearchService.DEFAULT_SEARСH_TERM_DELIMITER;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;

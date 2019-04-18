@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.order;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.iface.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Order;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.OrderView;
 
 /**
  * Custom order search controller declaration

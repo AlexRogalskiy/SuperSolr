@@ -23,10 +23,10 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.SearchableProduct;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.ProductSearchRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.ProductSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.ProductSearchService;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

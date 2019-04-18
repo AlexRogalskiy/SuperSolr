@@ -23,12 +23,12 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.controller.BaseDocumentSearchController;
+import com.wildbeeslabs.sensiblemetrics.supersolr.controller.iface.BaseDocumentSearchController;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.BaseDocument;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseDocumentSearchService;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.OffsetPageRequest;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.BaseDocumentView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.BaseDocumentView;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

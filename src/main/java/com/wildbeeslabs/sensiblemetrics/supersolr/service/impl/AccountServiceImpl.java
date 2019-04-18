@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.Account;
 import com.wildbeeslabs.sensiblemetrics.supersolr.repository.AccountRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.AccountService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.iface.AccountService;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

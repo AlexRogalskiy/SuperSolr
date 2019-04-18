@@ -23,10 +23,10 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Account;
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.Role;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.AccountService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.service.AuthUserService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.Account;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.Role;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.iface.AccountService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.service.iface.AuthUserService;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

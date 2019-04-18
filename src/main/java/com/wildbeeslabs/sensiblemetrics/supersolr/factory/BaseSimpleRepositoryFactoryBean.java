@@ -23,7 +23,7 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.factory;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.model.BaseModel;
+import com.wildbeeslabs.sensiblemetrics.supersolr.model.entity.BaseModel;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl.BaseSimpleSearchServiceImpl;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

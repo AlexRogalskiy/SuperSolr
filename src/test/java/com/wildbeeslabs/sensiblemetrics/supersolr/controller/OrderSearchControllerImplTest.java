@@ -25,10 +25,10 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller;
 
 import com.google.common.collect.ImmutableMap;
 import com.wildbeeslabs.sensiblemetrics.supersolr.BaseTest;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Order;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.Product;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.OrderSearchService;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.OrderView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Order;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Product;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.OrderSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.OrderView;
 import com.wildbeeslabs.sensiblemetrics.supersolr.utility.MapperUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;

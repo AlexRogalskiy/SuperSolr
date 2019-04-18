@@ -23,9 +23,9 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.search.service.impl;
 
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.BaseDocument;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.BaseDocument;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.repository.BaseDocumentSearchRepository;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.BaseDocumentSearchService;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseDocumentSearchService;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

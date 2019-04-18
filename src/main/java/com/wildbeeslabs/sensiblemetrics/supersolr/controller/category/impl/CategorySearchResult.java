@@ -26,7 +26,7 @@ package com.wildbeeslabs.sensiblemetrics.supersolr.controller.category.impl;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper.SearchResult;
-import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.CategoryView;
+import com.wildbeeslabs.sensiblemetrics.supersolr.search.view.entity.CategoryView;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
