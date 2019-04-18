@@ -63,7 +63,8 @@ import java.util.Optional;
         "com.wildbeeslabs.sensiblemetrics.supersolr"
     },
     namedQueriesLocation = "classpath:solr-named-queries.properties",
-    schemaCreationSupport = true)
+    schemaCreationSupport = true
+)
 @PropertySource("classpath:application.properties")
 public class SolrConfig {
 

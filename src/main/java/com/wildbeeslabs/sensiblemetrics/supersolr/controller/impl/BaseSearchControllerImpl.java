@@ -28,14 +28,12 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.controller.iface.BaseSearchCon
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.EmptyContentException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.exception.ResourceNotFoundException;
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.BaseSearchService;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.solr.core.SolrTemplate;
 
 import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
@@ -54,6 +52,7 @@ import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.for
  * @param <ID> type of document identifier {@link Serializable}
  */
 @Slf4j
+@Getter(AccessLevel.PROTECTED)
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
@@ -61,6 +60,9 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private SolrTemplate solrTemplate;
 
     protected List<? extends E> getAllItems() throws EmptyContentException {
         log.debug("Fetching all items");
@@ -83,6 +85,8 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
     protected E createItem(final T itemDto, final Class<? extends E> entityClass) {
         log.debug("Creating new item: {}", itemDto);
         final E itemEntity = map(itemDto, entityClass);
+//        long count = getSolrTemplate().count(new SimpleQuery(new Criteria(SearchableBaseDocument.CORE_ID).is(baseModelId)));
+////        return (0 != count);
 //        if (getSearchService().exists(itemEntity)) {
 //            throw new ResourceAlreadyExistException(formatMessage(getMessageSource(), "error.already.exist.item"));
 //        }
@@ -147,10 +151,6 @@ public abstract class BaseSearchControllerImpl<E, T, ID extends Serializable> im
             final U item = Enum.valueOf(getType(), text.toUpperCase());
             setValue(item);
         }
-    }
-
-    protected MessageSource getMessageSource() {
-        return this.messageSource;
     }
 
     /**
