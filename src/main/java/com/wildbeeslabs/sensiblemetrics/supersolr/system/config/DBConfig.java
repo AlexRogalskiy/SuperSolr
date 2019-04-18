@@ -57,6 +57,8 @@ import javax.sql.DataSource;
 import java.util.Properties;
 import java.util.UUID;
 
+import static com.wildbeeslabs.sensiblemetrics.supersolr.utility.StringUtils.getString;
+
 /**
  * Custom database configuration
  */
@@ -247,7 +249,7 @@ public class DBConfig {
     @ConditionalOnMissingBean(value = ObjectNamingStrategy.class, search = SearchStrategy.CURRENT)
     public ParentAwareNamingStrategy objectNamingStrategy() {
         final ParentAwareNamingStrategy namingStrategy = new ParentAwareNamingStrategy(new AnnotationJmxAttributeSource());
-        namingStrategy.setDefaultDomain(DEFAULT_DOMAIN_NAME_PREFIX + UUID.randomUUID().toString());
+        namingStrategy.setDefaultDomain(getString(DEFAULT_DOMAIN_NAME_PREFIX, UUID.randomUUID().toString()));
         return namingStrategy;
     }
 
