@@ -28,13 +28,13 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.model.iface.PersistableBaseMod
 import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.DBConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -60,14 +60,14 @@ import static org.junit.Assert.assertTrue;
  */
 @Slf4j
 @Getter(AccessLevel.PROTECTED)
-@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DBConfig.class})
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:test.sql")
 @Transactional
 public class ProductRepositoryTest {
 
-    private final ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("Test search all products")

@@ -30,13 +30,13 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.entity.Categor
 import com.wildbeeslabs.sensiblemetrics.supersolr.search.service.iface.CategorySearchService;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -65,7 +65,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Slf4j
 @Getter(AccessLevel.PROTECTED)
-@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -73,7 +72,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext
 public class CategorySearchControllerImplTest extends AbstractBaseSearchControllerTest {
 
-    private final CategorySearchService categoryService;
+    @Autowired
+    private CategorySearchService categoryService;
 
     @Before
     public void before() {

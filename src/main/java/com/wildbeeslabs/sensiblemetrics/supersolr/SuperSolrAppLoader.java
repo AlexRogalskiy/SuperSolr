@@ -38,7 +38,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SuperSolrAppLoader extends SpringBootServletInitializer {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(SuperSolrAppLoader.class, args);
     }
 }

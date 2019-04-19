@@ -31,7 +31,6 @@ import com.wildbeeslabs.sensiblemetrics.supersolr.search.document.interfaces.Sea
 import com.wildbeeslabs.sensiblemetrics.supersolr.system.config.SolrConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.internal.util.DateUtils;
 import org.hamcrest.core.IsEqual;
@@ -40,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -70,7 +70,6 @@ import static org.hamcrest.Matchers.hasSize;
  */
 @Slf4j
 @Getter(AccessLevel.PROTECTED)
-@RequiredArgsConstructor
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SolrConfig.class)
 @PostgresDataJpaTest
@@ -78,7 +77,8 @@ import static org.hamcrest.Matchers.hasSize;
 @Transactional
 public class CategorySearchRepositoryTest extends BaseTest {
 
-    private final CategorySearchRepository categorySearchRepository;
+    @Autowired
+    private CategorySearchRepository categorySearchRepository;
 
     @Before
     public void before() {
