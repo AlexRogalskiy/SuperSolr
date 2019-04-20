@@ -45,6 +45,11 @@ import java.io.Serializable;
 public class OffsetPageRequest implements Pageable, Serializable {
 
     /**
+     * Default explicit serialVersionUID for interoperability
+     */
+    private static final long serialVersionUID = -4496915523497562058L;
+
+    /**
      * Default page offset
      */
     @JsonProperty("offset")

@@ -29,7 +29,7 @@ public class ServiceUtils {
         }
     };
 
-    public static <T> void getResultAsync(final Executor executor, @NonNull final CompletableFuture<T>... future) {
+    public static <T> void getResultAsync(final Executor executor, final CompletableFuture<T>... future) {
         CompletableFuture.allOf(future).whenCompleteAsync(DEFAULT_COMPLETABLE_ACTION, executor).join();
     }
 

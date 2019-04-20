@@ -274,7 +274,7 @@ public class DBConfig {
         //jpaProperties.put(CONNECTION_PROVIDER, env.getRequiredProperty("supersolr.datasource.hibernate.connection.providerClass"));
         jpaProperties.put(POOL_SIZE, env.getRequiredProperty("supersolr.datasource.hibernate.connection.poolSize"));
         jpaProperties.put(AUTOCOMMIT, env.getRequiredProperty("supersolr.datasource.hibernate.connection.autocommit"));
-        jpaProperties.put(RELEASE_CONNECTIONS, env.getRequiredProperty("supersolr.datasource.hibernate.connection.releaseMode"));
+//        jpaProperties.put(RELEASE_CONNECTIONS, env.getRequiredProperty("supersolr.datasource.hibernate.connection.releaseMode"));
         jpaProperties.put(USE_UNICODE, env.getRequiredProperty("supersolr.datasource.hibernate.connection.useUnicode"));
         jpaProperties.put(CHARSET, env.getRequiredProperty("supersolr.datasource.hibernate.connection.charSet"));
         jpaProperties.put(CHARACTER_ENCODING, env.getRequiredProperty("supersolr.datasource.hibernate.connection.characterEncoding"));
