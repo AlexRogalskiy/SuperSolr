@@ -23,9 +23,14 @@
  */
 package com.wildbeeslabs.sensiblemetrics.supersolr.controller.wrapper;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.io.Serializable;
 
 /**
  * Custom offset page request implementation {@link Pageable}
@@ -35,19 +40,24 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class OffsetPageRequest implements Pageable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class OffsetPageRequest implements Pageable, Serializable {
 
     /**
      * Default page offset
      */
+    @JsonProperty("offset")
     private long offset;
     /**
      * Default page limit
      */
+    @JsonProperty("limit")
     private int limit;
     /**
      * Default page sort
      */
+    @JsonProperty("sort")
     private Sort sort;
 
     /**
